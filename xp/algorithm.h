@@ -2,6 +2,8 @@
 #define __ALGORITHM_H__
 
 #include <algorithm>
+#include <utility>
+
 #include "fakeconcepts.h"
 
 namespace xp {
@@ -79,6 +81,65 @@ T tighten(U val, T min, T max) {
 	else if (val < static_cast<U>(min))
 		return min;
 	return static_cast<T>(val);
+}
+
+// The cost function returns a value TotallyOrdered by <
+template<ForwardIterator I, Function Cost>
+I min_cost_element(I first, I last, Cost cost) {
+	if (first == last)
+		return last;
+
+	auto lowest = cost(*first);
+	auto found = first;
+	for (++first; first != last; ++first) {
+		auto val = cost(*first);
+		if (val < lowest) {
+			lowest = val;
+			found = first;
+		}
+	}
+	return found;
+}
+
+// The cost function returns a value TotallyOrdered by <
+template<ForwardIterator I, Function Cost>
+I max_cost_element(I first, I last, Cost cost) {
+	if (first == last)
+		return last;
+
+	auto highest = cost(*first);
+	auto found = first;
+	for (++first; first != last; ++first) {
+		auto val = cost(*first);
+		if (highest < val) {
+			highest = val;
+			found = first;
+		}
+	}
+	return found;
+}
+
+// The cost function returns a value TotallyOrdered by <
+template<ForwardIterator I, Function Cost>
+std::pair<I, I> minmax_cost_element(I first, I last, Cost cost) {
+	using namespace std;
+
+	auto result = make_pair(first, first);
+	if (first != last) {
+		auto lowest = cost(*first);
+		auto highest = lowest;
+		for (++first; first != last; ++first) {
+			auto val = cost(*first);
+			if (val < lowest) {
+				lowest = val;
+				result.first = first;
+			} else if (!(val < highest)) {
+				highest = val;
+				result.second = first;
+			}
+		}
+	}
+	return result;
 }
 
 } // namespace xp

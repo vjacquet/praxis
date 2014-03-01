@@ -91,4 +91,26 @@ TEST(check_tighten_with_overflow) {
 	VERIFY(result == 150);
 }
 
+TEST(check_min_cost_element) {
+	vector<int> v { 2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1 };
+	auto result = min_cost_element(v.begin(), v.end(), [](int i) { return i * i; });
+
+	VERIFY(distance(v.begin(), result) == 8);
+}
+
+TEST(check_max_cost_element) {
+	vector<int> v {2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1};
+	auto result = max_cost_element(v.begin(), v.end(), [](int i) { return i * i; });
+
+	VERIFY(distance(v.begin(), result) == 5);
+}
+
+TEST(check_minmax_cost_element) {
+	vector<int> v {2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1};
+	auto result = minmax_cost_element(v.begin(), v.end(), [](int i) { return i * i; });
+
+	VERIFY(distance(v.begin(), result.first) == 8);
+	VERIFY(distance(v.begin(), result.second) == 7);
+}
+
 TESTFIXTURE(algorithm_fixture)

@@ -65,6 +65,8 @@ if(!(e == a)) { \
 	msg << TEST_WHERE << "(" << e << ")!=(" << a << ") in VERIFY_EQ("#expected","#actual")"; \
 	throw std::logic_error(msg.str()); \
 }}
+#define SKIP(expr) \
+{ auto e = (expr); if(e) { cout << "SKIPPED" << endl; return; }  }
 
 #define TESTFIXTURE(b)  /* unnamed namespace { */ } \
 	void b(size_t& pass, size_t& fail) { testrange<0, __LINE__>().run(pass, fail); }

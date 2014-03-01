@@ -3,6 +3,7 @@
 
 using namespace std;
 
+void get_lowest_fixture(size_t& pass, size_t& fail);
 void algorithm_fixture(size_t& pass, size_t& fail);
 void while_each_fixture(size_t& pass, size_t& fail);
 void numeric_fixture(size_t& pass, size_t& fail);
@@ -11,7 +12,8 @@ int main(int argc, char* argv[])
 try {
 	size_t pass = 0, fail = 0;
 
-	//while_each_fixture(pass, fail);
+	get_lowest_fixture(pass, fail);
+	while_each_fixture(pass, fail);
 	algorithm_fixture(pass, fail);
 	numeric_fixture(pass, fail);
 
