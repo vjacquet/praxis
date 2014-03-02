@@ -110,7 +110,8 @@ TEST(check_minmax_cost_element) {
 	auto result = minmax_cost_element(v.begin(), v.end(), [](int i) { return i * i; });
 
 	VERIFY(distance(v.begin(), result.first) == 8);
-	VERIFY(distance(v.begin(), result.second) == 7);
+	// Different from max_cost_element but consistent with minmax_element
+	VERIFY(distance(v.begin(), result.second) == 7); 
 }
 
 TESTFIXTURE(algorithm_fixture)

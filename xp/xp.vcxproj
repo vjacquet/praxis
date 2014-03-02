@@ -67,6 +67,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="tests\algorithm.cpp" />
     <ClCompile Include="tests\get_lowest.cpp" />
+    <ClCompile Include="tests\ranges.cpp" />
     <ClCompile Include="tests\while_each.cpp" />
     <ClCompile Include="tests\numeric.cpp" />
   </ItemGroup>

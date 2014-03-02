@@ -6,12 +6,12 @@
 #define BidirectionalIterator typename
 #define RandomAccessIterator typename
 #define OutputIterator typename
+#define Range typename
 #define UnaryPredicate typename
 #define Function typename
 #define Predicate typename
 #define Generator typename
 #define Size std::size_t
-
 #define requires(...) 
 
 #define constexpr const

@@ -2,6 +2,7 @@
 #define __ALGORITHM_H__
 
 #include <algorithm>
+#include <iterator>
 #include <utility>
 
 #include "fakeconcepts.h"
@@ -32,7 +33,7 @@ namespace xp {
 
 	}
 
-	template<BidirectionalIterator I, typename T>
+template<BidirectionalIterator I, typename T>
 I find_backwards(I first, I last, const T& val) {
 	return details::find_backwards_with_not_found_value(first, last, last, val);
 }
@@ -140,6 +141,46 @@ std::pair<I, I> minmax_cost_element(I first, I last, Cost cost) {
 		}
 	}
 	return result;
+}
+
+template<Range R>
+R range_before(R const& range, decltype(*std::cbegin(range)) const& val) {
+	auto first = std::cbegin(range);
+	auto last = std::cend(range);
+	auto found = std::find(first, last, val);
+	if (found == last)
+		return R {last, last};
+	return R {first, found};
+}
+
+template<Range R>
+R range_after(R const& range, decltype(*std::cbegin(range)) const& val) {
+	auto first = std::cbegin(range);
+	auto last = std::cend(range);
+	auto found = std::find(first, last, val);
+	if (found != last)
+		++found;
+	return R {found, last};
+}
+
+template<Range R1, Range R2>
+R1 range_before(R1 const& range1, R2 const& range2) {
+	auto first1 = std::cbegin(range1);
+	auto last1 = std::cend(range1);
+	auto found = std::search(first1, last1, std::cbegin(range2), std::cend(range2));
+	if (found == last1)
+		return R1(last1, last1);
+	return R1(first1, found);
+}
+
+template<Range R1, Range R2>
+R1 range_after(R1 const& range1, R2 const& range2) {
+	auto first1 = std::cbegin(range1);
+	auto last1 = std::cend(range1);
+	auto found = std::search(first1, last1, std::cbegin(range2), std::cend(range2));
+	if (found != last1)
+		++found;
+	return R1(found, last1);
 }
 
 } // namespace xp
