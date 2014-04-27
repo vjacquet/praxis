@@ -150,9 +150,22 @@ std::pair<DifferenceType(I), I> count_while_adjacent(I first, I last)
 	return {n, last};
 }
 
+template<ForwardIterator I, OutputIterator O>
+O unique_copy_with_count(I first, I last, O output) {
+	I next;
+	DifferenceType(I) n;
+	while (first != last) {
+		tie(n, next) = count_while_adjacent(first, last);
+		*output = {n, *first};
+		++output;
+		first = next;
+	}
+	return output;
+}
+
 template<typename T>
 const T& stable_max(const T& a, const T& b) {
-	// Returns the seonc argument when the arguments are equivalent.
+	// Returns the second argument when the arguments are equivalent.
 	if (b < a)
 		return a;
 	return b;

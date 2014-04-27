@@ -130,4 +130,13 @@ TEST(check_count_while_adjacent) {
 	VERIFY(c == 4);
 }
 
+TEST(check_unique_copy) {
+	vector<int> v {1, 1, 1, 2, 2, 3, 4, 4, 4, 4};
+	vector<pair<int, int>> expected {{3, 1}, {2, 2}, {1, 3}, {4, 4}};
+	vector<pair<int, int>> actual;
+	unique_copy_with_count(v.begin(), v.end(), back_inserter(actual));
+	VERIFY(expected.size() == actual.size());
+	VERIFY(equal(actual.begin(), actual.end(), expected.begin()));
+}
+
 TESTFIXTURE(algorithm_fixture)
