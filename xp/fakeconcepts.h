@@ -1,19 +1,47 @@
-#ifndef __CONCEPTSLITE_H__
-#define __CONCEPTSLITE_H__
+#ifndef __CONCEPTS_H__
+#define __CONCEPTS_H__
 
+#include <iterator>
+#include "function_traits.h"
+
+// list seen in Stepanov's programming conversations lecture 4
+#define TotallyOrdered typename
+#define Pointer typename
+#define Number typename
+#define Unsigned typename
+#define Integral typename
 #define InputIterator typename
+#define OutputIterator typename
 #define ForwardIterator typename
 #define BidirectionalIterator typename
 #define RandomAccessIterator typename
-#define OutputIterator typename
-#define Range typename
+#define Sorter typename
+#define Incrementable typename
+#define StrictWeakOrdering typename
+#define Generator typename
+#define BinaryOperation typename
+#define EquivalenceRelation typename
 #define UnaryPredicate typename
+#define BinaryPredicate typename
+#define Sequence typename
+#define UnsignedIntegral typename
+
+#define Range typename
 #define Function typename
 #define Predicate typename
-#define Generator typename
+
 #define Size std::size_t
+
 #define requires(...) 
 
-#define constexpr const
+#define DifferenceType(I) typename std::iterator_traits<I>::difference_type
+#define ValueType(I) typename std::iterator_traits<I>::value_type
 
-#endif __CONCEPTSLITE_H__
+// use function traits to define Domain, Codomain, etc. as in EoP
+#define Codomain(fn) typename xp::function_traits<decltype(fn)>::return_type
+#define Domain(fn) typename xp::function_traits<decltype(fn)>::argument<0>::type
+#define Arity(fn) xp::function_traits<decltype(fn)>::arity
+#define InputType(fn, arg) typename xp::function_traits<decltype(fn)>::argument<arg>::type
+
+
+#endif __CONCEPTS_H__

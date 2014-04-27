@@ -33,6 +33,9 @@
     <ClCompile Include="tests\ranges.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tests\function_traits.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="numeric.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="fakeconcepts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="function_traits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

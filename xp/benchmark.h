@@ -1,8 +1,9 @@
 #ifndef __BENCHMARK_H__
 #define __BENCHMARK_H__
 
-#include <algorithm>
 #include <cassert>
+#include <ctime>
+#include <algorithm>
 #include <chrono>
 #include <ratio>
 #include <tuple>
@@ -23,10 +24,25 @@ namespace xp {
 
 		template<typename D>
 		requires(D is Duration)
-			D elapsed() const {
-				return std::chrono::duration_cast<D>(C::now() - since);
-			}
+		D elapsed() const {
+			return std::chrono::duration_cast<D>(C::now() - since);
+		}
 	};
+
+	class processor_clock {
+	public:
+		typedef clock_t rep;
+		typedef std::ratio<1, CLOCKS_PER_SEC> period;
+		typedef std::chrono::duration<rep, period> duration;
+		typedef std::chrono::time_point<processor_clock> time_point;
+
+		static const bool is_steady = true;
+
+		static time_point now() {
+			return time_point {duration {std::clock()}};
+		}
+	};
+
 
 	template<typename D>
 	requires(D is Duration)
@@ -37,7 +53,7 @@ namespace xp {
 		int n;
 
 	public:
-		mesures() : n(0), mini(D::min()), maxi(D::max()), sum(D::zero()) {}
+		mesures() : mini(D::min()), maxi(D::max()), sum(D::zero()), n(0) {}
 
 		mesures& operator += (D d) {
 			std::tie(mini, maxi) = std::minmax({mini, d, maxi});

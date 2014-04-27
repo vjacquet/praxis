@@ -31,6 +31,38 @@ namespace xp {
 			return not_found;
 		}
 
+		// The cost function returns a value supporting LessThanComparable
+		template<ForwardIterator I, Function Cost>
+		inline
+		I min_cost_element_nonempty(I first, I last, Cost cost) {
+			typedef decltype(cost(*first)) T;
+			T lowest = cost(*first);
+			auto found = first;
+			while (++first != last) {
+				auto val = cost(*first);
+				if (val < lowest) {
+					lowest = val;
+					found = first;
+				}
+			}
+			return found;
+		}
+
+		// The cost function returns a value supporting LessThanComparable
+		template<ForwardIterator I, Function Cost>
+		I max_cost_element_nonempty(I first, I last, Cost cost) {
+			auto highest = cost(*first);
+			auto found = first;
+			for (++first; first != last; ++first) {
+				auto val = cost(*first);
+				if (highest < val) {
+					highest = val;
+					found = first;
+				}
+			}
+			return found;
+		}
+
 	}
 
 template<BidirectionalIterator I, typename T>
@@ -40,7 +72,7 @@ I find_backwards(I first, I last, const T& val) {
 
 template<BidirectionalIterator I, UnaryPredicate Pred>
 I find_if_backwards(I first, I last, Pred pred) {
-	return details::find_if_backwards_with_not_found_value(first, last, last, val);
+	return details::find_if_backwards_with_not_found_value(first, last, last, pred);
 }
 
 template<BidirectionalIterator I, typename T>
@@ -84,43 +116,53 @@ T tighten(U val, T min, T max) {
 	return static_cast<T>(val);
 }
 
-// The cost function returns a value TotallyOrdered by <
-template<ForwardIterator I, Function Cost>
-I min_cost_element(I first, I last, Cost cost) {
-	if (first == last)
-		return last;
-
-	auto lowest = cost(*first);
-	auto found = first;
-	for (++first; first != last; ++first) {
-		auto val = cost(*first);
-		if (val < lowest) {
-			lowest = val;
-			found = first;
-		}
-	}
-	return found;
+template<typename T>
+std::pair<const T&, const T&> adjust_minmax(const T& cmin, const T& cmax, const T& c) {
+	// precondition: cmin < cmax
+	if (c < cmin) return {c, cmax};
+	if (cmax < c) return {cmin, c};
+	return {cmin, cmax};
 }
 
-// The cost function returns a value TotallyOrdered by <
+template<typename T, StrictWeakOrdering Compare>
+std::pair<const T&, const T&> adjust_minmax(const T& cmin, const T& cmax, const T& c, Compare comp) {
+	// precondition: comp(cmin, cmax)
+	if (comp(c, cmin)) return {c, cmax};
+	if (comp(cmax, c)) return {cmin, c};
+	return {cmin, cmax};
+}
+
+template<typename T>
+const T& stable_max(const T& a, const T& b) {
+	// Returns the seonc argument when the arguments are equivalent.
+	if (b < a)
+		return a;
+	return b;
+}
+
+template<typename T, StrictWeakOrdering Compare>
+const T& stable_max(const T& a, const T& b, Compare comp) {
+	if (comp(b, a))
+		return a;
+	return b;
+}
+
+// The cost function returns a value supporting LessThanComparable
+template<ForwardIterator I, Function Cost>
+inline
+I min_cost_element(I first, I last, Cost cost) {
+	if (first == last) return last;
+	return details::min_cost_element_nonempty(first, last, cost);
+}
+
+// The cost function returns a value supporting LessThanComparable
 template<ForwardIterator I, Function Cost>
 I max_cost_element(I first, I last, Cost cost) {
-	if (first == last)
-		return last;
-
-	auto highest = cost(*first);
-	auto found = first;
-	for (++first; first != last; ++first) {
-		auto val = cost(*first);
-		if (highest < val) {
-			highest = val;
-			found = first;
-		}
-	}
-	return found;
+	if (first == last) return last;
+	return details::max_cost_element_nonempty(first, last, cost);
 }
 
-// The cost function returns a value TotallyOrdered by <
+// The cost function returns a value supporting LessThanComparable
 template<ForwardIterator I, Function Cost>
 std::pair<I, I> minmax_cost_element(I first, I last, Cost cost) {
 	using namespace std;
@@ -149,8 +191,8 @@ R range_before(R const& range, decltype(*std::cbegin(range)) const& val) {
 	auto last = std::cend(range);
 	auto found = std::find(first, last, val);
 	if (found == last)
-		return R {last, last};
-	return R {first, found};
+		return {last, last};
+	return {first, found};
 }
 
 template<Range R>
@@ -160,7 +202,7 @@ R range_after(R const& range, decltype(*std::cbegin(range)) const& val) {
 	auto found = std::find(first, last, val);
 	if (found != last)
 		++found;
-	return R {found, last};
+	return {found, last};
 }
 
 template<Range R1, Range R2>
@@ -169,8 +211,8 @@ R1 range_before(R1 const& range1, R2 const& range2) {
 	auto last1 = std::cend(range1);
 	auto found = std::search(first1, last1, std::cbegin(range2), std::cend(range2));
 	if (found == last1)
-		return R1(last1, last1);
-	return R1(first1, found);
+		return {last1, last1};
+	return {first1, found};
 }
 
 template<Range R1, Range R2>
@@ -180,7 +222,7 @@ R1 range_after(R1 const& range1, R2 const& range2) {
 	auto found = std::search(first1, last1, std::cbegin(range2), std::cend(range2));
 	if (found != last1)
 		++found;
-	return R1(found, last1);
+	return {found, last1};
 }
 
 } // namespace xp

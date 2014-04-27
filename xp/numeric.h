@@ -25,7 +25,7 @@ namespace xp {
 		return first;
 
 		// The version above is faster. 
-		// Too bad, I'd rather used existing algorithms when possible.
+		// That's unfortunate, I'd rather use existing algorithms whenever possible.
 		//auto gen = details::iota_generator<T>{val};
 		//return generate_n(first, n, gen);
 	}

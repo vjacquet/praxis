@@ -43,7 +43,7 @@ namespace {
 		}
 	};
 
-	const Foo& get_lowest_naive(const vector<Foo>& foos) {
+	Foo const& get_lowest_naive(const vector<Foo>& foos) {
 		assert(!foos.empty());
 
 		double lowest_so_far = numeric_limits<double>::max();
@@ -59,7 +59,63 @@ namespace {
 		return *best;
 	}
 
-	const Foo& get_lowest_wierd(const vector<Foo>& foos) {
+	Foo const& get_lowest_naive_optimized(const vector<Foo>& foos) {
+		assert(!foos.empty());
+
+		vector<Foo>::const_iterator f = foos.cbegin();
+		vector<Foo>::const_iterator l = foos.cend();
+
+		vector<Foo>::const_iterator best = f;
+		double lowest_so_far = f->bar();
+		while (++f != l) {
+			const double curr_val = f->bar();
+			if (curr_val < lowest_so_far) {
+				best = f;
+				lowest_so_far = curr_val;
+			}
+		}
+
+		return *best;
+	}
+
+	template<ForwardIterator I, Predicate P> inline
+		I wierdo_nonempty(I first, I last, P pred)
+	{	// find smallest element, using pred
+			I found = first;
+			for (; ++first != last;)
+				if (pred(*first, *found))
+					found = first;
+			return found;
+	}
+
+	template<ForwardIterator I, Function Cost>
+	I min_cost_element_wierd(I first, I last, Cost cost) {
+		struct predicate {
+			typedef decltype(*first) T;
+			typedef decltype(cost(*first)) C;
+
+			Cost& cost;
+			C lowest;
+			predicate(Cost& cost, const T& t) : cost(cost), lowest(cost(t)) {}
+			bool operator()(const Foo& x, const Foo&) {
+				auto val = cost(x);
+				if (val < lowest) {
+					lowest = val;
+					return true;
+				}
+				return false;
+			}
+		};
+		if (first == last) return last;
+		return wierdo_nonempty(first, last, predicate(cost, *first));
+	}
+
+	Foo const& get_lowest_wrapped_wierd(const vector<Foo>& foos) {
+		assert(!foos.empty());
+		return *min_cost_element_wierd(foos.cbegin(), foos.cend(), [](Foo const& f) { return f.bar(); });
+	}
+
+	Foo const& get_lowest_wierd(const vector<Foo>& foos) {
 		struct predicate {
 			double lowest;
 			predicate(const Foo& first) : lowest(first.bar()) {}
@@ -76,14 +132,29 @@ namespace {
 		// /!\ must be compiled in Release under Visual Studio. 
 		// Sanity checks may fail in Debug mode.
 		assert(!foos.empty());
+		// the predicate is not called for the first item
 		return *min_element(foos.cbegin(), foos.cend(), predicate(foos.front()));
 	}
 
-	const Foo& get_lowest(const vector<Foo>& foos) {
+	Foo const& get_lowest(const vector<Foo>& foos) {
+		struct cost {
+			double operator()(const Foo& x) {
+				return x.bar();
+			}
+		};
 		assert(!foos.empty());
-		return *min_cost_element(foos.begin(), foos.end(), mem_fn(&Foo::bar));
+		return *min_cost_element(foos.cbegin(), foos.cend(), cost());
 	}
 
+	Foo const& get_lowest_mem_fn(const vector<Foo>& foos) {
+		assert(!foos.empty());
+		return *min_cost_element(foos.cbegin(), foos.cend(), mem_fn(&Foo::bar));
+	}
+
+	Foo const& get_lowest_lambda(const vector<Foo>& foos) {
+		assert(!foos.empty());
+		return *min_cost_element(foos.cbegin(), foos.cend(), [](Foo const& f) { return f.bar(); });
+	}
 
 	Foo const& get_lowest_stackoverflow(const std::vector<Foo> &foos) {
 		typedef decltype(foos[0].bar()) BarVal;
@@ -120,25 +191,25 @@ namespace {
 
 TESTBENCH()
 
-TEST(get_lowest_naive) {
+TEST(check_get_lowest_naive) {
 	auto& v = Sample;
 	for_each(v.begin(), v.end(), mem_fn(&Foo::reset));
 
-	const auto& lowest = get_lowest(v);
+	const auto& lowest = get_lowest_naive(v);
 	VERIFY(all_of(v.begin(), v.end(), [](const Foo& foo) { return foo.called == 1; }));
 
 	cout << "  lowest: " << lowest.id << endl;
 }
 
-TEST(get_lowest_wierd) {
+TEST(check_get_lowest_wierd) {
 #ifdef _DEBUG
 	SKIP(true)
 #endif
 
-		auto& v = Sample;
+	auto& v = Sample;
 	for_each(v.begin(), v.end(), mem_fn(&Foo::reset));
 
-	const auto& lowest = get_lowest(v);
+	const auto& lowest = get_lowest_wierd(v);
 	VERIFY(all_of(v.begin(), v.end(), [](const Foo& foo) { return foo.called == 1; }));
 
 	cout << "  lowest: " << lowest.id << endl;
@@ -168,15 +239,24 @@ TEST(bench_get_lowest) {
 	const int attempts = 20000;
 
 	vector<pair<string, scenario_t>> scenarii {
-		make_pair("get_lowest_stackoverflow", &get_lowest_stackoverflow),
+		make_pair("get_lowest_naive", &get_lowest_naive),
+		make_pair("get_lowest_naive_optimized", &get_lowest_naive_optimized),
+		make_pair("get_lowest_wierd", &get_lowest_wierd),
+		make_pair("get_lowest_wrapped_wierd", &get_lowest_wrapped_wierd),
 		make_pair("get_lowest", &get_lowest),
+		make_pair("get_lowest_mem_fn", &get_lowest_mem_fn),
+		make_pair("get_lowest_lambda", &get_lowest_lambda),
+		make_pair("get_lowest_stackoverflow", &get_lowest_stackoverflow),
 	};
 
 	for (auto& scenario : scenarii) {
 		mesures<microseconds> m;
 		for (int attempt = 0; attempt != attempts; ++attempt) {
-			stopwatch<high_resolution_clock> w;
-			auto result = scenario.second(Sample);
+			auto& v = Sample;
+			for_each(v.begin(), v.end(), mem_fn(&Foo::reset));
+
+			stopwatch<processor_clock> w;
+			auto result = scenario.second(v);
 			m += w.elapsed<microseconds>();
 		}
 		cout << "  " << scenario.first << " took an average of " << m.avg().count() << " us." << endl;
