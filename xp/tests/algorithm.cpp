@@ -114,4 +114,20 @@ TEST(check_minmax_cost_element) {
 	VERIFY(distance(v.begin(), result.second) == 7); 
 }
 
+TEST(check_count_while_adjacent) {
+	vector<int> v {1, 1, 1, 2, 2, 3, 4, 4, 4, 4};
+
+	auto f = v.begin();
+	auto l = v.end();
+	int c = 0;
+	tie(c, f) = count_while_adjacent(f, l);
+	VERIFY(c == 3);
+	tie(c, f) = count_while_adjacent(f, l);
+	VERIFY(c == 2);
+	tie(c, f) = count_while_adjacent(f, l);
+	VERIFY(c == 1);
+	tie(c, f) = count_while_adjacent(f, l);
+	VERIFY(c == 4);
+}
+
 TESTFIXTURE(algorithm_fixture)

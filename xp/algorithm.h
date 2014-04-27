@@ -132,6 +132,24 @@ std::pair<const T&, const T&> adjust_minmax(const T& cmin, const T& cmax, const 
 	return {cmin, cmax};
 }
 
+template <ForwardIterator I>
+std::pair<DifferenceType(I), I> count_while_adjacent(I first, I last)
+{
+	DifferenceType(I) n {0};
+	if (first != last) {
+		I next = first;
+		++n;
+		++next;
+		while (next != last) {
+			if (*first != *next)
+				return {n, next};
+			++n;
+			++next;
+		}
+	}
+	return {n, last};
+}
+
 template<typename T>
 const T& stable_max(const T& a, const T& b) {
 	// Returns the seonc argument when the arguments are equivalent.
