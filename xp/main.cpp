@@ -9,6 +9,7 @@ void algorithm_fixture(size_t& pass, size_t& fail);
 void while_each_fixture(size_t& pass, size_t& fail);
 void numeric_fixture(size_t& pass, size_t& fail);
 void function_traits_fixture(size_t& pass, size_t& fail);
+void min_fixture(size_t& pass, size_t& fail);
 
 int main(int argc, char* argv[])
 try {
@@ -20,6 +21,7 @@ try {
 	algorithm_fixture(pass, fail);
 	numeric_fixture(pass, fail);
 	function_traits_fixture(pass, fail);
+	min_fixture(pass, fail);
 
 	cout << "pass: " << pass << ", fail: " << fail << endl;
 	if(fail) {
