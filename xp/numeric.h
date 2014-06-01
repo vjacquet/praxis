@@ -21,7 +21,7 @@ namespace xp {
 	O iota_n(O first, N n, T val)
 	{
 		for (; 0 < n; --n, ++val)
-			*first = val;
+			*first++ = val;
 		return first;
 
 		// The version above is faster. 

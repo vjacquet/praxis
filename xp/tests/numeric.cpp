@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <functional>
 #include <iterator>
@@ -35,6 +36,16 @@ TEST(check_iota_n) {
 	VERIFY(v[5] == 5);
 }
 
+TEST(check_iota_n_with_array) {
+	using namespace std;
+	using xp::iota_n;
+
+	array<int, 10> v;
+	iota_n(begin(v), 10, 0);
+
+	VERIFY(v[5] == 5);
+}
+
 TEST(bench_generic_iota_generator) {
 	using namespace std;
 	using xp::iota_n;
@@ -59,6 +70,7 @@ TEST(bench_generic_iota_generator) {
 		}
 		cout << "  " << scenario.first << " took an average of " << m.avg().count() << " us." << endl;
 	}
+
 }
 
 TESTFIXTURE(numeric_fixture)
