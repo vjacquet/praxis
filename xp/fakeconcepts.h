@@ -43,5 +43,8 @@
 #define Arity(fn) xp::function_traits<decltype(fn)>::arity
 #define InputType(fn, arg) typename xp::function_traits<decltype(fn)>::argument<arg>::type
 
+#define Regular typename
+#define Semiregular typename
+
 
 #endif __CONCEPTS_H__
