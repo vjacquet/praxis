@@ -211,7 +211,7 @@ TEST(bench_count_while_scenarii) {
 			auto stop = generator();
 			predicate_t pred {stop};
 
-			stopwatch<high_resolution_clock> w;
+			timer<high_resolution_clock> w;
 			if (stop != scenario.second(v, pred))
 				throw runtime_error("Invalid algorithm");
 

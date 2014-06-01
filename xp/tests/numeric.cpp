@@ -64,7 +64,7 @@ TEST(bench_generic_iota_generator) {
 	for (auto& scenario : scenarii) {
 		mesures<microseconds> m;
 		for (int attempt = 0; attempt != attempts; ++attempt) {
-			stopwatch<high_resolution_clock> w;
+			timer<high_resolution_clock> w;
 			scenario.second();
 			m += w.elapsed<microseconds>();
 		}

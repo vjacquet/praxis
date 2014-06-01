@@ -265,7 +265,7 @@ TEST(bench_get_lowest) {
 			auto first = v.data();
 			auto last = first + v.size();
 
-			stopwatch<processor_clock> w;
+			timer<processor_clock> w;
 			auto result = scenario.second(first, last);
 			m += w.elapsed<microseconds>();
 		}

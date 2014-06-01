@@ -14,13 +14,13 @@ namespace xp {
 
 	template<typename C>
 	requires(C is Chrono)
-	struct stopwatch {
+	struct timer {
 		typedef std::chrono::time_point<C> time_point;
 		typedef typename C::duration duration;
 
 		const time_point since;
 
-		stopwatch() : since(C::now()) {}
+		timer() : since(C::now()) {}
 
 		template<typename D>
 		requires(D is Duration)
