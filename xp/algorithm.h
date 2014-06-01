@@ -35,8 +35,8 @@ namespace xp {
 		template<ForwardIterator I, Function Cost>
 		inline
 		I min_cost_element_nonempty(I first, I last, Cost cost) {
-			typedef decltype(cost(*first)) T;
-			T lowest = cost(*first);
+			typedef decltype(cost(*first)) C;
+			C lowest = cost(*first);
 			auto found = first;
 			while (++first != last) {
 				auto val = cost(*first);
@@ -163,20 +163,36 @@ O unique_copy_with_count(I first, I last, O output) {
 	return output;
 }
 
-template<typename T>
-const T& stable_max(const T& a, const T& b) {
+template<typename T, StrictWeakOrdering Cmp>
+const T& stable_max(const T& a, const T& b, Cmp cmp) {
 	// Returns the second argument when the arguments are equivalent.
-	if (b < a)
+	if (cmp(b, a))
 		return a;
 	return b;
 }
 
-template<typename T, StrictWeakOrdering Compare>
-const T& stable_max(const T& a, const T& b, Compare comp) {
-	if (comp(b, a))
-		return a;
-	return b;
+template<typename T>
+const T& stable_max(const T& a, const T& b) {
+	// Returns the second argument when the arguments are equivalent.
+	return stable_max(a, b, std::less<T>());
 }
+
+template <ForwardIterator I, StrictWeakOrdering Cmp>
+I stable_max_element(I first, I last, Cmp cmp) {
+	if (first == last) return last;
+	I largest = first;
+	while (++first != last) {
+		if (!cmp(*first, *largest))
+			largest = first;
+	}
+	return largest;
+}
+
+template<ForwardIterator I>
+I stable_max_element(I first, I last) {
+	return stable_max_element(first, last, std::less<T>());
+}
+
 
 // The cost function returns a value supporting LessThanComparable
 template<ForwardIterator I, Function Cost>

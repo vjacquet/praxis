@@ -25,6 +25,13 @@ struct instrumented {
 	}
 };
 
+template<typename T>
+struct first_less {
+	bool operator()(pair<T, T> x, pair<T, T> y) {
+		return x.first < y.first;
+	}
+};
+
 TESTBENCH()
 
 TEST(check_find_backwards) {
@@ -130,13 +137,31 @@ TEST(check_count_while_adjacent) {
 	VERIFY(c == 4);
 }
 
-TEST(check_unique_copy) {
+TEST(check_unique_copy_with_count) {
 	vector<int> v {1, 1, 1, 2, 2, 3, 4, 4, 4, 4};
 	vector<pair<int, int>> expected {{3, 1}, {2, 2}, {1, 3}, {4, 4}};
 	vector<pair<int, int>> actual;
 	unique_copy_with_count(v.begin(), v.end(), back_inserter(actual));
 	VERIFY(expected.size() == actual.size());
 	VERIFY(equal(actual.begin(), actual.end(), expected.begin()));
+}
+
+TEST(check_stable_max) {
+	first_less<int> cmp;
+
+	pair<int, int> x {0, 1};
+	pair<int, int> y {0, 2};
+	VERIFY(std::max(x, y, cmp).second == 1);
+	VERIFY(stable_max(x, y, cmp).second == 2);
+}
+
+TEST(check_stable_max_element) {
+	first_less<int> cmp;
+
+	vector<pair<int, int>> v {{3, 1}, {2, 2}, {1, 3}, {3, 4}};
+
+	VERIFY(std::max_element(v.begin(), v.end(), cmp)->second == 1);
+	VERIFY(stable_max_element(v.begin(), v.end(), cmp)->second == 4);
 }
 
 TESTFIXTURE(algorithm_fixture)
