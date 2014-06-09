@@ -4,6 +4,12 @@
 #include <iterator>
 #include "function_traits.h"
 
+#ifdef _MSC_VER
+
+#define noexcept throw()
+
+#endif
+
 // list seen in Stepanov's programming conversations lecture 4
 #define TotallyOrdered typename
 #define Pointer typename

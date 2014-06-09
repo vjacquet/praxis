@@ -17,7 +17,9 @@
 #include <sstream>
 #include <string>
 
-#define TESTBENCH() namespace {\
+#define TESTNAMESPACE namespace
+
+#define TESTBENCH() TESTNAMESPACE {\
 struct empty_testcase { void run() {} const char* name() { return 0; } };\
 template <size_t offset> struct testcase : empty_testcase {}; \
 template <size_t begin, size_t end> \
@@ -51,7 +53,7 @@ struct testcase<__LINE__> { \
 	const char* name() { return(#fun_name); } \
 	void run() { fun_name(); } \
 }; \
-void fun_name()
+inline void fun_name()
 
 #define Q_(e) #e
 #define Q(e)  Q_(e)

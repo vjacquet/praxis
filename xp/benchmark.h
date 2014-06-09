@@ -68,4 +68,4 @@ namespace xp {
 
 } // namespace xp
 
-#endif // __BENCHMARK_H__
+#endif __BENCHMARK_H__
