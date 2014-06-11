@@ -25,29 +25,27 @@ template <size_t offset> struct testcase : empty_testcase {}; \
 template <size_t begin, size_t end> \
 struct testrange {\
 	void run(size_t& pass, size_t& fail) {\
-		using namespace std;\
 		testcase<begin> a_case;\
 		if(a_case.name()) {\
 			size_t p = 0, f = 0;\
-			cout << "TEST: Running " << a_case.name() << endl;\
+			std::cout << "TEST: Running " << a_case.name() << std::endl;\
 			try {\
 				a_case.run();\
 				++pass; \
-			}\
+												}\
 			catch(logic_error& e) {\
-				cerr << "ERRORS:" << "  " << e.what() << endl;\
+				std::cerr << "ERRORS:" << "  " << e.what() << std::endl;\
 				++fail; \
-			}\
-		}\
+												}\
+						}\
 		const size_t rem = (end-begin-1);\
 		testrange<begin+1, begin+1+rem/2>().run(pass, fail);\
 		testrange<begin+1+rem/2, end>().run(pass, fail);\
-	}\
+				}\
 };\
 template <size_t begin> struct testrange<begin, begin> { void run(size_t& pass, size_t& fail) {}; };
 
-#define TEST(fun_name) \
-void fun_name(); \
+#define TEST(fun_name) void fun_name(); \
 template <> \
 struct testcase<__LINE__> { \
 	const char* name() { return(#fun_name); } \
@@ -64,7 +62,7 @@ inline void fun_name()
 { auto e = (expected); auto a = (actual); \
 if(!(e == a)) { \
 	std::stringstream msg; \
-	msg << TEST_WHERE << "(" << e << ")!=(" << a << ") in VERIFY_EQ("#expected","#actual")"; \
+	msg << TEST_WHERE "(" << e << ")!=(" << a << ") in VERIFY_EQ("#expected","#actual")"; \
 	throw std::logic_error(msg.str()); \
 }}
 #define SKIP(expr) \

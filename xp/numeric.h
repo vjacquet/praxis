@@ -17,7 +17,7 @@ namespace xp {
 		};
 	} // namespace details
 
-	template <OutputIterator O, typename N, typename T>
+	template<OutputIterator O, typename N, typename T>
 	O iota_n(O first, N n, T val)
 	{
 		for (; 0 < n; --n, ++val)
