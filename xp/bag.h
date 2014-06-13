@@ -69,14 +69,8 @@ namespace xp {
 			}
 		}
 
-		pointer relocating(pointer f, pointer l, pointer o, std::false_type) {
-			return std::uninitialized_copy(f, l, o);
-		}
-		pointer relocating(pointer f, pointer l, pointer o, std::true_type) {
-			return uninitialized_move(f, l, o);
-		}
 		pointer relocate(pointer f, pointer l, pointer o) {
-			o = relocating(f, l, o, std::is_nothrow_move_constructible<value_type>::type());
+			o = uninitialized_move_if_noexcept(f, l, o);
 			destroy(f, l);
 			return o;
 		}
@@ -91,8 +85,18 @@ namespace xp {
 		}
 
 		void grow(size_type n) {
-			size_type len = size();
-			reallocate(len + max(len, n));
+			auto len = size();
+			reallocate(len + std::max(len, n));
+		}
+
+		void reserve_1_more() {
+			if (finish == end_of_storage)
+				grow(std::max(size_type(1), size_type(4096 / sizeof(value_type))));
+		}
+		void reserve_n_more(size_type n) {
+			auto avail = end_of_storage - finish;
+			if (avail < n)
+				grow(n - avail);
 		}
 
 		void tidy() {
@@ -144,7 +148,7 @@ namespace xp {
 		template<InputIterator I>
 		void insert(I first, I last, std::forward_iterator_tag) {
 			auto n = std::distance(first, last);
-			grow(n);
+			reserve_n_more(n);
 			finish = std::uninitialized_copy_n(first, n, finish);
 		}
 
@@ -243,24 +247,24 @@ namespace xp {
 		}
 
 		// iterators bunch
-		iterator begin() noexcept {return start; }
-		iterator end() noexcept {return finish; }
+		iterator begin() noexcept {return start;}
+		iterator end() noexcept {return finish;}
 		const_iterator begin() const noexcept {return start;}
-		const_iterator end() const noexcept {return finish; }
-		const_iterator cbegin() const noexcept {return start; }
-		const_iterator cend() const noexcept {return finish; }
-		reverse_iterator rbegin() noexcept {return reverse_iterator(end()); }
-		reverse_iterator rend() noexcept {return reverse_iterator(begin()); }
-		const_reverse_iterator rbegin() const noexcept {return const_reverse_iterator(end());}
-		const_reverse_iterator rend() const noexcept {return const_reverse_iterator(begin());}
-		const_reverse_iterator crbegin() const noexcept {return const_reverse_iterator(end()); }
-		const_reverse_iterator crend() const noexcept {return const_reverse_iterator(begin()); }
+		const_iterator end() const noexcept {return finish;}
+		const_iterator cbegin() const noexcept {return start;}
+		const_iterator cend() const noexcept {return finish;}
+		reverse_iterator rbegin() noexcept {return reverse_iterator(end());}
+		reverse_iterator rend() noexcept {return reverse_iterator(begin());}
+		const_reverse_iterator rbegin() const noexcept {return const_reverse_iterator(end()); }
+		const_reverse_iterator rend() const noexcept {return const_reverse_iterator(begin()); }
+		const_reverse_iterator crbegin() const noexcept {return const_reverse_iterator(end());}
+		const_reverse_iterator crend() const noexcept {return const_reverse_iterator(begin());}
 
-			// accessors and mutators
-		size_type size() const noexcept {return size_type(finish - start);}
-		size_type max_size() const noexcept {return AllocTraits::max_size(alloc);}
-		size_type capacity() const noexcept {return size_type(end_of_storage - start); }
-		bool empty() const noexcept {return start == finish; }
+		// accessors and mutators
+		size_type size() const noexcept {return size_type(finish - start); }
+		size_type max_size() const noexcept {return AllocTraits::max_size(alloc); }
+		size_type capacity() const noexcept {return size_type(end_of_storage - start);}
+		bool empty() const noexcept {return start == finish;}
 
 		reference operator[](size_type n) { return *(start + n); }
 		const_reference operator[](size_type n) const { return *(start + n); }
@@ -268,28 +272,22 @@ namespace xp {
 		reference at(size_type n) { bound_check(n); return *(start + n); }
 		const_reference at(size_type n) const { bound_check(n); return *(start + n); }
 
-		pointer data() noexcept {return start; }
-		const_pointer data() const noexcept {return start; }
+		pointer data() noexcept {return start;}
+		const_pointer data() const noexcept {return start;}
 
 		template<class... Args>
 		void emplace(Args&&... args) {
-			if (finish == end_of_storage) {
-				grow(std::max(size_type(1), size_type(4096 / sizeof(value_type))));
-			}
+			reserve_1_more();
 			construct(finish, std::forward<Args>(args)...);
 			++finish;
 		}
 		void insert(const value_type& val) {
-			if (finish == end_of_storage) {
-				grow(std::max(size_type(1), size_type(4096 / sizeof(value_type))));
-			}
+			reserve_1_more();
 			construct(finish, val);
 			++finish;
 		}
 		void insert(value_type&& val) {
-			if (finish == end_of_storage) {
-				grow(std::max(size_type(1), size_type(4096 / sizeof(value_type))));
-			}
+			reserve_1_more();
 			construct(finish, std::forward<value_type>(val));
 			++finish;
 		}
@@ -302,7 +300,7 @@ namespace xp {
 		iterator erase(const_iterator pos) {
 			--finish;
 			if (finish != pos) {
-				*pos = move(*finish);
+				*pos = std::move_if_noexcept(*finish);
 			}
 			destroy(finish);
 			return pos;
