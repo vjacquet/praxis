@@ -20,11 +20,11 @@ namespace xp {
 	template<OutputIterator O, typename N, typename T>
 	O iota_n(O first, N n, T val)
 	{
-		for (; 0 < n; --n, ++val)
-			*first++ = val;
+		for (; 0 < n; --n, ++first, ++val)
+			*first = val;
 		return first;
 
-		// The version above is faster. 
+		// The version above is faster by almost 20%. 
 		// That's unfortunate, I'd rather use existing algorithms whenever possible.
 		//auto gen = details::iota_generator<T>{val};
 		//return generate_n(first, n, gen);
