@@ -46,4 +46,4 @@ TEST(prove_range_after_with_c_string_fails) {
 	VERIFY(range_after(haystack, "-") == "");
 }
 
-TESTFIXTURE(ranges_fixture)
+TESTFIXTURE(ranges)

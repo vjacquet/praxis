@@ -57,4 +57,4 @@ TEST(check_fn2) {
 //	static_assert(std::is_same<Traits::argument<1>::type, int>::value, "");
 //}
 
-TESTFIXTURE(function_traits_fixture)
+TESTFIXTURE(function)

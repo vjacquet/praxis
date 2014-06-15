@@ -221,5 +221,5 @@ TEST(bench_count_while_scenarii) {
 	}
 }
 
-TESTFIXTURE(while_each_fixture)
+TESTFIXTURE(while_each)
 

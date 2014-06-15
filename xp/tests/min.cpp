@@ -145,4 +145,4 @@ TEST(check_min) {
 	cout << "end" << endl;
 }
 
-TESTFIXTURE(min_fixture)
+TESTFIXTURE(min)

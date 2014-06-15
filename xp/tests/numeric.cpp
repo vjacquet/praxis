@@ -73,4 +73,4 @@ TEST(bench_generic_iota_generator) {
 
 }
 
-TESTFIXTURE(numeric_fixture)
+TESTFIXTURE(numeric)

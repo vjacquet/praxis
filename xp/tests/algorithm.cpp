@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "../algorithm.h"
+
 #include "testbench.h"
 
 using namespace std;
@@ -164,4 +165,4 @@ TEST(check_stable_max_element) {
 	VERIFY(stable_max_element(v.begin(), v.end(), cmp)->second == 4);
 }
 
-TESTFIXTURE(algorithm_fixture)
+TESTFIXTURE(algorithm)

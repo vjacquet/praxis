@@ -273,4 +273,4 @@ TEST(bench_get_lowest) {
 	}
 }
 
-TESTFIXTURE(get_lowest_fixture)
+TESTFIXTURE(get_lowest)

@@ -142,4 +142,16 @@ TEST(check_relops) {
 	VERIFY(x < y);
 }
 
-TESTFIXTURE(bag_fixture)
+TEST(check_uninitialize_move) {
+
+	typedef instrumented<int> value_type;
+
+	bag<value_type> b {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	value_type p[10];
+
+	instrumented_base::reset();
+	uninitialized_move_n(b.begin(), b.size(), p);
+	VERIFY(instrumented_base::counts[instrumented_base::operations::move_construct] == 10);
+}
+
+TESTFIXTURE(bag)
