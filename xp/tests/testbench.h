@@ -88,7 +88,7 @@ struct testrange {\
 				std::cerr << "ERRORS:" << "  " << e.what() << std::endl;\
 				++fail; \
 			}\
-		}\
+				}\
 		const size_t rem = (end-begin-1);\
 		testrange<begin+1, begin+1+rem/2>().run(pass, fail);\
 		testrange<begin+1+rem/2, end>().run(pass, fail);\
@@ -96,13 +96,12 @@ struct testrange {\
 };\
 template <size_t begin> struct testrange<begin, begin> { void run(size_t& pass, size_t& fail) {}; };
 
-#define TEST(fun_name) void fun_name(); \
-template <> \
+#define TEST(fun_name) template <> \
 struct testcase<__LINE__> { \
 	const char* name() { return(#fun_name); } \
-	void run() { fun_name(); } \
+	void run(); \
 }; \
-inline void fun_name()
+inline void testcase<__LINE__>::run()
 
 #define Q_(e) #e
 #define Q(e)  Q_(e)
@@ -121,6 +120,5 @@ if(!(e == a)) { \
 
 #define TESTFIXTURE(b) struct b##_fixture : public fixture { b##_fixture() : fixture(Q(b)) {} \
 private: virtual void run(size_t& pass, size_t& fail) const { testrange<0, __LINE__>().run(pass, fail); } \
-}; \
-b##_fixture registered_##b##_fixture; \
+} registered_##b##_fixture; \
 /* unnamed namespace { */ }
