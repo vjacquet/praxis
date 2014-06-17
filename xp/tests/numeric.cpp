@@ -73,4 +73,19 @@ TEST(bench_generic_iota_generator) {
 
 }
 
+TEST(check_random_iota) {
+	using namespace std;
+	using xp::random_iota;
+
+	const int N = 100;
+
+	vector<int> v1(N);
+	random_iota(v1.begin(), v1.end(), 0);
+
+	vector<int> v2(N);
+	random_iota(v2.begin(), v2.end(), 0);
+
+	VERIFY(v1 != v2);
+}
+
 TESTFIXTURE(numeric)
