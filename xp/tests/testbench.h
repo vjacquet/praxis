@@ -84,11 +84,11 @@ struct testrange {\
 				a_case.run();\
 				++pass; \
 			}\
-			catch(logic_error& e) {\
+			catch(std::logic_error& e) {\
 				std::cerr << "ERRORS:" << "  " << e.what() << std::endl;\
 				++fail; \
 			}\
-				}\
+		}\
 		const size_t rem = (end-begin-1);\
 		testrange<begin+1, begin+1+rem/2>().run(pass, fail);\
 		testrange<begin+1+rem/2, end>().run(pass, fail);\
