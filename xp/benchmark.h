@@ -14,18 +14,48 @@ namespace xp {
 
 	template<typename C>
 	requires(C is Chrono)
-	struct timer {
-		typedef std::chrono::time_point<C> time_point;
+	class timer {
+	private:
+		typedef typename C::time_point time_point;
+		time_point since;
+
+	public:
 		typedef typename C::duration duration;
 
-		const time_point since;
-
 		timer() : since(C::now()) {}
+		timer(const timer& x) : since(x.since) {}
+
+		void reset() {
+			since = C::now();
+		}
 
 		template<typename D>
 		requires(D is Duration)
 		D elapsed() const {
 			return std::chrono::duration_cast<D>(C::now() - since);
+		}
+
+		// Regular
+		inline friend bool operator==(const timer& x, const timer& y) {
+			return x.since == y.since;
+		}
+		inline friend bool operator!=(const timer& x, const timer& y) {
+			return !(x == y);
+		}
+
+		// TotallyOrdered
+		inline friend bool operator<(const timer& x, const timer& y) {
+			// we want to compare on duration, not epoch.
+			return y.since < x.since;
+		}
+		inline friend bool operator <=(const timer& x, const timer& y) {
+			return !(y < x);
+		}
+		inline friend bool operator >(const timer& x, const timer& y) {
+			return y < x;
+		}
+		inline friend bool operator >=(const timer& x, const timer& y) {
+			return !(x < y);
 		}
 	};
 

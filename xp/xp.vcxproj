@@ -69,6 +69,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="tests\algorithm.cpp" />
     <ClCompile Include="tests\bag.cpp" />
+    <ClCompile Include="tests\benchmark.cpp" />
     <ClCompile Include="tests\functional.cpp" />
     <ClCompile Include="tests\function_traits.cpp" />
     <ClCompile Include="tests\get_lowest.cpp" />
