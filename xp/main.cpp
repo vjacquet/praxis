@@ -5,7 +5,6 @@
 #include <utility>
 #include <vector>
 
-#include "registrar.h"
 #include "tests\testbench.h"
 
 using namespace std;
