@@ -47,4 +47,19 @@ TEST(check_is_semiregular) {
 	cout << "  m1:" << m1.count() << "us, m2:" << m2.count() << "us" << endl;
 }
 
+TEST(check_is_totallyordered) {
+	using namespace std;
+	using namespace std::chrono;
+
+	vector<int> v(100000);
+
+	timer<steady_clock> w1;
+	random_iota_n(v.begin(), v.size(), 0);
+
+	timer<steady_clock> w2;
+	random_iota_n(v.begin(), v.size(), 0);
+
+	VERIFY(w2 < w1);
+}
+
 TESTFIXTURE(benchmark)
