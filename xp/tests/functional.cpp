@@ -30,4 +30,14 @@ TEST(check_dereference_binary_function) {
 	VERIFY(op(&x, &y));
 }
 
+TEST(can_memoize) {
+	int count = 0;
+	function<int(int)> fn = [&count](int val) {++count; return val; };
+	auto m = memoize(fn);
+
+	VERIFY(m(1) == 1 && count == 1);
+	VERIFY(m(2) == 2 && count == 2);
+	VERIFY(m(1) == 1 && count == 2);
+}
+
 TESTFIXTURE(functional)

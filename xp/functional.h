@@ -2,10 +2,30 @@
 #define __FUNCTIONAL_H__
 
 #include <functional>
+#include <map>
+#include <tuple>
+#include <utility>
 
 #include "fakeconcepts.h"
 
 namespace xp {
+	//memoize
+	template <typename ReturnType, typename... Args>
+	std::function<ReturnType(Args...)> memoize(std::function<ReturnType(Args...)> func) {
+		using namespace std;
+		
+		map<tuple<Args...>, ReturnType> cache;
+		return ([=](Args... args) mutable {
+			tuple<Args...> t(args...);
+			bool inserted;
+			map<tuple<Args...>, ReturnType>::iterator pos;
+			tie(pos, inserted) = cache.insert(make_pair(t, ReturnType {}));
+			if (inserted) {
+				pos->second = func(args...);
+			}
+			return pos->second;
+		});
+	}
 
 	template<Function Op>
 	struct dereference_function_t {
@@ -36,9 +56,6 @@ namespace xp {
 	dereference_function_t<Op> dereference(Op op) {
 		return dereference_function_t<Op> {op};
 	}
-
-	//memoize
-
 
 } // namespace xp
 
