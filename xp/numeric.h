@@ -32,6 +32,21 @@ namespace xp {
 		//return generate_n(first, n, gen);
 	}
 
+	template<ForwardIterator I, typename T>
+	I reverse_iota(I first, I last, T val) {
+		for (; first != last; ++first, --val)
+			*first = val;
+		return first;
+	}
+
+	template<OutputIterator O, typename N, typename T>
+	O reverse_iota_n(O first, N n, T val)
+	{
+		for (; 0 < n; --n, ++first, --val)
+			*first = val;
+		return first;
+	}
+
 	template<RandomAccessIterator I, typename T, class URNG>
 	I random_iota(I first, I last, T val, URNG&& g) {
 		std::iota(first, last, val);

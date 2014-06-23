@@ -46,6 +46,16 @@ TEST(check_iota_n_with_array) {
 	VERIFY(v[5] == 5);
 }
 
+TEST(check_reverse_iota_n_with_array) {
+	using namespace std;
+	using xp::iota_n;
+
+	array<int, 10> v;
+	reverse_iota_n(begin(v), 10, 10);
+
+	VERIFY(v[5] == 5);
+}
+
 TEST(bench_generic_iota_generator) {
 	using namespace std;
 	using xp::iota_n;
