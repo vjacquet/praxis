@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "../bag.h"
 #include "../instrumented.h"
 #include "testbench.h"
@@ -152,6 +154,16 @@ TEST(check_uninitialize_move) {
 	instrumented_base::reset();
 	uninitialized_move_n(b.begin(), b.size(), p);
 	VERIFY(instrumented_base::counts[instrumented_base::operations::move_construct] == 10);
+}
+
+TEST(check_use_allocator) {
+	using namespace std;
+	
+	bool bag_uses_allocator = std::uses_allocator<bag<int>, allocator<int>>::value;
+	VERIFY(bag_uses_allocator);
+
+	bool instrumented_uses_allocator = std::uses_allocator<instrumented<int>, allocator<int>> ::value;
+	VERIFY(!instrumented_uses_allocator);
 }
 
 TESTFIXTURE(bag)
