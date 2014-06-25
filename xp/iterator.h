@@ -43,7 +43,7 @@ namespace xp {
 	}
 
 	template <BidirectionalIterator I>
-	reverse_iterator reverse(I it) {
+	reverse_iterator<I> reverse(I it) {
 		return reverse_iterator {it};
 	}
 
