@@ -106,6 +106,26 @@ I find_if(I first, I last, I hint, Pred pred) {
 	}
 }
 
+template <class T, StrictWeakOrdering Compare>
+bool is_sorted(const T& a, const T& b, Compare cmp) {
+	return !cmp(b, a);
+}
+
+template<typename T>
+bool is_sorted(const T& a, const T& b) {
+	return is_sorted(a, b, std::less<T>());
+}
+
+template <class T, StrictWeakOrdering Compare>
+bool is_sorted(const T& a, const T& b, const T& c, Compare cmp) {
+	return !(cmp(b, a) || cmp(c, b));
+}
+
+template<typename T>
+bool is_sorted(const T& a, const T& b, const T& c) {
+	return is_sorted(a, b, c, std::less<T>());
+}
+
 // different from boost' clamp function because the value can be of a different type than min & max.
 template<typename T, typename U>
 T tighten(U val, T min, T max) {
@@ -125,10 +145,10 @@ std::pair<const T&, const T&> adjust_minmax(const T& cmin, const T& cmax, const 
 }
 
 template<typename T, StrictWeakOrdering Compare>
-std::pair<const T&, const T&> adjust_minmax(const T& cmin, const T& cmax, const T& c, Compare comp) {
-	// precondition: comp(cmin, cmax)
-	if (comp(c, cmin)) return {c, cmax};
-	if (comp(cmax, c)) return {cmin, c};
+std::pair<const T&, const T&> adjust_minmax(const T& cmin, const T& cmax, const T& c, Compare cmp) {
+	// precondition: cmp(cmin, cmax)
+	if (cmp(c, cmin)) return {c, cmax};
+	if (cmp(cmax, c)) return {cmin, c};
 	return {cmin, cmax};
 }
 
@@ -163,8 +183,8 @@ O unique_copy_with_count(I first, I last, O output) {
 	return output;
 }
 
-template<typename T, StrictWeakOrdering Cmp>
-const T& stable_max(const T& a, const T& b, Cmp cmp) {
+template<typename T, StrictWeakOrdering Compare>
+const T& stable_max(const T& a, const T& b, Compare cmp) {
 	// Returns the second argument when the arguments are equivalent.
 	if (cmp(b, a))
 		return a;
@@ -177,8 +197,8 @@ const T& stable_max(const T& a, const T& b) {
 	return stable_max(a, b, std::less<T>());
 }
 
-template <ForwardIterator I, StrictWeakOrdering Cmp>
-I stable_max_element(I first, I last, Cmp cmp) {
+template <ForwardIterator I, StrictWeakOrdering Compare>
+I stable_max_element(I first, I last, Compare cmp) {
 	if (first == last) return last;
 	I largest = first;
 	while (++first != last) {
