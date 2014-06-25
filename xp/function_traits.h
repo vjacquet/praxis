@@ -48,17 +48,15 @@ namespace xp {
 	{};
 
 	// functor
-/*	removed functor as it still requires the signature of the function.
-
 	template<class F>
 	struct function_traits
 	{
 	private:
-		using call_type = function_traits<decltype(&F::type::operator())>;
+		using call_type = function_traits<decltype(&F::operator())>;
 	public:
 		using return_type = typename call_type::return_type;
 
-		static constexpr std::size_t arity = call_type::arity - 1;
+		static const std::size_t arity = call_type::arity - 1;
 
 		template <std::size_t N>
 		struct argument
@@ -74,7 +72,7 @@ namespace xp {
 
 	template<class F>
 	struct function_traits<F&&> : public function_traits<F>
-	{};*/
+	{};
 
 } // namespace xp
 
