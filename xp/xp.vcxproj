@@ -73,6 +73,7 @@
     <ClCompile Include="tests\functional.cpp" />
     <ClCompile Include="tests\function_traits.cpp" />
     <ClCompile Include="tests\get_lowest.cpp" />
+    <ClCompile Include="tests\iterator.cpp" />
     <ClCompile Include="tests\min.cpp" />
     <ClCompile Include="tests\ranges.cpp" />
     <ClCompile Include="tests\while_each.cpp" />
@@ -85,6 +86,7 @@
     <ClInclude Include="functional.h" />
     <ClInclude Include="function_traits.h" />
     <ClInclude Include="instrumented.h" />
+    <ClInclude Include="iterator.h" />
     <ClInclude Include="memory.h" />
     <ClInclude Include="numeric.h" />
     <ClInclude Include="benchmark.h" />

@@ -32,6 +32,7 @@
 #define Sequence typename
 #define UnsignedIntegral typename
 
+#define Container typename
 #define Range typename
 #define Function typename
 #define Predicate typename

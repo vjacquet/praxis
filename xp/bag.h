@@ -248,14 +248,14 @@ namespace xp {
 
 		// iterators bunch
 		iterator begin() noexcept {return start;}
-		iterator end() noexcept {return finish;}
 		const_iterator begin() const noexcept {return start;}
+		iterator end() noexcept {return finish;}
 		const_iterator end() const noexcept {return finish;}
 		const_iterator cbegin() const noexcept {return start;}
 		const_iterator cend() const noexcept {return finish;}
 		reverse_iterator rbegin() noexcept {return reverse_iterator(end());}
-		reverse_iterator rend() noexcept {return reverse_iterator(begin());}
 		const_reverse_iterator rbegin() const noexcept {return const_reverse_iterator(end()); }
+		reverse_iterator rend() noexcept {return reverse_iterator(begin());}
 		const_reverse_iterator rend() const noexcept {return const_reverse_iterator(begin()); }
 		const_reverse_iterator crbegin() const noexcept {return const_reverse_iterator(end());}
 		const_reverse_iterator crend() const noexcept {return const_reverse_iterator(begin());}
