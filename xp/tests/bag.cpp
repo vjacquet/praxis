@@ -58,11 +58,10 @@ TEST(can_insert_with_copy) {
 }
 
 TEST(can_insert_with_move) {
-	static_assert(std::is_nothrow_move_constructible< instrumented<int> >::value, "Instrumented should be nothrow move constructible.");
-	
 	instrumented_base::reset();
 
 	typedef instrumented<int> value_type;
+	static_assert(std::is_nothrow_move_constructible<value_type>::value, "Instrumented should be nothrow move constructible.");
 
 	bag<value_type> b;
 	b.reserve(4);

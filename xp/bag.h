@@ -10,8 +10,6 @@
 #include <type_traits>
 #include <vector>
 
-#pragma warning(pop)
-
 #include "memory.h"
 
 #include "fakeconcepts.h"
@@ -355,5 +353,7 @@ namespace xp {
 	};
 
 } // namespace xp
+
+#pragma warning(pop)
 
 #endif __BAG_H__
