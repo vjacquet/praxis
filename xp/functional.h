@@ -4,6 +4,7 @@
 #include <functional>
 #include <map>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 
 #include "fakeconcepts.h"
@@ -29,24 +30,46 @@ namespace xp {
 			typedef typename function_traits<F>::argument<1>::type second_argument_type;
 		};
 
+		template <typename R, typename... Args>
+		std::function<R(Args...)> memoize(std::function<R(Args...)>&& func, std::true_type) {
+			// when R is default constructible
+			using namespace std;
+
+			map<tuple<Args...>, R> cache;
+			return ([=](Args... args) mutable {
+				tuple<Args...> t(args...);
+				bool inserted;
+				map<tuple<Args...>, R>::iterator pos;
+				tie(pos, inserted) = cache.insert(make_pair(t, R {}));
+				if (inserted) {
+					pos->second = func(args...);
+				}
+				return pos->second;
+			});
+		}
+
+		template <typename R, typename... Args>
+		std::function<R(Args...)> memoize(std::function<R(Args...)>&& func, std::false_type) {
+			// when R is not default constructible
+			using namespace std;
+
+			map<tuple<Args...>, R> cache;
+			return ([=](Args... args) mutable {
+				tuple<Args...> t(args...);
+				auto found = cache.find(t);
+				if (found == cache.end()) {
+					tie(found, std::ignore) = cache.emplace(t, func(args...));
+				}
+				return found->second;
+			});
+		}
 	}
 
 	//memoize
 	template <typename R, typename... Args>
 	std::function<R(Args...)> memoize(std::function<R(Args...)> func) {
 		using namespace std;
-		
-		map<tuple<Args...>, R> cache;
-		return ([=](Args... args) mutable {
-			tuple<Args...> t(args...);
-			bool inserted;
-			map<tuple<Args...>, R>::iterator pos;
-			tie(pos, inserted) = cache.insert(make_pair(t, R {}));
-			if (inserted) {
-				pos->second = func(args...);
-			}
-			return pos->second;
-		});
+		return details::memoize(std::move(func), integral_constant<bool, is_default_constructible<R>::value || is_trivially_default_constructible<R>::value || is_nothrow_default_constructible<R>::value>::type());
 	}
 
 	template<Function Op>

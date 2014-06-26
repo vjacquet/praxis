@@ -33,7 +33,7 @@ namespace xp {
 		instrumented(const instrumented& x) : value(x.value) {
 			++counts[copy_construct];
 		}
-		instrumented(instrumented&& x) : value(std::move(x.value)) {
+		instrumented(instrumented&& x) noexcept : value(std::move(x.value)) {
 			++counts[move_construct];
 		}
 
