@@ -1,6 +1,5 @@
-#include <vector>
+#include <set>
 
-#include "../bag.h"
 #include "../iterator.h"
 
 #include "testbench.h"
@@ -11,14 +10,14 @@ using namespace xp;
 TESTBENCH()
 
 TEST(check_inserter) {
-	bag<int> b {1, 2, 3};
+	set<int> s {1, 2, 3};
 
-	auto ins = inserter(b);
+	auto ins = inserter(s);
 	*ins++ = 4;
 	*ins++ = 5;
 
-	VERIFY(b.size() == 5);
-	VERIFY(b[4] == 5);
+	VERIFY(s.size() == 5);
+	VERIFY(s.find(4) != s.end());
 }
 
 TESTFIXTURE(iterator)
