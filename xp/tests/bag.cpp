@@ -7,14 +7,6 @@
 using namespace std;
 using namespace xp;
 
-namespace std {
-
-	// forces the definition as MSVC does not.
-	template<>
-	struct is_nothrow_move_constructible<instrumented<int>> : true_type {};
-
-}
-
 TESTBENCH()
 
 TEST(can_construct) {
@@ -66,6 +58,8 @@ TEST(can_insert_with_copy) {
 }
 
 TEST(can_insert_with_move) {
+	static_assert(std::is_nothrow_move_constructible< instrumented<int> >::value, "Instrumented should be nothrow move constructible.");
+	
 	instrumented_base::reset();
 
 	typedef instrumented<int> value_type;
