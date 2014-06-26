@@ -83,12 +83,13 @@ namespace xp {
 	template<StrictWeakOrdering Compare>
 	class between_t {
 		typedef typename Compare::first_argument_type argument_type;
-		Compare cmp;
 		argument_type lo;
 		argument_type up;
+		Compare cmp;
 
 	public:
-		between_t(argument_type&& lower, argument_type&& upper, Compare&& cmp) : lo(std::forward<argument_type>(lower))
+		between_t(argument_type&& lower, argument_type&& upper, Compare&& cmp) 
+			: lo(std::forward<argument_type>(lower))
 			, up(std::forward<argument_type>(upper))
 			, cmp(cmp) {}
 
@@ -98,15 +99,13 @@ namespace xp {
 	};
 
 	template <typename T>
-	between_t<std::less<T>> between(T&& lower, T&& upper)
-	{
+	between_t<std::less<T>> between(T&& lower, T&& upper) {
 		// precondition: lower <= upper
 		return between_t<std::less<T>>(std::forward<T>(lower), std::forward<T>(upper), std::less<T> {});
 	}
 
 	template <typename T, StrictWeakOrdering Compare>
-	between_t<Compare> between(const Compare& cmp, T&& lower, T&& upper)
-	{
+	between_t<Compare> between(const Compare& cmp, T&& lower, T&& upper) {
 		// precondition: !cmp(upper, lower)
 		return between_t<Compare>(std::forward(lower), std::forward(upper), cmp);
 	}

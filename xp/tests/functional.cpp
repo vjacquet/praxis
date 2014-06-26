@@ -21,7 +21,7 @@ TEST(check_dereference_unary_function) {
 	int x = 5;
 	auto op = dereference(square {});
 
-	static_assert(is_same<int, decltype(op)::argument_type>::value, "Argument type should be int");
+	static_assert(is_same<int, dereference_function_t<square>::argument_type>::value, "Argument type should be int");
 
 	VERIFY(op(&x) == 25);
 }
