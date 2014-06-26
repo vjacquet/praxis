@@ -83,10 +83,11 @@ namespace xp {
 		int n;
 
 	public:
-		mesures() : mini(D::min()), maxi(D::max()), sum(D::zero()), n(0) {}
+		mesures() : mini(D::max()), maxi(D::min()), sum(D::zero()), n(0) {}
 
 		mesures& operator += (D d) {
-			std::tie(mini, maxi) = std::minmax({mini, d, maxi});
+			if (d < mini) mini = d;
+			if (maxi < d) maxi = d;
 			sum += d;
 			n++;
 			return *this;
