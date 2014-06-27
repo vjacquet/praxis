@@ -46,4 +46,15 @@ TEST(prove_range_after_with_c_string_fails) {
 	VERIFY(range_after(haystack, "-") == "");
 }
 
+TEST(check_bounded_range) {
+	string s {"hello word"};
+	auto r = make_bounded_range(s.begin(), s.end());
+}
+
+TEST(check_counted_range) {
+	string s {"hello word"};
+	auto r = make_counted_range(s.begin(), s.find(' '));
+	VERIFY(r.n == 5);
+}
+
 TESTFIXTURE(ranges)

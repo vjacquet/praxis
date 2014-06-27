@@ -292,6 +292,42 @@ R1 range_after(R1 const& range1, R2 const& range2) {
 	return {found, last1};
 }
 
+template<ForwardIterator I>
+struct bounded_range {
+	I first;
+	I last;
+
+	inline friend bool operator == (const bounded_range& x, const bounded_range& y) {
+		return x.first == y.first && x.last == y.last;
+	}
+	inline friend bool operator != (const bounded_range& x, const bounded_range& y) {
+		return !(x == y);
+	}
+};
+
+template<ForwardIterator I>
+bounded_range<I> make_bounded_range(I first, I last) {
+	return bounded_range<I> {first, last};
+}
+
+template<ForwardIterator I>
+struct counted_range {
+	I first;
+	typename std::iterator_traits<I>::difference_type n;
+
+	inline friend bool operator == (const counted_range& x, const counted_range& y) {
+		return x.first == y.first && x.n == y.n;
+	}
+	inline friend bool operator != (const counted_range& x, const counted_range& y) {
+		return !(x == y);
+	}
+};
+
+template<ForwardIterator I, Number N>
+counted_range<I> make_counted_range(I first, N n) {
+	return counted_range<I> {first, std::iterator_traits<I>::difference_type(n)};
+}
+
 } // namespace xp
 
 #endif __ALGORITHM_H__
