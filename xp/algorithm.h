@@ -297,12 +297,18 @@ struct bounded_range {
 	I first;
 	I last;
 
+	bounded_range() : first(), last(first) {}
+	bounded_range(I first, I last) : first(first), last(last) {}
+
 	inline friend bool operator == (const bounded_range& x, const bounded_range& y) {
 		return x.first == y.first && x.last == y.last;
 	}
 	inline friend bool operator != (const bounded_range& x, const bounded_range& y) {
 		return !(x == y);
 	}
+
+	I begin() const { return first; }
+	I end() const { return last; }
 };
 
 template<ForwardIterator I>
@@ -312,8 +318,13 @@ bounded_range<I> make_bounded_range(I first, I last) {
 
 template<ForwardIterator I>
 struct counted_range {
+	typedef typename std::iterator_traits<I>::difference_type size_type;
+
 	I first;
-	typename std::iterator_traits<I>::difference_type n;
+	size_type n;
+
+	counted_range() : first(), n(size_type(0)) {}
+	counted_range(I first, size_type n) : first(first), n(n) {}
 
 	inline friend bool operator == (const counted_range& x, const counted_range& y) {
 		return x.first == y.first && x.n == y.n;
@@ -321,11 +332,29 @@ struct counted_range {
 	inline friend bool operator != (const counted_range& x, const counted_range& y) {
 		return !(x == y);
 	}
+
+	I begin() const { return first; }
+	size_type size() const { return n; }
 };
 
 template<ForwardIterator I, Number N>
 counted_range<I> make_counted_range(I first, N n) {
 	return counted_range<I> {first, std::iterator_traits<I>::difference_type(n)};
+}
+
+template<typename T>
+inline auto size(const T& x) -> decltype(x.size()) {
+	return x.size();
+}
+
+template<typename T, std::size_t N>
+inline std::size_t size(T(&)[N]) {
+	return N;
+}
+
+template<Range R>
+inline auto size(const R& range) -> typename std::iterator_traits<decltype(std::cend(range))>::difference_type {
+	return std::distance(std::cbegin(range), std::cend(range));
 }
 
 } // namespace xp

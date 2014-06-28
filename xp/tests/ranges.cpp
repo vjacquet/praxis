@@ -49,12 +49,41 @@ TEST(prove_range_after_with_c_string_fails) {
 TEST(check_bounded_range) {
 	string s {"hello word"};
 	auto r = make_bounded_range(s.begin(), s.end());
+	auto n = size(r);
+	VERIFY(n == 10)
+}
+
+TEST(check_bounded_range_is_semiregular) {
+	string s {"hello word"};
+
+	bounded_range<string::iterator> dft;
+	bounded_range<string::iterator> src(s.begin(), s.begin()+5);
+	bounded_range<string::iterator> cpy = src;
+
+	dft = src;
+
+	VERIFY(src == cpy);
+	VERIFY(src == dft);
 }
 
 TEST(check_counted_range) {
 	string s {"hello word"};
 	auto r = make_counted_range(s.begin(), s.find(' '));
-	VERIFY(r.n == 5);
+	auto n = size(r);
+	VERIFY(n == 5);
+}
+
+TEST(check_counted_range_is_semiregular) {
+	string s {"hello word"};
+
+	counted_range<string::iterator> dft;
+	counted_range<string::iterator> src(s.begin(), 5);
+	counted_range<string::iterator> cpy = src;
+
+	dft = src;
+
+	VERIFY(src == cpy);
+	VERIFY(src == dft);
 }
 
 TESTFIXTURE(ranges)
