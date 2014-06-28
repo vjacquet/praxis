@@ -69,7 +69,10 @@ namespace xp {
 	template <typename R, typename... Args>
 	std::function<R(Args...)> memoize(std::function<R(Args...)> func) {
 		using namespace std;
-		return details::memoize(std::move(func), integral_constant<bool, is_default_constructible<R>::value || is_trivially_default_constructible<R>::value || is_nothrow_default_constructible<R>::value>::type());
+		typedef typename integral_constant<bool, is_default_constructible<R>::value
+			|| is_trivially_default_constructible<R>::value
+			|| is_nothrow_default_constructible<R>::value>::type is_result_default_constructible_type;
+		return details::memoize(std::move(func), is_result_default_constructible_type());
 	}
 
 	template<Function Op>
