@@ -50,6 +50,7 @@ TEST(check_bounded_range) {
 	string s {"hello word"};
 	auto r = make_bounded_range(s.begin(), s.end());
 	auto n = size(r);
+	VERIFY(!empty(r));
 	VERIFY(n == 10)
 }
 
@@ -70,6 +71,7 @@ TEST(check_counted_range) {
 	string s {"hello word"};
 	auto r = make_counted_range(s.begin(), s.find(' '));
 	auto n = size(r);
+	VERIFY(!empty(r));
 	VERIFY(n == 5);
 }
 

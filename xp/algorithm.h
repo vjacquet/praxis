@@ -357,6 +357,21 @@ inline auto size(const R& range) -> typename std::iterator_traits<decltype(std::
 	return std::distance(std::cbegin(range), std::cend(range));
 }
 
+template<typename T>
+inline bool empty(const T& x) {
+	return x.empty();
+}
+
+template<ForwardIterator I>
+inline bool empty(const bounded_range<I>& x) {
+	return std::cbegin(x) == std::cend(x);
+}
+
+template<ForwardIterator I>
+inline bool empty(const counted_range<I>& x) {
+	return x.size() == 0;
+}
+
 } // namespace xp
 
 #endif __ALGORITHM_H__
