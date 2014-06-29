@@ -54,6 +54,9 @@
     <ClCompile Include="tests\iterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tests\utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="numeric.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="iterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -76,6 +76,7 @@
     <ClCompile Include="tests\iterator.cpp" />
     <ClCompile Include="tests\min.cpp" />
     <ClCompile Include="tests\ranges.cpp" />
+    <ClCompile Include="tests\utility.cpp" />
     <ClCompile Include="tests\while_each.cpp" />
     <ClCompile Include="tests\numeric.cpp" />
   </ItemGroup>
@@ -91,6 +92,7 @@
     <ClInclude Include="numeric.h" />
     <ClInclude Include="benchmark.h" />
     <ClInclude Include="tests\testbench.h" />
+    <ClInclude Include="utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
