@@ -14,6 +14,7 @@
 #define TotallyOrdered typename
 #define Pointer typename
 #define Number typename
+#define Integer typename
 #define Unsigned typename
 #define Integral typename
 #define InputIterator typename
@@ -25,6 +26,7 @@
 #define Incrementable typename
 #define StrictWeakOrdering typename
 #define Generator typename
+#define UnaryOperation typename
 #define BinaryOperation typename
 #define EquivalenceRelation typename
 #define UnaryPredicate typename
@@ -45,6 +47,8 @@
 #define ValueType(I) typename std::iterator_traits<I>::value_type
 
 // use function traits to define Domain, Codomain, etc. as in EoP
+//template<Function F> using Domain = typename std::decay<typename xp::function_traits<F>::argument<0>::type>::type;
+
 #define Codomain(fn) typename xp::function_traits<decltype(fn)>::return_type
 #define Domain(fn) typename xp::function_traits<decltype(fn)>::argument<0>::type
 #define Arity(fn) xp::function_traits<decltype(fn)>::arity

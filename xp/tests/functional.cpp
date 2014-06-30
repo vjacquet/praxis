@@ -6,7 +6,7 @@
 
 #include "testbench.h"
 
-using namespace std;
+//using namespace std;
 using namespace xp;
 
 struct square {
@@ -30,7 +30,26 @@ struct barrier {
 
 TESTBENCH()
 
+TEST(check_operators) {
+	std::plus<int> op;
+	int a = 1;
+	int b = 1;
+	int c = op(a, b);
+	VERIFY(c == 2);
+}
+
+TEST(check_power) {
+	VERIFY(power(2, 4) == 16);
+}
+
+TEST(check_negative_power) {
+	double r = power(2.0, -2);
+	VERIFY(r == 0.25); 
+}
+
 TEST(check_dereference_unary_function) {
+	using namespace std;
+
 	int x = 5;
 	auto op = dereference(square {});
 
@@ -48,6 +67,8 @@ TEST(check_dereference_binary_function) {
 }
 
 TEST(check_between) {
+	using namespace std;
+
 	vector<int> v {11, 22, 33, 44, 55};
 
 	auto found = find_if(begin(v), end(v), between(30, 40));
@@ -55,6 +76,8 @@ TEST(check_between) {
 }
 
 TEST(can_memoize_with_default_constructible_result) {
+	using namespace std;
+
 	int count = 0;
 	function<int(int)> fn = [&count](int val) {++count; return val; };
 	auto m = memoize(fn);
@@ -65,9 +88,11 @@ TEST(can_memoize_with_default_constructible_result) {
 }
 
 TEST(can_memoize_with_non_default_constructible_result) {
-	static_assert(!std::is_default_constructible<barrier>::value, "Barrier cannot be default constructible.");
-	static_assert(!std::is_trivially_default_constructible<barrier>::value, "Barrier cannot be trivially default constructible.");
-	static_assert(!std::is_nothrow_default_constructible<barrier>::value, "Barrier cannot be nothrow default constructible.");
+	using namespace std;
+
+	static_assert(!is_default_constructible<barrier>::value, "Barrier cannot be default constructible.");
+	static_assert(!is_trivially_default_constructible<barrier>::value, "Barrier cannot be trivially default constructible.");
+	static_assert(!is_nothrow_default_constructible<barrier>::value, "Barrier cannot be nothrow default constructible.");
 
 	int count = 0;
 	function<barrier(int)> fn = [&count](int val) {++count; return val; };

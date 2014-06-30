@@ -136,6 +136,103 @@ namespace xp {
 		return between_t<Compare>(std::forward(lower), std::forward(upper), cmp);
 	}
 
+	// synonyms
+	using std::plus;
+	using std::negate;
+	using std::multiplies;
+
+	template<typename T>
+	struct reciprocal {
+		// do not inherit from public std::unary_function<T, T> as it is deprecated (but why?)
+		typedef T argument_type;
+		typedef T result_type;
+
+		T operator()(const T& x) {
+			return T(1) / x;
+		}
+	};
+
+	template<typename T>
+	T identity_element(plus<T>) {
+		return T(0);
+	}
+
+	template<typename T>
+	T identity_element(multiplies<T>) {
+		return T(1);
+	}
+
+	template<typename T>
+	negate<T> inverse_operation(plus<T>) {
+		return negate<T>();
+	}
+
+	template<typename T>
+	reciprocal<T> inverse_operation(multiplies<T>) {
+		return reciprocal<T>();
+	}
+
+	template<Integer N>
+	bool odd(N n) {
+		return (n & 1) == 1;
+	}
+
+	template<Integer N>
+	N half_non_negative(N n) {
+		return n >> 1;
+	}
+
+	namespace details {
+
+		template<Regular T, Integer N, BinaryOperation Op>
+		T power_accumulate_semigroup(T r, T a, N n, Op op) {
+			// precondition: n >= 0
+			if (n == 0) return r;
+			while (true) {
+				if (odd(n)) {
+					r = op(r, a);
+					if (n == 1) return r;
+				}
+				a = op(a, a);
+				n = half_non_negative(n);
+			}
+		}
+
+		template<Regular T, Integer N, BinaryOperation Op>
+		T power_semigroup(T a, N n, Op op) {
+			// precondition: n > 0
+			while (!odd(n)) {
+				a = op(a, a);
+				n = half_non_negative(n);
+			}
+			if (n == 1) return a;
+			return power_accumulate_semigroup(a, op(a, a), half_non_negative(n - 1), op);
+		}
+
+		template<Regular T, Integer N, BinaryOperation Op>
+		T power_monoid(T a, N n, Op op) {
+			// precondition: n >= 0
+			if (n == 0) return identity_element(op);
+			return power_semigroup(a, n, op);
+		}
+
+	}
+
+	template<Regular T, Integer N, BinaryOperation Op>
+	T power(T a, N n, Op op) {
+		//static_assert(std::is_same<T, Domain<Op>>::value, "The domain of Op must be T.");
+		if (n < 0) {
+			n = -n;
+			a = inverse_operation(op)(a);
+		}
+		return details::power_monoid(a, n, op);
+	}
+
+	template<Regular T, Integer N>
+	T power(T a, N n) {
+		return power(a, n, multiplies<T>());
+	}
+
 } // namespace xp
 
 #endif __FUNCTIONAL_H__
