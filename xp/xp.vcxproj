@@ -67,6 +67,7 @@
   <ItemGroup>
     <ClCompile Include="instrumented.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="tests\algebra.cpp" />
     <ClCompile Include="tests\algorithm.cpp" />
     <ClCompile Include="tests\bag.cpp" />
     <ClCompile Include="tests\benchmark.cpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="memory.h" />
     <ClInclude Include="numeric.h" />
     <ClInclude Include="benchmark.h" />
+    <ClInclude Include="algebra.h" />
     <ClInclude Include="tests\testbench.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>

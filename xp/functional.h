@@ -142,17 +142,6 @@ namespace xp {
 	using std::multiplies;
 
 	template<typename T>
-	struct reciprocal {
-		// do not inherit from public std::unary_function<T, T> as it is deprecated (but why?)
-		typedef T argument_type;
-		typedef T result_type;
-
-		T operator()(const T& x) {
-			return T(1) / x;
-		}
-	};
-
-	template<typename T>
 	T identity_element(plus<T>) {
 		return T(0);
 	}
@@ -161,6 +150,17 @@ namespace xp {
 	T identity_element(multiplies<T>) {
 		return T(1);
 	}
+
+	template<typename T>
+	struct reciprocal {
+		// do not inherit from public std::unary_function<T, T> as it is deprecated (but why?)
+		typedef T argument_type;
+		typedef T result_type;
+
+		T operator()(const T& x) {
+			return identity_element(multiplies<T>()) / x;
+		}
+	};
 
 	template<typename T>
 	negate<T> inverse_operation(plus<T>) {
