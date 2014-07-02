@@ -176,6 +176,10 @@ namespace xp {
 	bool odd(N n) {
 		return (n & 1) == 1;
 	}
+	template<Integer N>
+	bool even(N n) {
+		return !odd(n);
+	}
 
 	template<Integer N>
 	N half_non_negative(N n) {
