@@ -106,6 +106,37 @@ namespace xp {
 		return dereference_function_t<Op> {op};
 	}
 
+	template<Function Op>
+	class negation_function_t : public details::functor_base<Op, function_traits<Op>::arity> {
+		Op op;
+
+	public:
+		negation_function_t(Op op) : op(op) {}
+
+		template<typename T, class = std::enable_if<function_traits<Op>::arity == 2>::type>
+		auto operator()(const T& x, const T& y) -> decltype(op(x, y)) {
+			return !op(x, y);
+		}
+		template<typename T, class = std::enable_if<function_traits<Op>::arity == 2>::type>
+		auto operator()(typename const T& x, const T& y) const -> decltype(op(x, y)) {
+			return !op(x, y);
+		}
+
+		template<typename T, class = std::enable_if<function_traits<Op>::arity == 1>::type>
+		auto operator()(const T& x) -> decltype(op(x)) {
+			return !op(x);
+		}
+		template<typename T, class = std::enable_if<function_traits<Op>::arity == 1>::type>
+		auto operator()(const T& x) const -> decltype(op(x)) {
+			return !op(x);
+		}
+	};
+
+	template<Function Op>
+	negation_function_t<Op> negation(Op op) {
+		return negation_function_t<Op> {op};
+	}
+
 	template<StrictWeakOrdering Compare>
 	class between_t {
 		typedef typename Compare::first_argument_type argument_type;

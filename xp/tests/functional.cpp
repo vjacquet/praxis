@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <functional>
+#include <utility>
 #include <vector>
 
 #include "../functional.h"
@@ -101,6 +102,14 @@ TEST(can_memoize_with_non_default_constructible_result) {
 	VERIFY(m(1) == 1 && count == 1);
 	VERIFY(m(2) == 2 && count == 2);
 	VERIFY(m(1) == 1 && count == 2);
+}
+
+TEST(check_negation) {
+	using namespace std;
+
+	auto op = odd<int>;
+	vector<int> v {1, 2, 3, 4};
+	VERIFY(find_if(v.begin(), v.end(), negation(op)) == find_if_not(v.begin(), v.end(), op));
 }
 
 TESTFIXTURE(functional)
