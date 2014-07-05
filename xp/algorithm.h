@@ -183,6 +183,17 @@ O unique_copy_with_count(I first, I last, O output) {
 	return output;
 }
 
+template<ForwardIterator I, Integer N, OutputIterator O>
+std::pair<I, O> copy_atmost_n(I first, I last, N n, O output) {
+	while (first != last &&  n != 0) {
+		*output = *first;
+		++first;
+		--n;
+		++output;
+	}
+	return {first, output};
+}
+
 template<typename T, StrictWeakOrdering Compare>
 const T& stable_max(const T& a, const T& b, Compare cmp) {
 	// Returns the second argument when the arguments are equivalent.
