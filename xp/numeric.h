@@ -73,6 +73,131 @@ namespace xp {
 		return random_iota_n(first, n, val, std::default_random_engine {seed()});
 	}
 
+	template<InputIterator I, Integer N, typename T, BinaryOperation Op>
+	T accumulate_n(I first, N n, T init, Op op) {
+		while (n != 0) {
+			init = op(init, *first);
+			--n;
+			++first;
+		}
+		return init;
+	}
+	template<InputIterator I, Integer N, typename T>
+	T accumulate_n(I first, N n, T init) {
+		return accumulate_n(first, n, init, std::plus<T>());
+	}
+
+	template<InputIterator I, Integer N, BinaryOperation Op>
+	auto accumulate_n_nonempty(I first, N n, Op op)->typename std::decay<decltype(*first)>::type {
+		// precondition: n > 0
+		auto val = *first;
+		while (--n != 0) {
+			val = op(val, *++first);
+		}
+		return val;
+	}
+	template<InputIterator I, Integer N>
+	auto accumulate_n_nonempty(I first, N n) -> typename std::decay<decltype(*first)>::type {
+		// precondition: n > 0
+		typedef typename std::decay<decltype(*first)>::type T;
+		return accumulate_n_nonempty(first, n, std::plus<T>());
+	}
+
+	template<InputIterator I1, InputIterator I2, Integer N, typename T, BinaryOperation Op1, BinaryOperation Op2>
+	T inner_product_n(I1 first1, I2 first2, N n, T init, Op1 op1, Op2 op2) {
+		while (n != 0) {
+			init = op1(init, op2(*first1, *first2));
+			--n;
+			++first1;
+			++first2;
+		}
+		return init;
+	}
+	template<InputIterator I1, InputIterator I2, Integer N, typename T>
+	T inner_product_n(I1 first1, I2 first2, N n, T init) {
+		return inner_product_n(first1, first2, n, init, std::plus<T>(), std::multiplies<T>());
+	}
+
+	template<InputIterator I1, InputIterator I2, Integer N, BinaryOperation Op1, BinaryOperation Op2>
+	auto inner_product_n_nonempty(I1 first1, I2 first2, N n, Op1 op1, Op2 op2)->decltype(op2(*first1, *first2)){
+		// precondition: n > 0
+		auto val = op2(*first1, *first2);
+		while (--n != 0) {
+			val = op1(val, op2(*++first1, *++first2));
+		}
+		return val;
+	}
+	template<InputIterator I1, InputIterator I2, Integer N>
+	auto inner_product_n_nonempty(I1 first1, I2 first2, N n)->decltype(std::multiplies<>()(*first1, *first2)){
+		// precondition: n > 0
+		typedef std::decay<decltype(*first1)>::type T;
+		return inner_product_n_nonempty(first1, first2, n, std::plus<T>(), std::multiplies<T>());
+	}
+
+	template<InputIterator I, Integer N, OutputIterator O, BinaryOperation Op>
+	O adjacent_difference_n_nonempty(I first, N n, O result, Op op) {
+		// precondition: n > 0
+		auto prev = *first;
+		*result = prev;
+		decltype(prev) val;
+		while (--n != 0) {
+			val = *++first;
+			*++result = op(val, prev);
+			prev = val;
+		}
+		++result;
+		return result;
+	}
+	template<InputIterator I, Integer N, OutputIterator O>
+	O adjacent_difference_n_nonempty(I first, N n, O result) {
+		// precondition: n > 0
+		typedef std::decay<decltype(*first)>::type T;
+		return adjacent_difference_n_nonempty(first, n, std::minus<T>());
+	}
+
+	template<InputIterator I, Integer N, OutputIterator O, BinaryOperation Op>
+	O adjacent_difference_n(I first, N n, O result, Op op) {
+		if (n == 0)
+			return result;
+		return adjacent_difference_n_nonempty(first, n, result, op);
+	}
+	template<InputIterator I, Integer N, OutputIterator O>
+	O adjacent_difference_n(I first, N n, O result) {
+		typedef std::decay<decltype(*first)>::type T;
+		return adjacent_difference_n(first, n, result, std::minus<T>());
+	}
+
+	template<InputIterator I, Integer N, OutputIterator O, BinaryOperation Op>
+	O partial_sum_n_nonempty(I first, N n, O result, Op op) {
+		// precondition: n > 0
+		auto val = *first;
+		*result = val;
+		while (--n != 0) {
+			val += *++first;
+			*++result = val;
+		}
+		++result;
+		return result;
+	}
+	template<InputIterator I, Integer N, OutputIterator O>
+	O partial_sum_n_nonempty(I first, N n, O result) {
+		// precondition: n > 0
+		typedef std::decay<decltype(*first)>::type T;
+		return partial_sum_n_nonempty(first, n, result, std::plus<T>());
+	}
+
+	template<InputIterator I, Integer N, OutputIterator O, BinaryOperation Op>
+	O partial_sum_n(I first, N n, O result, Op op) {
+		if (n == 0) 
+			return result;
+		return partial_sum_n(first, n, result, op);
+	}
+	template<InputIterator I, Integer N, OutputIterator O>
+	O partial_sum_n(I first, N n, O result) {
+		typedef std::decay<decltype(*first)>::type T;
+		return partial_sum_n(first, n, result, std:plus<T>());
+	}
+
 } // namespace xp
 
 #endif __NUMERIC_H__

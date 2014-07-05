@@ -16,6 +16,41 @@ using namespace xp;
 
 TESTBENCH()
 
+TEST(check_inner_product_n_nonempty) {
+	vector<int> v {1, 2, 3};
+	int r1 = inner_product_n(v.begin(), v.begin(), v.size(), 0);
+	int r2 = inner_product_n_nonempty(v.begin(), v.begin(), v.size());
+	VERIFY(r1 == 14);
+	VERIFY(r2 == 14);
+}
+
+TEST(accumulate_n_nonempty) {
+	vector<int> v {1, 2, 3};
+	int r1 = accumulate_n(v.begin(), v.size(), 0);
+	int r2 = accumulate_n_nonempty(v.begin(), v.size());
+	VERIFY(r1 == 6);
+	VERIFY(r2 == 6);
+}
+
+TEST(adjacent_difference_n) {
+	vector<int> v {1, 2, 3};
+	vector<int> actual(3);
+	adjacent_difference_n(v.begin(), v.size(), actual.begin());
+
+	vector<int> expected(3);
+	adjacent_difference(v.begin(), v.end(), expected.begin());
+	VERIFY(actual == expected);
+}
+
+TEST(partial_sum_n_nonempty) {
+	vector<int> v {1, 2, 3};
+	vector<int> o {0, 0, 0};
+	partial_sum_n_nonempty(v.begin(), v.size(), o.begin());
+	VERIFY(o[0] == 1);
+	VERIFY(o[1] == 3);
+	VERIFY(o[2] == 6);
+}
+
 template<typename T>
 struct my_iota_generator {
 	T v;
@@ -84,7 +119,6 @@ TEST(bench_generic_iota_generator) {
 }
 
 TEST(check_random_iota) {
-	using namespace std;
 	using xp::random_iota;
 
 	const int N = 100;
