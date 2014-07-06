@@ -1,4 +1,5 @@
 #include <set>
+#include <vector>
 
 #include "../iterator.h"
 
@@ -18,6 +19,13 @@ TEST(check_inserter) {
 
 	VERIFY(s.size() == 5);
 	VERIFY(s.find(4) != s.end());
+}
+
+TEST(check_stride_iterator) {
+	vector<int> v = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	stride_iterator<vector<int>::iterator, 2> i = v.begin();
+	++i;
+	VERIFY(*i == 3);
 }
 
 TESTFIXTURE(iterator)

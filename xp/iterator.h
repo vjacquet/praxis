@@ -5,6 +5,137 @@
 #include "fakeconcepts.h"
 
 namespace xp {
+
+	namespace details {
+
+		// TODO: The use of the curiously recurring template pattern makes things a little bit too complicated to my taste.
+		//       Stepanov uses a template and a typedef
+		template<typename I, typename Traits>
+		struct iterator_scaffolding {
+			typedef typename std::iterator_traits<Traits>::iterator_category iterator_category;
+			typedef typename std::iterator_traits<Traits>::difference_type difference_type;
+			typedef typename std::iterator_traits<Traits>::value_type value_type;
+			typedef typename std::iterator_traits<Traits>::reference reference;
+			typedef typename std::iterator_traits<Traits>::pointer pointer;
+
+			// Regular
+			friend bool operator==(const I& x, const I& y) {
+				return x.state() == y.state();
+			}
+			friend bool operator!=(const I& x, const I& y) {
+				return !(x == y);
+			}
+
+			// dereference
+			reference operator*() const {
+				return static_cast<const I*>(this)->source();
+			}
+			pointer operator->() const {
+				return &(**this); 
+			}
+
+			// forward
+			I& operator++() {
+				auto self = static_cast<I*>(this);
+				self->successor();
+				return *self;
+			}
+			I& operator++(int) {
+				I i = *this;
+				++*this;
+				return i;
+			}
+
+			// bidirectional
+			I& operator--() {
+				auto self = static_cast<I*>(this);
+				self->predecessor();
+				return *self;
+			}
+			I& operator--(int) {
+				I i = *this;
+				--*this;
+				return i;
+			}
+
+			// random access
+			I& operator+=(typename difference_type n) {
+				auto self = static_cast<I*>(this);
+				self->advance(n);
+				return *self;
+			}
+
+			I& operator-=(typename difference_type n) {
+				*this += -n;
+				return *this;
+			}
+
+			reference operator[](typename difference_type n) const {
+				return *(*this + n);
+			}
+
+			friend difference_type operator-(const I& x, const I& y) {
+				return static_cast<const I*>(x)->distance(y);
+			}
+
+			I operator-(difference_type n) {
+				return *this + (-n);
+			}
+
+			friend I operator+(I x, difference_type n) {
+				return x += n;
+			}
+
+			friend I operator+(difference_type n, I x) {
+				return x += n;
+			}
+
+			friend bool operator<(const I& x, const I& y) {
+				return (x - y) < 0;
+			}
+
+			friend bool operator>(const I& x, const I& y) {
+				return y < x;
+			}
+
+			friend bool operator<=(const I& x, const I& y) {
+				return !(y < x);
+			}
+
+			friend bool operator>=(const I& x, const I& y) {
+				return !(x < y);
+			}
+		};
+	}
+
+	// Caution: Prefer counted ranges. Do not use bounded range unless you known (last - first) % S == 0.
+	template<InputIterator I, size_t S>
+	struct stride_iterator : public details::iterator_scaffolding<stride_iterator<I, S>, I> {
+		I base;
+
+		stride_iterator() : base() {}
+		stride_iterator(I i) : base(i) {}
+
+		I& state() {
+			return base;
+		}
+
+		reference source() const {
+			return *base;
+		}
+		void successor() {
+			base += S;
+		}
+		void predecessor() {
+			base -= S;
+		}
+	};
+
+	template<size_t S, InputIterator I>
+	stride_iterator<I, S> make_stride_iterator(I i) {
+		return stride_iterator<I, S>(i);
+	}
+
 	using std::reverse_iterator;
 
 	template <Container C>
