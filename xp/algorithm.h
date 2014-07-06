@@ -183,15 +183,28 @@ O unique_copy_with_count(I first, I last, O output) {
 	return output;
 }
 
-template<ForwardIterator I, Integer N, OutputIterator O>
-std::pair<I, O> copy_atmost_n(I first, I last, N n, O output) {
-	while (first != last &&  n != 0) {
-		*output = *first;
-		++first;
-		--n;
-		++output;
+namespace details {
+	template<InputIterator I, Integer N, OutputIterator O>
+	std::pair<I, O> copy_atmost_n(I first, I last, N n, O output, std::input_iterator_tag) {
+		while (first != last && n != 0) {
+			*output = *first;
+			++first;
+			--n;
+			++output;
+		}
+		return {first, output};
 	}
-	return {first, output};
+
+	template<RandomAccessIterator I, Integer N, OutputIterator O>
+	std::pair<I, O> copy_atmost_n(I first, I last, N n, O output, std::random_access_iterator_tag) {
+		last = first + std::min(std::iterator_traits<I>::difference_type (n), std::distance(first, last));
+		return {last, std::copy(first, last, output)};
+	}
+}
+
+template<InputIterator I, Integer N, OutputIterator O>
+std::pair<I, O> copy_atmost_n(I first, I last, N n, O output) {
+	return details::copy_atmost_n(first, last, n, output, std::iterator_traits<I>::iterator_category());
 }
 
 template<typename T, StrictWeakOrdering Compare>
