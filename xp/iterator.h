@@ -12,11 +12,11 @@ namespace xp {
 		//       Stepanov uses a template and a typedef
 		template<typename I, typename Traits>
 		struct iterator_scaffolding {
-			typedef typename std::iterator_traits<Traits>::iterator_category iterator_category;
-			typedef typename std::iterator_traits<Traits>::difference_type difference_type;
-			typedef typename std::iterator_traits<Traits>::value_type value_type;
-			typedef typename std::iterator_traits<Traits>::reference reference;
-			typedef typename std::iterator_traits<Traits>::pointer pointer;
+			typedef typename Traits::iterator_category iterator_category;
+			typedef typename Traits::difference_type difference_type;
+			typedef typename Traits::value_type value_type;
+			typedef typename Traits::reference reference;
+			typedef typename Traits::pointer pointer;
 
 			// Regular
 			friend bool operator==(const I& x, const I& y) {
@@ -110,11 +110,11 @@ namespace xp {
 
 	// Caution: Prefer counted ranges. Do not use bounded range unless you known (last - first) % S == 0.
 	template<InputIterator I, size_t S>
-	struct stride_iterator : public details::iterator_scaffolding<stride_iterator<I, S>, I> {
+	struct stride_iterator_k : public details::iterator_scaffolding<stride_iterator_k<I, S>, std::iterator_traits<I>> {
 		I base;
 
-		stride_iterator() : base() {}
-		stride_iterator(I i) : base(i) {}
+		stride_iterator_k() : base() {}
+		stride_iterator_k(I i) : base(i) {}
 
 		I& state() {
 			return base;
@@ -132,8 +132,38 @@ namespace xp {
 	};
 
 	template<size_t S, InputIterator I>
-	stride_iterator<I, S> make_stride_iterator(I i) {
-		return stride_iterator<I, S>(i);
+	stride_iterator_k<I, S> make_stride_iterator_k(I i) {
+		return stride_iterator_k<I, S>(i);
+	}
+
+	template<InputIterator I>
+	struct stride_iterator : public details::iterator_scaffolding<stride_iterator<I>, std::iterator_traits<I>> {
+		typedef typename std::iterator_traits<I>::difference_type difference_type;
+
+		difference_type n;
+		I base;
+
+		stride_iterator() : n(0), base() {}
+		stride_iterator(I i, difference_type n) : n(n), base(i) {}
+
+		I& state() {
+			return base;
+		}
+
+		reference source() const {
+			return *base;
+		}
+		void successor() {
+			base += n;
+		}
+		void predecessor() {
+			base -= n;
+		}
+	};
+
+	template<InputIterator I>
+	stride_iterator<I> make_stride_iterator(I i, std::size_t n) {
+		return stride_iterator<I>(i, n);
 	}
 
 	using std::reverse_iterator;
