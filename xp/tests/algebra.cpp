@@ -85,6 +85,69 @@ namespace xp {
 
 	};
 
+	template<typename T>
+	struct valmatrix {
+		size_t n;
+		std::valarray<T> data;
+
+		valmatrix(size_t n) : n(n), data(n*n) {}
+		valmatrix(const valmatrix& x) : n(x.n), data(x.data) {}
+		valmatrix(valmatrix&& x) noexcept : n(x.n), data(std::move(x.data)) {}
+
+		valmatrix& operator=(const valmatrix& x) {
+			data = x.data;
+			n = x.n;
+			return *this;
+		}
+		valmatrix& operator=(valmatrix&& x) {
+			data = std::move(x.data);
+			n = x.n;
+			return *this;
+		}
+
+		T& operator[](std::pair<size_t, size_t> nm) {
+			return data[nm.first + n*nm.second];
+		}
+		const T& operator[](std::pair<size_t, size_t> nm) const{
+			return data[nm.first + n*nm.second];
+		}
+
+		// Regular
+		inline friend bool operator==(const valmatrix& x, const valmatrix& y) {
+			return x.data == y.data;
+		}
+		inline friend bool operator!=(const valmatrix& x, const valmatrix& y) {
+			return !(x == y);
+		}
+
+		// arithmetic
+		valmatrix& operator+=(const valmatrix& x) {
+			data += x.data;
+			return *this;
+		}
+		valmatrix& operator*=(const valmatrix& x) {
+			for (unsigned i = 0; i != n; ++i)
+				for (unsigned j = 0; j != N; ++j)
+					data[i + n * j] = inner_product_n_nonempty(begin(x.data) + (n * j), make_stride_iterator(begin(x.data) + i, n), n);
+			return *this;
+		}
+		valmatrix& operator-=(const valmatrix& x) {
+			data -= x.data;
+			return *this;
+		}
+
+		inline friend valmatrix operator+(valmatrix x, const valmatrix& y) {
+			return x += y;
+		}
+		inline friend valmatrix operator*(valmatrix x, const valmatrix& y) {
+			return x *= y;
+		}
+		inline friend valmatrix operator-(valmatrix x, const valmatrix& y) {
+			return x -= y;
+		}
+
+	};
+
 	vector<pair<string, string>> get_relations() {
 		vector<pair<string, string>> v = {
 			{"asterix", "obelix"},
@@ -159,7 +222,8 @@ TEST(check_boolean_semiring) {
 
 TEST(check_who_knows_who_power) {
 	auto relations = get_relations();
-
+	vector<string> persons;
+	persons.reserve(relations.size() * 2);
 }
 
 TESTFIXTURE(algebra)
