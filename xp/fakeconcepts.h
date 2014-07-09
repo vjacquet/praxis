@@ -12,7 +12,7 @@
 
 // list seen in Stepanov's programming conversations lecture 4
 #define TotallyOrdered typename
-#define Pointer typename
+//#define Pointer typename
 #define Number typename
 #define Integer typename
 #define Unsigned typename

@@ -19,7 +19,7 @@ namespace xp {
 	// The bag is similar to std::vector except for the erase function, which takes the last items to fill the gap.
 	template<Semiregular T, typename Alloc = std::allocator<T>>
 	class bag {
-		using AllocTraits = std::allocator_traits < Alloc > ;
+		using AllocTraits = std::allocator_traits<Alloc>;
 
 	public:
 		typedef T value_type;

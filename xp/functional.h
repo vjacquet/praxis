@@ -82,20 +82,20 @@ namespace xp {
 	public:
 		dereference_function_t(Op op) : op(op) {}
 
-		template<Pointer P, class = std::enable_if<function_traits<Op>::arity==2>::type>
+		template<typename P, class = std::enable_if<function_traits<Op>::arity==2>::type>
 		auto operator()(const P& x, const P& y) -> decltype(op(*x, *y)) {
 			return op(*x, *y);
 		}
-		template<Pointer P, class = std::enable_if<function_traits<Op>::arity == 2>::type>
+		template<typename P, class = std::enable_if<function_traits<Op>::arity == 2>::type>
 		auto operator()(const P& x, const P& y) const -> decltype(op(*x, *y)) {
 			return op(*x, *y);
 		}
 
-		template<Pointer P, class = std::enable_if<function_traits<Op>::arity == 1>::type>
+		template<typename P, class = std::enable_if<function_traits<Op>::arity == 1>::type>
 		auto operator()(const P& x) -> decltype(op(*x)) {
 			return op(*x);
 		}
-		template<Pointer P, class = std::enable_if<function_traits<Op>::arity == 1>::type>
+		template<typename P, class = std::enable_if<function_traits<Op>::arity == 1>::type>
 		auto operator()(const P& x) const -> decltype(op(*x)) {
 			return op(*x);
 		}
