@@ -10,17 +10,38 @@ namespace xp {
 
 		// TODO: The use of the curiously recurring template pattern makes things a little bit too complicated to my taste.
 		//       Stepanov uses a template and a typedef
-		template<typename I, typename Traits>
-		struct iterator_scaffolding {
-			typedef typename Traits::iterator_category iterator_category;
-			typedef typename Traits::difference_type difference_type;
-			typedef typename Traits::value_type value_type;
-			typedef typename Traits::reference reference;
-			typedef typename Traits::pointer pointer;
+
+		/* 
+		 *                          curiously recurring template pattern
+		 * +--------------------------------------------+--------------------------------------------+
+		 * |                    pros                   |                   cons                    |
+		 * +--------------------------------------------+--------------------------------------------+
+		 * | * the implementation defines the ctrs     | * must make iterator_scaffolding friend   |
+		 * | * the state is the implemention itself    |   to hide implementation details          |
+		 * |                                           | * must define all typedefs or adapt trait |
+		 * |                                           | * must cast scaffolding as implementation |
+		 * |                                           |   before calling                          |
+		 * +--------------------------------------------+--------------------------------------------+
+		 *
+		 *                          templatized implementation and typedef
+		 * +--------------------------------------------+--------------------------------------------+
+		 * |                    pros                   |                   cons                    |
+		 * +--------------------------------------------+--------------------------------------------+
+		 * | * the implementation can be in a separate | * the scaffoling must forward the ctrs to |
+		 * |   namespace and the typedef makes it      |   the implementation                      |
+		 * |   opaque                                  | * the state is a data member              |
+		 * | * the implementation can inherit from     |                                           |
+		 * |   iterator to define the typedefs         |                                           |
+		 * +--------------------------------------------+--------------------------------------------+
+		 *
+		 */
+
+		template<typename I, typename Category, typename T, typename Diff = std::ptrdiff_t, typename Pointer = T*, typename Reference = T&>
+		struct iterator_scaffolding : std::iterator<Category, T, Diff, Pointer, Reference> {
 
 			// Regular
 			friend bool operator==(const I& x, const I& y) {
-				return x.state() == y.state();
+				return x.position() == y.position();
 			}
 			friend bool operator!=(const I& x, const I& y) {
 				return !(x == y);
@@ -106,17 +127,25 @@ namespace xp {
 				return !(x < y);
 			}
 		};
+
+		template<typename I, typename Traits> 
+		using iterator_scaffolding_adapter = iterator_scaffolding<I
+			, typename Traits::iterator_category
+			, typename Traits::value_type
+			, typename Traits::difference_type
+			, typename Traits::pointer
+			, typename Traits::reference>;
 	}
 
 	// Caution: Prefer counted ranges. Do not use bounded range unless you known (last - first) % S == 0.
 	template<InputIterator I, size_t S>
-	struct stride_iterator_k : public details::iterator_scaffolding<stride_iterator_k<I, S>, std::iterator_traits<I>> {
+	struct stride_iterator_k : public details::iterator_scaffolding_adapter<stride_iterator_k<I, S>, std::iterator_traits<I>> {
 		I base;
 
 		stride_iterator_k() : base() {}
 		stride_iterator_k(I i) : base(i) {}
 
-		I& state() {
+		I& position() {
 			return base;
 		}
 
@@ -129,6 +158,12 @@ namespace xp {
 		void predecessor() {
 			base -= S;
 		}
+		void advance(difference_type n) {
+			base += n * S;
+		}
+		difference_type distance(stride_iterator_k x) {
+			return (x.base - base) / S;
+		}
 	};
 
 	template<size_t S, InputIterator I>
@@ -137,16 +172,14 @@ namespace xp {
 	}
 
 	template<InputIterator I>
-	struct stride_iterator : public details::iterator_scaffolding<stride_iterator<I>, std::iterator_traits<I>> {
-		typedef typename std::iterator_traits<I>::difference_type difference_type;
-
-		difference_type n;
+	struct stride_iterator : public details::iterator_scaffolding_adapter<stride_iterator<I>, std::iterator_traits<I>> {
+		difference_type step;
 		I base;
 
-		stride_iterator() : n(0), base() {}
-		stride_iterator(I i, difference_type n) : n(n), base(i) {}
+		stride_iterator() : step(0), base() {}
+		stride_iterator(I i, difference_type step) : step(step), base(i) {}
 
-		I& state() {
+		I& position() {
 			return base;
 		}
 
@@ -154,10 +187,16 @@ namespace xp {
 			return *base;
 		}
 		void successor() {
-			base += n;
+			base += step;
 		}
 		void predecessor() {
-			base -= n;
+			base -= step;
+		}
+		void advance(difference_type n) {
+			base += n * step;
+		}
+		difference_type distance(stride_iterator_k x) {
+			return (x.base - base) / step;
 		}
 	};
 
