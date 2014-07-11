@@ -237,7 +237,6 @@ I stable_max_element(I first, I last) {
 	return stable_max_element(first, last, std::less<T>());
 }
 
-
 // The cost function returns a value supporting LessThanComparable
 template<ForwardIterator I, Function Cost>
 inline
@@ -394,6 +393,26 @@ inline bool empty(const bounded_range<I>& x) {
 template<ForwardIterator I>
 inline bool empty(const counted_range<I>& x) {
 	return x.size() == 0;
+}
+
+// The predicate returns true is the iterator is valid.
+template<InputIterator I, Predicate Pred, OutputIterator O>
+O copy_while(I first, Pred pred, O result) {
+	while (pred(first)) {
+		*result = *first;
+		++first;
+		++result;
+	}
+	return result;
+}
+
+template<OutputIterator O, Predicate Pred, class T>
+O fill_while(O first, Pred pred, const T& val) {
+	while (pred(first)) {
+		*first = val;
+		++first;
+	}
+	return first;
 }
 
 } // namespace xp
