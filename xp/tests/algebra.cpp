@@ -195,6 +195,32 @@ namespace xp {
 		return v;
 	}
 
+	template <OutputIterator O>
+	struct expand_output_iterator : std::iterator<std::output_iterator_tag, void, void, void, void>
+	{
+		O output;
+
+		expand_output_iterator(O output) : output {output} {}
+		expand_output_iterator() {}
+
+		template <typename T>
+		void operator=(const std::pair<T, T>& value) {
+			output = value.first;
+			++output;
+			output = value.second;
+			++output;
+		}
+
+		expand_output_iterator& operator*() { return *this; }
+		expand_output_iterator& operator++() { return *this; }
+		expand_output_iterator& operator++(int) { return *this; }
+	};
+
+	template <OutputIterator O>
+	expand_output_iterator<O> expand(O output) {
+		return expand_output_iterator<O> {output};
+	}
+
 }
 
 TESTBENCH()
@@ -222,8 +248,14 @@ TEST(check_boolean_semiring) {
 
 TEST(check_who_knows_who_power) {
 	auto relations = get_relations();
+	auto n = relations.size();
 	vector<string> persons;
-	persons.reserve(relations.size() * 2);
+	persons.reserve(n * 2);
+	std::copy_n(relations.begin(), n, expand(std::back_inserter(persons)));
+	std::sort(persons.begin(), persons.end());
+	auto end = std::unique_copy(persons.begin(), persons.end(), persons.begin());
+	persons.resize(end - persons.begin());
+	n = 0;
 }
 
 TESTFIXTURE(algebra)
