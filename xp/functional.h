@@ -233,24 +233,32 @@ namespace xp {
 			}
 		}
 
-		template<Regular T, Integer N, BinaryOperation Op>
-		T power_semigroup(T a, N n, Op op) {
-			// precondition: n > 0
-			while (!odd(n)) {
-				a = op(a, a);
-				n = half_non_negative(n);
-			}
-			if (n == 1) return a;
-			return power_accumulate_semigroup(a, op(a, a), half_non_negative(n - 1), op);
-		}
+	}
 
-		template<Regular T, Integer N, BinaryOperation Op>
-		T power_monoid(T a, N n, Op op) {
-			// precondition: n >= 0
-			if (n == 0) return identity_element(op);
-			return power_semigroup(a, n, op);
+	template<Regular T, Integer N, BinaryOperation Op>
+	T power_semigroup(T a, N n, Op op) {
+		// precondition: n > 0
+		while (!odd(n)) {
+			a = op(a, a);
+			n = half_non_negative(n);
 		}
+		if (n == 1) return a;
+		return details::power_accumulate_semigroup(a, op(a, a), half_non_negative(n - 1), op);
+	}
+	template<Regular T, Integer N>
+	T power_semigroup(T a, N n) {
+		return power_monoid(a, n, multiplies<T>());
+	}
 
+	template<Regular T, Integer N, BinaryOperation Op>
+	T power_monoid(T a, N n, Op op) {
+		// precondition: n >= 0
+		if (n == 0) return identity_element(op);
+		return power_semigroup(a, n, op);
+	}
+	template<Regular T, Integer N>
+	T power_monoid(T a, N n) {
+		return power_monoid(a, n, multiplies<T>());
 	}
 
 	template<Regular T, Integer N, BinaryOperation Op>
@@ -260,9 +268,8 @@ namespace xp {
 			n = -n;
 			a = inverse_operation(op)(a);
 		}
-		return details::power_monoid(a, n, op);
+		return power_monoid(a, n, op);
 	}
-
 	template<Regular T, Integer N>
 	T power(T a, N n) {
 		return power(a, n, multiplies<T>());

@@ -1,11 +1,13 @@
 #include <algorithm>
 #include <functional>
 #include <initializer_list>
+#include <map>
 #include <numeric>
 #include <valarray>
 
 #include "../algebra.h"
 #include "../algorithm.h"
+#include "../functional.h"
 #include "../iterator.h"
 #include "../numeric.h"
 
@@ -127,7 +129,7 @@ namespace xp {
 		}
 		valmatrix& operator*=(const valmatrix& x) {
 			for (unsigned i = 0; i != n; ++i)
-				for (unsigned j = 0; j != N; ++j)
+				for (unsigned j = 0; j != n; ++j)
 					data[i + n * j] = inner_product_n_nonempty(begin(x.data) + (n * j), make_stride_iterator(begin(x.data) + i, n), n);
 			return *this;
 		}
@@ -247,15 +249,45 @@ TEST(check_boolean_semiring) {
 }
 
 TEST(check_who_knows_who_power) {
+	typedef semiring<bool, logical_or<bool>, logical_and<bool>> boolean;
+
 	auto relations = get_relations();
 	auto n = relations.size();
-	vector<string> persons;
-	persons.reserve(n * 2);
-	std::copy_n(relations.begin(), n, expand(std::back_inserter(persons)));
-	std::sort(persons.begin(), persons.end());
-	auto end = std::unique_copy(persons.begin(), persons.end(), persons.begin());
-	persons.resize(end - persons.begin());
-	n = 0;
+
+	//vector<string> persons;
+	//persons.reserve(n * 2);
+	//std::copy_n(relations.begin(), n, expand(std::back_inserter(persons)));
+	//std::sort(persons.begin(), persons.end());
+	//auto end = std::unique_copy(persons.begin(), persons.end(), persons.begin());
+	//persons.resize(end - persons.begin());
+
+	map<string, int> indexes;
+	for (auto& p : relations) {
+		indexes.insert(make_pair(p.first, indexes.size()));
+		indexes.insert(make_pair(p.second, indexes.size()));
+	}
+
+	valmatrix<boolean> m {indexes.size()};
+	for (auto& p : relations) {
+		int i = indexes[p.first];
+		int j = indexes[p.second];
+		m[make_pair(i, i)] = true;
+		m[make_pair(i, j)] = true;
+		m[make_pair(j, i)] = true;
+		m[make_pair(j, j)] = true;
+	}
+
+	m = power_semigroup(m, indexes.size());
+
+	for (auto& first : indexes) {
+		cout << first.first << ": ";
+		for (auto& second : indexes) {
+			if (first != second && m[make_pair(first.second, second.second)].value) {
+				cout << second.first << "; ";
+			}
+		}
+		cout << endl;
+	}
 }
 
 TESTFIXTURE(algebra)

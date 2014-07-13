@@ -195,7 +195,7 @@ namespace xp {
 		void advance(difference_type n) {
 			base += n * step;
 		}
-		difference_type distance(stride_iterator_k x) {
+		difference_type distance(stride_iterator x) {
 			return (x.base - base) / step;
 		}
 	};
