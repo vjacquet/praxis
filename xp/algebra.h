@@ -31,6 +31,13 @@ namespace xp {
 			return *this;
 		}
 
+		explicit operator T&() {
+			return value;
+		}
+		explicit operator const T&() const {
+			return value;
+		}
+
 		// Regular
 		inline friend bool operator==(const semiring& x, const semiring& y) {
 			return x.value == y.value;
