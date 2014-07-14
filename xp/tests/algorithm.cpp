@@ -26,6 +26,12 @@ struct instrumented {
 	}
 };
 
+struct is_not_end_of_string {
+	bool operator()(const char * c) {
+		return *c != '\0';
+	}
+};
+
 template<typename T>
 struct first_less {
 	bool operator()(pair<T, T> x, pair<T, T> y) {
@@ -163,6 +169,28 @@ TEST(check_stable_max_element) {
 
 	VERIFY(std::max_element(v.begin(), v.end(), cmp)->second == 1);
 	VERIFY(stable_max_element(v.begin(), v.end(), cmp)->second == 4);
+}
+
+TEST(check_copy_while) {
+	vector<char> v;
+	copy_while("hello world!", is_not_end_of_string {}, back_inserter(v));
+
+	VERIFY(v.size() == 12);
+	VERIFY(v.front() == 'h');
+	VERIFY(v.back() == '!');
+}
+
+TEST(check_fill_while) {
+	char s[] = "hello world!";
+	fill_while(s, is_not_end_of_string {}, '_');
+	VERIFY(*s == '_');
+	VERIFY(count(s, s + 12, '_') == 12);
+}
+
+TEST(check_find_while) {
+	auto s = "hello world!";
+	auto w = find_while(s, is_not_end_of_string {}, ' ');
+	VERIFY(distance(s, w) == 5);
 }
 
 TESTFIXTURE(algorithm)
