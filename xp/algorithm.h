@@ -317,6 +317,8 @@ R1 range_after(R1 const& range1, R2 const& range2) {
 
 template<ForwardIterator I>
 struct bounded_range {
+	typedef typename I iterator;
+
 	I first;
 	I last;
 
@@ -341,6 +343,7 @@ bounded_range<I> make_bounded_range(I first, I last) {
 
 template<ForwardIterator I>
 struct counted_range {
+	typedef typename I iterator;
 	typedef typename std::iterator_traits<I>::difference_type size_type;
 
 	I first;
@@ -395,10 +398,31 @@ inline bool empty(const counted_range<I>& x) {
 	return x.size() == 0;
 }
 
+template<InputIterator I, UnaryPredicate Guard>
+struct guarded_range {
+	typedef typename I iterator;
+	typedef typename Guard predicate;
+
+	I first;
+	predicate guard;
+
+	guarded_range() : first(), guard() {}
+	guarded_range(I first, Guard is_valid) : first(first), guard(guard) {}
+
+	inline friend bool operator == (const guarded_range& x, const guarded_range& y) {
+		return x.first == y.first && x.guard == y.guard;
+	}
+	inline friend bool operator != (const guarded_range& x, const guarded_range& y) {
+		return !(x == y);
+	}
+
+	I begin() const { return first; }
+};
+
 // The predicate returns true is the iterator is valid.
-template<InputIterator I, Predicate Pred, OutputIterator O>
-O copy_while(I first, Pred pred, O result) {
-	while (pred(first)) {
+template<InputIterator I, UnaryPredicate Guard, OutputIterator O>
+O copy_while(I first, Guard guard, O result) {
+	while (guard(first)) {
 		*result = *first;
 		++first;
 		++result;
@@ -406,10 +430,28 @@ O copy_while(I first, Pred pred, O result) {
 	return result;
 }
 
-template<OutputIterator O, Predicate Pred, class T>
-O fill_while(O first, Pred pred, const T& val) {
-	while (pred(first)) {
+template<OutputIterator O, UnaryPredicate Guard, class T>
+O fill_while(O first, Guard guard, const T& val) {
+	while (guard(first)) {
 		*first = val;
+		++first;
+	}
+	return first;
+}
+
+template<InputIterator I, UnaryPredicate Guard, class T>
+I find_while(I first, Guard guard, const T& val)
+{
+	while (guard(first) && *first != val) {
+		++first;
+	}
+	return first;
+}
+
+template<InputIterator I, UnaryPredicate Guard, UnaryPredicate Pred>
+I find_if_while(I first, Guard guard, Pred pred)
+{
+	while (guard(first) && !pred(*first)) {
 		++first;
 	}
 	return first;
