@@ -78,6 +78,7 @@
     <ClCompile Include="tests\k_array.cpp" />
     <ClCompile Include="tests\min.cpp" />
     <ClCompile Include="tests\ranges.cpp" />
+    <ClCompile Include="tests\trivalent.cpp" />
     <ClCompile Include="tests\utility.cpp" />
     <ClCompile Include="tests\while_each.cpp" />
     <ClCompile Include="tests\numeric.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="benchmark.h" />
     <ClInclude Include="algebra.h" />
     <ClInclude Include="tests\testbench.h" />
+    <ClInclude Include="trivalent.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

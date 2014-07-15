@@ -63,6 +63,9 @@
     <ClCompile Include="tests\k_array.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tests\trivalent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="numeric.h">
@@ -105,6 +108,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="k_array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trivalent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
