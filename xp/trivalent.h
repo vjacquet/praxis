@@ -24,6 +24,8 @@ namespace xp {
 		friend bool is_false(trivalent tv) { return tv.v == -1; }
 		friend bool is_unknown(trivalent tv) { return tv.v == 0; }
 
+		// semiregular. returning trivalent makes comparison too difficult.
+		// checking unknown is easy because unknown != unknown
 		friend inline bool operator ==(trivalent lhs, trivalent rhs) {
 			return (lhs.v*rhs.v) > 0;
 		}
