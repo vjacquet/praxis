@@ -18,17 +18,16 @@ namespace xp {
 		trivalent& operator =(trivalent other) {
 			v = other.v;
 		}
-		trivalent operator !() { return trivalent((std::int8_t)-v); }
+		trivalent operator !() { return trivalent((std::int8_t) - v); }
 
 		friend bool is_true(trivalent tv) { return tv.v == 1; }
 		friend bool is_false(trivalent tv) { return tv.v == -1; }
 		friend bool is_unknown(trivalent tv) { return tv.v == 0; }
 
-		friend inline trivalent operator ==(trivalent lhs, trivalent rhs) {
-			if (is_unknown(rhs) || is_unknown(rhs)) return trivalent();
-			return is_true(lhs) == is_true(rhs);
+		friend inline bool operator ==(trivalent lhs, trivalent rhs) {
+			return (lhs.v*rhs.v) > 0;
 		}
-		friend inline trivalent operator !=(trivalent lhs, trivalent rhs) {
+		friend inline bool operator !=(trivalent lhs, trivalent rhs) {
 			return !(lhs == rhs);
 		}
 
