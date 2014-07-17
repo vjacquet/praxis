@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <fstream>
 #include <functional>
 #include <initializer_list>
 #include <map>
@@ -249,6 +250,8 @@ TEST(check_boolean_semiring) {
 }
 
 TEST(check_who_knows_who_power) {
+	// Check knuth Vol I, page 354: Process equivalence relation for an algorithm using trees.
+
 	typedef semiring<bool, logical_or<bool>, logical_and<bool>> boolean;
 
 	auto relations = get_relations();
@@ -279,14 +282,15 @@ TEST(check_who_knows_who_power) {
 
 	m = power_semigroup(m, indexes.size());
 
+	ofstream ofs("bd.txt");
 	for (auto& first : indexes) {
-		cout << first.first << ": ";
+		ofs << first.first << ": ";
 		for (auto& second : indexes) {
-			if (first != second && m[make_pair(first.second, second.second)].value) {
-				cout << second.first << "; ";
+			if (first != second && m[make_pair(first.second, second.second)]) {
+				ofs << second.first << "; ";
 			}
 		}
-		cout << endl;
+		ofs << endl;
 	}
 }
 
