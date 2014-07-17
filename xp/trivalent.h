@@ -17,6 +17,7 @@ namespace xp {
 
 		trivalent& operator =(trivalent other) {
 			v = other.v;
+			return *this;
 		}
 		trivalent operator !() { return trivalent((std::int8_t) - v); }
 
@@ -26,21 +27,48 @@ namespace xp {
 
 		// semiregular. returning trivalent makes comparison too difficult.
 		// checking unknown is easy because unknown != unknown
-		friend inline bool operator ==(trivalent lhs, trivalent rhs) {
+		inline friend bool operator ==(trivalent lhs, trivalent rhs) {
 			return (lhs.v*rhs.v) > 0;
 		}
-		friend inline bool operator !=(trivalent lhs, trivalent rhs) {
+		inline friend bool operator !=(trivalent lhs, trivalent rhs) {
 			return !(lhs == rhs);
 		}
 
-		friend inline trivalent operator && (trivalent lhs, trivalent rhs) {
+		// regular: unknown < false < true
+		inline friend bool operator<(trivalent lhs, trivalent rhs) {
+			if (is_unknown(lhs))
+				return !is_unknown(rhs);
+			if (is_unknown(rhs))
+				return false;
+			return lhs.v < rhs.v;
+		}
+		inline friend bool operator <=(const trivalent& x, const trivalent& y) {
+			return !(y < x);
+		}
+		inline friend bool operator >(const trivalent& x, const trivalent& y) {
+			return y < x;
+		}
+		inline friend bool operator >=(const trivalent& x, const trivalent& y) {
+			return !(x < y);
+		}
+
+		// logical operators
+		inline friend trivalent operator && (trivalent lhs, trivalent rhs) {
 			if (is_unknown(lhs) || is_unknown(rhs)) return trivalent();
 			return is_true(lhs) && is_true(rhs);
 		}
-		friend inline trivalent operator ||(trivalent lhs, trivalent rhs) {
+		inline friend trivalent operator ||(trivalent lhs, trivalent rhs) {
 			if (is_true(lhs) || is_true(rhs)) return true;
 			if (is_false(lhs) && is_false(rhs)) return false;
 			return trivalent();
+		}
+
+		inline friend bool equivalent(trivalent lhs, trivalent rhs) {
+			// unknown != unknown on purpose so I need this function to check for equivalence
+			// but is it a good idea. Should I make unkown == unkown ?
+			// anyway, this function could be included in "functional.h", defined as
+			// !((x < y) || (y < x)) or !(pred(x,y) || pred(y, x))
+			return lhs.v == rhs.v;
 		}
 	};
 

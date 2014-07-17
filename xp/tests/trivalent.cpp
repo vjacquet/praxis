@@ -1,3 +1,7 @@
+#include <algorithm>
+#include <vector>
+#include <utility>
+
 #include "../trivalent.h"
 
 #include "testbench.h"
@@ -32,6 +36,18 @@ TEST(can_compare) {
 	VERIFY(!(u == u));
 	VERIFY(u != u);
 }
+TEST(can_order) {
+	using namespace std;
 
+	trivalent u;
+	trivalent t = true;
+	trivalent f = false;
+
+	vector<trivalent> v = {t, f, u, f, u, t, t, f, f};
+	sort(begin(v), end(v));
+
+	vector<trivalent> expected = {u, u, f, f, f, f, t, t, t};
+	VERIFY(equal(begin(v), end(v), begin(expected), equivalent));
+}
 
 TESTFIXTURE(trivalent)
