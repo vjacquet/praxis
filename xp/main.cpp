@@ -28,7 +28,7 @@ try {
 	if(fail) {
 		cerr << "ERRORS PRESENT." << endl;
 	} else if(!pass) {
-		cerr << "ERROR, no tests run" << endl;
+		cerr << "ERROR, no test to run" << endl;
 	}
 
 	cin.get();

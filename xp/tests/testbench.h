@@ -1,16 +1,17 @@
 // Initialize the test bench by calling TESTBENCH(),
 // then define the tests and, finally,
 // name the TESTFIXTURE.
-// 
-// To call the tests, write the following code in the main:
-// size_t pass = 0, fail = 0;
-// name_of_the_fixture(pass, fail);
-// cout << "pass: " << pass << ", fail: " << fail << endl;
-// if(fail) {
-// 	 cerr << "ERRORS PRESENT." << endl;
-// } else if(!pass) {
-//   cerr << "ERROR, no tests run" << endl;
-// }
+
+// This file is inspired by http://rxcpp.codeplex.com/SourceControl/latest#Ix/CPP/unittest/testbench.hpp, 
+// released under Apache Licence v2, http://www.apache.org/licenses/LICENSE-2.0
+//   - the testcase is a struct templatized on the line number in the file
+//   - the testrange executes all the testcases between two lines
+// I changed the following:
+//   - the empty_testcase has been removed
+//   - the test bench declares the tests in an anonyous namespace
+//   - the fixture (there should be only one by file) auto registers itself
+//   - the main allow to run all fixtures or only the one specified in the argv list
+//   - reformat the messages
 
 #include <algorithm>
 #include <exception>
@@ -25,7 +26,7 @@ struct fixture {
 	virtual ~fixture() {}
 
 	void operator()(size_t& pass, size_t& fail) const {
-		std::cout << "FIXTURE: " << name << std::endl;
+		std::cout << "> Fixture " << name << std::endl;
 		run(pass, fail);
 		std::cout << std::endl;
 	}
@@ -71,27 +72,25 @@ inline fixture::fixture(const char* name) : name(name) {
 #define TESTNAMESPACE namespace
 
 #define TESTBENCH() TESTNAMESPACE {\
-struct empty_testcase { void run() {} const char* name() { return 0; } };\
-template <size_t offset> struct testcase : empty_testcase {}; \
+template <size_t offset> struct testcase { const char* name() { return nullptr; } void run() {} }; \
 template <size_t begin, size_t end> \
 struct testrange {\
 	void run(size_t& pass, size_t& fail) {\
-		testcase<begin> a_case;\
-		if(a_case.name()) {\
-			size_t p = 0, f = 0;\
-			std::cout << "TEST: Running " << a_case.name() << std::endl;\
+		testcase<begin> c;\
+		if(c.name()) {\
+			std::cout << "Running " << c.name() << std::endl;\
 			try {\
-				a_case.run();\
+				c.run();\
 				++pass; \
 			}\
 			catch(std::logic_error& e) {\
-				std::cerr << "ERRORS:" << "  " << e.what() << std::endl;\
+				std::cerr << e.what() << std::endl;\
 				++fail; \
 			}\
 		}\
-		const size_t rem = (end-begin-1);\
-		testrange<begin+1, begin+1+rem/2>().run(pass, fail);\
-		testrange<begin+1+rem/2, end>().run(pass, fail);\
+		const size_t mid = (begin+end+1)/2;\
+		testrange<begin+1, mid>().run(pass, fail);\
+		testrange<mid, end>().run(pass, fail);\
 	}\
 };\
 template <size_t begin> struct testrange<begin, begin> { void run(size_t& pass, size_t& fail) {}; };
@@ -105,14 +104,14 @@ inline void testcase<__LINE__>::run()
 
 #define Q_(e) #e
 #define Q(e)  Q_(e)
-#define TEST_WHERE  __FILE__ "(" Q(__LINE__) "): "
+#define POS   __FILE__ "(" Q(__LINE__) "): "
 #define VERIFY(expr) \
-{ auto e = (expr); if(!e) { throw std::logic_error(TEST_WHERE "VERIFY("#expr")"); }  }
+{ auto e = (expr); if(!e) { throw std::logic_error(POS "VERIFY("#expr")"); }  }
 #define VERIFY_EQ(expected, actual) \
 { auto e = (expected); auto a = (actual); \
 if(!(e == a)) { \
 	std::stringstream msg; \
-	msg << TEST_WHERE "(" << e << ")!=(" << a << ") in VERIFY_EQ("#expected","#actual")"; \
+	msg << POS "VERIFY_EQ("#expected","#actual") => (" << e << ")!=(" << a << ")"; \
 	throw std::logic_error(msg.str()); \
 }}
 #define SKIP(expr) \
