@@ -112,4 +112,12 @@ TEST(check_negation) {
 	VERIFY(find_if(v.begin(), v.end(), negation(op)) == find_if_not(v.begin(), v.end(), op));
 }
 
+TEST(check_select) {
+	using namespace std;
+	auto p = make_pair(1, string("one"));
+
+	auto select = select_element<0, decltype(p)>();
+	VERIFY_EQ(1, select(p));
+}
+
 TESTFIXTURE(functional)

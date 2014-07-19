@@ -167,6 +167,28 @@ namespace xp {
 		return between_t<Compare>(std::forward(lower), std::forward(upper), cmp);
 	}
 
+	// from sgi extensions
+	template<typename T>
+	struct identity {
+		typedef T argument_type;
+		typedef T result_type;
+
+		const T& operator()(const T& x) const {
+			return x;
+		}
+	};
+
+	// adapted from sgi extensions select1st and select2nd
+	template<size_t I, typename T>
+	struct select_element {
+		typedef T argument_type;
+		typedef typename std::tuple_element<I, T>::type result_type;
+
+		result_type operator()(const argument_type& x) const {
+			return std::get<I>(x);
+		}
+	};
+
 	// synonyms
 	using std::plus;
 	using std::negate;
