@@ -457,6 +457,26 @@ I find_if_while(I first, Guard guard, Pred pred)
 	return first;
 }
 
+template<typename T, StrictWeakOrdering Compare>
+const T& min(const T& a, const T& b, const T& c, Compare cmp) {
+	return std::min(a, std::min(b, c, cmp), cmp);
+}
+
+template<typename T>
+const T& min(const T& a, const T& b, const T& c) {
+	return min(a, b, c, std::less<T>());
+}
+
+template<typename T, StrictWeakOrdering Compare>
+const T& max(const T& a, const T& b, const T& c, Compare cmp) {
+	return stable_max(a, stable_max(b, c, cmp), cmp);
+}
+
+template<typename T>
+const T& max(const T& a, const T& b, const T& c) {
+	return max(a, b, c, std::less<T>());
+}
+
 } // namespace xp
 
 #endif __ALGORITHM_H__
