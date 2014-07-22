@@ -18,13 +18,13 @@ namespace xp {
 		};
 
 		template<Function F>
-		struct functor_base<F, 1> {
+		struct functor_base < F, 1 > {
 			typedef typename function_traits<F>::return_type result_type;
 			typedef typename function_traits<F>::argument<0>::type argument_type;
 		};
 
 		template<Function F>
-		struct functor_base<F, 2> {
+		struct functor_base < F, 2 > {
 			typedef typename function_traits<F>::return_type result_type;
 			typedef typename function_traits<F>::argument<0>::type first_argument_type;
 			typedef typename function_traits<F>::argument<1>::type second_argument_type;
@@ -69,20 +69,20 @@ namespace xp {
 	template <typename R, typename... Args>
 	std::function<R(Args...)> memoize(std::function<R(Args...)> func) {
 		using namespace std;
-		typedef typename integral_constant<bool, is_default_constructible<R>::value
+		typedef typename integral_constant < bool, is_default_constructible<R>::value
 			|| is_trivially_default_constructible<R>::value
-			|| is_nothrow_default_constructible<R>::value>::type is_result_default_constructible_type;
+			|| is_nothrow_default_constructible<R>::value > ::type is_result_default_constructible_type;
 		return details::memoize(std::move(func), is_result_default_constructible_type());
 	}
 
 	template<Function Op>
-	class dereference_function_t : public details::functor_base<Op, function_traits<Op>::arity> {
+	class dereference_function_t : public details::functor_base < Op, function_traits<Op>::arity > {
 		Op op;
 
 	public:
 		dereference_function_t(Op op) : op(op) {}
 
-		template<typename P, class = std::enable_if<function_traits<Op>::arity==2>::type>
+		template<typename P, class = std::enable_if<function_traits<Op>::arity == 2>::type>
 		auto operator()(const P& x, const P& y) -> decltype(op(*x, *y)) {
 			return op(*x, *y);
 		}
@@ -103,11 +103,11 @@ namespace xp {
 
 	template<Function Op>
 	dereference_function_t<Op> dereference(Op op) {
-		return dereference_function_t<Op> {op};
+		return dereference_function_t < Op > {op};
 	}
 
 	template<Function Op>
-	class negation_function_t : public details::functor_base<Op, function_traits<Op>::arity> {
+	class negation_function_t : public details::functor_base < Op, function_traits<Op>::arity > {
 		Op op;
 
 	public:
@@ -134,7 +134,7 @@ namespace xp {
 
 	template<Function Op>
 	negation_function_t<Op> negation(Op op) {
-		return negation_function_t<Op> {op};
+		return negation_function_t < Op > {op};
 	}
 
 	template<StrictWeakOrdering Compare>
@@ -145,7 +145,7 @@ namespace xp {
 		Compare cmp;
 
 	public:
-		between_t(argument_type&& lower, argument_type&& upper, Compare&& cmp) 
+		between_t(argument_type&& lower, argument_type&& upper, Compare&& cmp)
 			: lo(std::forward<argument_type>(lower))
 			, up(std::forward<argument_type>(upper))
 			, cmp(cmp) {}
@@ -158,7 +158,7 @@ namespace xp {
 	template <typename T>
 	between_t<std::less<T>> between(T&& lower, T&& upper) {
 		// precondition: lower <= upper
-		return between_t<std::less<T>>(std::forward<T>(lower), std::forward<T>(upper), std::less<T> {});
+		return between_t<std::less<T>>(std::forward<T>(lower), std::forward<T>(upper), std::less < T > {});
 	}
 
 	template <typename T, StrictWeakOrdering Compare>
@@ -224,6 +224,17 @@ namespace xp {
 	reciprocal<T> inverse_operation(multiplies<T>) {
 		return reciprocal<T>();
 	}
+
+	template<typename Pred>
+	struct complement_of_converse {
+		Pred pred;
+		typedef typename Pred::argument_type argument_type;
+
+		complement_of_converse(Pred pred) :pred(pred) {}
+		bool operator ()(const argument_type& x, const argument_type& y) {
+			return !pred(b, a);
+		}
+	};
 
 	template<Integer N>
 	bool odd(N n) {
