@@ -257,7 +257,7 @@ TEST(bench_get_lowest) {
 	};
 
 	for (auto& scenario : scenarii) {
-		mesures<microseconds> m;
+		measures<microseconds> m;
 		for (int attempt = 0; attempt != attempts; ++attempt) {
 			auto& v = Sample;
 			for_each(v.begin(), v.end(), mem_fn(&Foo::reset));

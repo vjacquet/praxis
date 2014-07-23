@@ -70,7 +70,7 @@ TEST(can_mesure_durations) {
 	seconds s2(6);
 	seconds s3(8);
 
-	mesures<seconds> m;
+	measures<seconds> m;
 	m += s1;
 	m += s2;
 	m += s3;

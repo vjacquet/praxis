@@ -76,16 +76,16 @@ namespace xp {
 
 	template<typename D>
 	requires(D is Duration)
-	class mesures {
+	class measures {
 		D   mini;
 		D   maxi;
 		D   sum;
 		int n;
 
 	public:
-		mesures() : mini(D::max()), maxi(D::min()), sum(D::zero()), n(0) {}
+		measures() : mini(D::max()), maxi(D::min()), sum(D::zero()), n(0) {}
 
-		mesures& operator += (D d) {
+		measures& operator += (D d) {
 			if (d < mini) mini = d;
 			if (maxi < d) maxi = d;
 			sum += d;

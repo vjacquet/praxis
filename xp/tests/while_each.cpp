@@ -206,7 +206,7 @@ TEST(bench_count_while_scenarii) {
 	for (auto& scenario : scenarii) {
 		mt19937 rand(1789);
 		auto generator = bind(distribution, rand);
-		mesures<microseconds> m;
+		measures<microseconds> m;
 		for (int attempt = 0; attempt != attempts; ++attempt) {
 			auto stop = generator();
 			predicate_t pred {stop};
