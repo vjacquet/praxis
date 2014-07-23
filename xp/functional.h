@@ -225,6 +225,7 @@ namespace xp {
 		return reciprocal<T>();
 	}
 
+	// from EoP
 	template<typename Pred>
 	struct complement_of_converse {
 		Pred pred;
@@ -233,6 +234,18 @@ namespace xp {
 		complement_of_converse(Pred pred) :pred(pred) {}
 		bool operator ()(const argument_type& x, const argument_type& y) {
 			return !pred(b, a);
+		}
+	};
+
+	// from EoP
+	template<BinaryOperation Op>
+	struct transpose_operation {
+		Op op;
+
+		typedef Codomain(Op) argument_type;
+
+		argument_type operator() (const argument_type& x, const argument_type& y) {
+			return op(y, x);
 		}
 	};
 
