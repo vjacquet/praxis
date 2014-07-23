@@ -29,8 +29,6 @@
 #define UnaryOperation typename
 #define BinaryOperation typename
 #define EquivalenceRelation typename
-#define UnaryPredicate typename
-#define BinaryPredicate typename
 #define Sequence typename
 #define UnsignedIntegral typename
 
@@ -38,6 +36,7 @@
 #define Range typename
 #define Function typename
 #define Predicate typename
+#define Relation typename
 
 #define Size std::size_t
 
@@ -50,7 +49,7 @@
 //template<Function F> using Domain = typename std::decay<typename xp::function_traits<F>::argument<0>::type>::type;
 
 #define Codomain(fn) typename xp::function_traits<decltype(fn)>::return_type
-#define Domain(fn) typename xp::function_traits<decltype(fn)>::argument<0>::type
+#define Domain(fn) typename xp::function_traits<decltype((fn))>::argument<0>::type
 #define Arity(fn) xp::function_traits<decltype(fn)>::arity
 #define InputType(fn, arg) typename xp::function_traits<decltype(fn)>::argument<arg>::type
 

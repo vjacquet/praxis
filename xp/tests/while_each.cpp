@@ -31,7 +31,7 @@ namespace {
 		}
 	};
 
-	template <InputIterator I, UnaryPredicate Pred>
+	template <InputIterator I, Predicate Pred>
 	typename iterator_traits<I>::difference_type count_while(I first, I last, Pred pred) {
 		typename iterator_traits<I>::difference_type ret = 0;
 		while (first != last && pred(*first)) {
@@ -41,7 +41,7 @@ namespace {
 		return ret;
 	}
 
-	template<InputIterator I, UnaryPredicate Pred>
+	template<InputIterator I, Predicate Pred>
 	struct take_while_adapter {
 		struct iterator_t : public iterator<input_iterator_tag, typename iterator_traits<I>::value_type> {
 			take_while_adapter& adapter;
@@ -81,7 +81,7 @@ namespace {
 		}
 	};
 
-	template<InputIterator I, UnaryPredicate Pred>
+	template<InputIterator I, Predicate Pred>
 	take_while_adapter<I, Pred> take_while(I first, I last, Pred pred) {
 		return take_while_adapter<I, Pred>(first, last, pred);
 	}
@@ -100,7 +100,7 @@ namespace {
 		operator size_t() const { return count; }
 	};
 
-	template<typename T, UnaryPredicate Pred>
+	template<typename T, Predicate Pred>
 	struct counter_if {
 		size_t count;
 		Pred pred;
@@ -115,7 +115,7 @@ namespace {
 		operator size_t() const { return count; }
 	};
 
-	template<typename T, UnaryPredicate Pred>
+	template<typename T, Predicate Pred>
 	struct counting_t {
 		size_t count;
 		Pred& pred;
@@ -129,7 +129,7 @@ namespace {
 		}
 	};
 
-	template<InputIterator I, UnaryPredicate Pred, Function Func>
+	template<InputIterator I, Predicate Pred, Function Func>
 	pair<Func, I> while_each(I first, I last, Pred pred, Func fn) {
 		while (first != last && pred(*first)) {
 			fn(*first);

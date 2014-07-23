@@ -21,7 +21,7 @@ namespace xp {
 			return not_found;
 		}
 
-		template<BidirectionalIterator I, UnaryPredicate Pred>
+		template<BidirectionalIterator I, Predicate Pred>
 		I find_if_backwards_with_not_found_value(I first, I last, I not_found, Pred pred) {
 			auto it = last;
 			while(it != first) {
@@ -70,7 +70,7 @@ I find_backwards(I first, I last, const T& val) {
 	return details::find_backwards_with_not_found_value(first, last, last, val);
 }
 
-template<BidirectionalIterator I, UnaryPredicate Pred>
+template<BidirectionalIterator I, Predicate Pred>
 I find_if_backwards(I first, I last, Pred pred) {
 	return details::find_if_backwards_with_not_found_value(first, last, last, pred);
 }
@@ -91,7 +91,7 @@ I find(I first, I last, I hint, const T& val) {
 }
 
 // because of cache misses, it might not be best if the hint is too far from the target
-template<BidirectionalIterator I, UnaryPredicate Pred>
+template<BidirectionalIterator I, Predicate Pred>
 requires(first <= hint && hint < last)
 I find_if(I first, I last, I hint, Pred pred) {
 	I lo = hint;
@@ -398,7 +398,7 @@ inline bool empty(const counted_range<I>& x) {
 	return x.size() == 0;
 }
 
-template<InputIterator I, UnaryPredicate Guard>
+template<InputIterator I, Predicate Guard>
 struct guarded_range {
 	typedef typename I iterator;
 	typedef typename Guard predicate;
@@ -420,7 +420,7 @@ struct guarded_range {
 };
 
 // The predicate returns true is the iterator is valid.
-template<InputIterator I, UnaryPredicate Guard, OutputIterator O>
+template<InputIterator I, Predicate Guard, OutputIterator O>
 O copy_while(I first, Guard guard, O result) {
 	while (guard(first)) {
 		*result = *first;
@@ -430,7 +430,7 @@ O copy_while(I first, Guard guard, O result) {
 	return result;
 }
 
-template<OutputIterator O, UnaryPredicate Guard, class T>
+template<OutputIterator O, Predicate Guard, class T>
 O fill_while(O first, Guard guard, const T& val) {
 	while (guard(first)) {
 		*first = val;
@@ -439,7 +439,7 @@ O fill_while(O first, Guard guard, const T& val) {
 	return first;
 }
 
-template<InputIterator I, UnaryPredicate Guard, class T>
+template<InputIterator I, Predicate Guard, class T>
 I find_while(I first, Guard guard, const T& val)
 {
 	while (guard(first) && *first != val) {
@@ -448,7 +448,7 @@ I find_while(I first, Guard guard, const T& val)
 	return first;
 }
 
-template<InputIterator I, UnaryPredicate Guard, UnaryPredicate Pred>
+template<InputIterator I, Predicate Guard, Predicate Pred>
 I find_if_while(I first, Guard guard, Pred pred)
 {
 	while (guard(first) && !pred(*first)) {
