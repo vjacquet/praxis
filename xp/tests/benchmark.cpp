@@ -15,14 +15,14 @@ TEST(can_reset) {
 	using namespace std;
 	using namespace std::chrono;
 
-	vector<int> v(10000000);
+	vector<int> v(1000000);
 
 	timer<steady_clock> w;
 	random_iota_n(v.begin(), v.size(), 0);
 	auto m1 = w.elapsed<nanoseconds>();
 
 	w.reset();
-	random_iota_n(v.begin(), v.size() / 2, 0);
+	random_iota_n(v.begin(), v.size() / 4, 0);
 	auto m2 = w.elapsed<nanoseconds>();
 
 	VERIFY(m2 < m1);
@@ -32,7 +32,7 @@ TEST(check_is_semiregular) {
 	using namespace std;
 	using namespace std::chrono;
 
-	vector<int> v(10000000);
+	vector<int> v(1000000);
 
 	timer<steady_clock> w1;
 	random_iota_n(v.begin(), v.size(), 0);
@@ -51,7 +51,7 @@ TEST(check_is_totallyordered) {
 	using namespace std;
 	using namespace std::chrono;
 
-	vector<int> v(10000000);
+	vector<int> v(1000000);
 
 	timer<steady_clock> w1;
 	random_iota_n(v.begin(), v.size(), 0);
@@ -62,7 +62,7 @@ TEST(check_is_totallyordered) {
 	VERIFY(w2 < w1);
 }
 
-TEST(can_mesure_durations) {
+TEST(can_measure_durations) {
 	using namespace std;
 	using namespace std::chrono;
 
@@ -78,6 +78,24 @@ TEST(can_mesure_durations) {
 	VERIFY(m.min() == s1);
 	VERIFY(m.avg() == s2);
 	VERIFY(m.max() == s3);
+}
+
+TEST(check_processor_clock) {
+	using namespace std;
+	using namespace std::chrono;
+
+	auto rep = duration_cast<microseconds>(processor_clock::duration {1}).count();
+	VERIFY_EQ(rep, CLOCKS_PER_SEC);
+}
+
+TEST(can_measure) {
+	using namespace std;
+	using namespace std::chrono;
+
+	double x = 3.14159 / 2.;
+	auto m = measure<processor_clock>([=]() { sin(x); });
+
+	cout << "Speed " << (double)m.second / duration_cast<microseconds>(m.first).count() << " executions per microseconds." << endl;
 }
 
 TESTFIXTURE(benchmark)

@@ -73,7 +73,7 @@ namespace xp {
 		}
 	};
 
-
+	// TODO: Fix name and operator
 	template<typename D>
 	requires(D is Duration)
 	class measures {
@@ -96,6 +96,30 @@ namespace xp {
 		D max() const { assert(n > 0); return maxi; }
 		D avg() const { assert(n > 0); return sum / n; }
 	};
+
+	template<typename C, Function F>
+	requires(C is Chrono)
+	std::pair<typename C::duration, long> measure(F f) {
+		// Returns the number of executions needed to have the duration exeed a hard coded threshold.
+		// It is an adaption of code found at <http://www.elementsofprogramming.com/code/measurements.h>
+		// The credit goes to Alexander Stepanov and Paul McJones
+		typedef long N;
+		typedef typename C::duration D;
+
+		D epsilon {100};
+		N n = 1;
+		while (true) {
+			N i = 0;
+			timer<C> t;
+			while (i < n) {
+				f();
+				++i;
+			}
+			auto d = t.elapsed<D>();
+			if (d > epsilon) return {d, n};
+			n += n; // double it.
+		}
+	}
 
 } // namespace xp
 
