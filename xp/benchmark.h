@@ -106,7 +106,7 @@ namespace xp {
 		typedef long N;
 		typedef typename C::duration D;
 
-		D epsilon {100};
+		D threshold {100};
 		N n = 1;
 		while (true) {
 			N i = 0;
@@ -116,9 +116,20 @@ namespace xp {
 				++i;
 			}
 			auto d = t.elapsed<D>();
-			if (d > epsilon) return {d, n};
+			if (d > threshold) return {d, n};
 			n += n; // double it.
 		}
+	}
+
+	template<typename C, Function F>
+	typename C::duration measure(int repeat, F f) {
+		typedef typename C::duration D;
+
+		timer<C> t;
+		while (repeat--) {
+			f();
+		}
+		return t.elapsed<D>();
 	}
 
 } // namespace xp
