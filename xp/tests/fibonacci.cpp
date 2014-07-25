@@ -63,11 +63,6 @@ namespace slewis {
 namespace vjacquet {
 
 	template<typename T>
-	T delta(const T& x, const T& y) {
-		return y - x;
-	}
-
-	template<typename T>
 	pair<T, T> fibonaccci_step(const T& fn_1, const T& fn_2) {
 		// Fn = Fn-1 + Fn-2
 		return {fn_1 + fn_2, fn_1};
@@ -77,7 +72,7 @@ namespace vjacquet {
 	pair<T, T> bounding_fibonacci(const T& x) {
 		T fn_2 = {0};
 		T fn_1 = {1};
-		if (x > 0) {
+		if (x > 1) {
 			do
 				tie(fn_1, fn_2) = fibonaccci_step(fn_1, fn_2);
 			while (fn_1 < x);
@@ -89,7 +84,7 @@ namespace vjacquet {
 	T nearest_fibonnaci(const T& x) {
 		T fn_2, fn_1;
 		tie(fn_1, fn_2) = bounding_fibonacci(x);
-		if (delta(fn_2, x) < delta(x, fn_1))
+		if ((x - fn_2) < (fn_1 - x))
 			return fn_2;
 		return fn_1;
 	}
