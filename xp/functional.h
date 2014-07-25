@@ -18,13 +18,13 @@ namespace xp {
 		};
 
 		template<Function F>
-		struct functor_base < F, 1 > {
+		struct functor_base<F, 1> {
 			typedef typename function_traits<F>::return_type result_type;
 			typedef typename function_traits<F>::argument<0>::type argument_type;
 		};
 
 		template<Function F>
-		struct functor_base < F, 2 > {
+		struct functor_base<F, 2> {
 			typedef typename function_traits<F>::return_type result_type;
 			typedef typename function_traits<F>::argument<0>::type first_argument_type;
 			typedef typename function_traits<F>::argument<1>::type second_argument_type;
@@ -158,7 +158,7 @@ namespace xp {
 	template <typename T>
 	between_t<std::less<T>> between(T&& lower, T&& upper) {
 		// precondition: lower <= upper
-		return between_t<std::less<T>>(std::forward<T>(lower), std::forward<T>(upper), std::less < T > {});
+		return between_t<std::less<T>>(std::forward<T>(lower), std::forward<T>(upper), std::less<T> {});
 	}
 
 	template <typename T, StrictWeakOrdering Compare>
