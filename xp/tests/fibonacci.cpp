@@ -124,17 +124,17 @@ TEST(check_get_nearest_fibonacci_vjacquet) {
 TEST(benchmark) {
 	using namespace std::chrono;
 
-	typedef processor_clock C;
+	typedef high_resolution_clock C;
 	typedef int value_type;
 
 	const value_type Val = 50000;
 	const int Repeat = 25000000;
 
-	auto ew = measure<processor_clock>(Repeat, bind(ewilliams::find, Val));
+	auto ew = measure<C>(Repeat, bind(ewilliams::find, Val));
 	cout << "  ewilliams: " << (double)Repeat / duration_cast<microseconds>(ew).count() << " executions per microseconds." << endl;
-	auto sl = measure<processor_clock>(Repeat, bind(slewis::fibinv, Val));
+	auto sl = measure<C>(Repeat, bind(slewis::fibinv, Val));
 	cout << "  slewis:    " << (double)Repeat / duration_cast<microseconds>(sl).count() << " executions per microseconds." << endl;
-	auto vj = measure<processor_clock>(Repeat, bind(vjacquet::nearest_fibonnaci<value_type>, Val));
+	auto vj = measure<C>(Repeat, bind(vjacquet::nearest_fibonnaci<value_type>, Val));
 	cout << "  vjacquet:  " << (double)Repeat / duration_cast<microseconds>(vj).count() << " executions per microseconds." << endl;
 
 }
