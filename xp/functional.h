@@ -249,24 +249,12 @@ namespace xp {
 		}
 	};
 
-	template<Integer N>
-	bool odd(N n) {
-		return (n & 1) == 1;
-	}
-	template<Integer N>
-	bool even(N n) {
-		return !odd(n);
-	}
-
-	template<Integer N>
-	N half_non_negative(N n) {
-		return n >> 1;
-	}
-
 	namespace details {
 
 		template<Regular T, Integer N, BinaryOperation Op>
 		T power_accumulate_semigroup(T r, T a, N n, Op op) {
+			using namespace xp::integers;
+
 			// precondition: n >= 0
 			if (n == 0) return r;
 			while (true) {
@@ -275,7 +263,7 @@ namespace xp {
 					if (n == 1) return r;
 				}
 				a = op(a, a);
-				n = half_non_negative(n);
+				n = half_nonnegative(n);
 			}
 		}
 
@@ -283,13 +271,15 @@ namespace xp {
 
 	template<Regular T, Integer N, BinaryOperation Op>
 	T power_semigroup(T a, N n, Op op) {
+		using namespace xp::integers;
+
 		// precondition: n > 0
 		while (!odd(n)) {
 			a = op(a, a);
-			n = half_non_negative(n);
+			n = half_nonnegative(n);
 		}
 		if (n == 1) return a;
-		return details::power_accumulate_semigroup(a, op(a, a), half_non_negative(n - 1), op);
+		return details::power_accumulate_semigroup(a, op(a, a), half_nonnegative(n - 1), op);
 	}
 	template<Regular T, Integer N>
 	T power_semigroup(T a, N n) {

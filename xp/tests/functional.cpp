@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "../functional.h"
+#include "../numeric.h"
 
 #include "testbench.h"
 
@@ -106,6 +107,7 @@ TEST(can_memoize_with_non_default_constructible_result) {
 
 TEST(check_negation) {
 	using namespace std;
+	using namespace xp::integers;
 
 	auto op = odd<int>;
 	vector<int> v {1, 2, 3, 4};

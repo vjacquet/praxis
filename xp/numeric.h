@@ -8,6 +8,69 @@
 
 namespace xp {
 
+	namespace integers {
+
+		template<Integer N>
+		N successor(const N& n) {
+			return n + N(1);
+		}
+
+		template<Integer N>
+		N predecessor(const N& n) {
+			return n - N(1);
+		}
+
+		template<Integer N>
+		N twice(const N& n) {
+			return n + n;
+		}
+
+		template<Integer N>
+		N half_nonnegative(const N& n) {
+			return n >> N(1);
+		}
+
+		template<Integer N>
+		N binary_scale_down_nonnegative(const N& n, const N& k) {
+			return n >> k;
+		}
+
+		template<Integer N>
+		N binary_scale_up_nonnegative(const N& n, const N& k) {
+			return n << k;
+		}
+
+		template<Integer N>
+		bool positive(const N& n) {
+			return N(0) < n;
+		}
+
+		template<Integer N>
+		bool negative(const N& n) {
+			return n < N(0);
+		}
+
+		template<Integer N>
+		bool zero(const N& n) {
+			return N(0) == n;
+		}
+
+		template<Integer N>
+		bool one(const N& n) {
+			return N(1) == n;
+		}
+
+		template<Integer N>
+		bool even(const N& n) {
+			return (n & N(1)) == N(0);
+		}
+
+		template<Integer N>
+		bool odd(const N& n) {
+			return (n & N(1)) != N(0);
+		}
+	}
+
 	namespace details {
 		template<typename T>
 		struct iota_generator {
