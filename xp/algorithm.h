@@ -477,6 +477,45 @@ const T& max(const T& a, const T& b, const T& c) {
 	return max(a, b, c, std::less<T>());
 }
 
+template <InputIterator I1, InputIterator I2, Relation Pred>
+typename std::iterator_traits<I1>::difference_type
+hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred) {
+	typename iterator_traits<I>::difference_type result = 0;
+	while (first1 != last1) {
+		if (pred(*first1, *first2))
+			++result;
+		++first1;
+		++first2;
+	}
+	return result;
+}
+
+template <InputIterator I1, InputIterator I2>
+typename std::iterator_traits<I1>::difference_type
+hamming_distance(I1 first1, I1 last1, I2 first2) {
+	typedef typename iterator_traits<I>::value_type value_type;
+	return hamming_distance(first1, last1, first2, std::equal<value_type>());
+}
+
+
+template <InputIterator I1, InputIterator I2, Integer N, Relation Pred>
+N hamming_distance_n(I1 first1, N n, I2 first2, Pred pred) {
+	N result = 0;
+	while (n--) {
+		if (pred(*first1, *first2))
+			++result;
+		++first1;
+		++first2;
+	}
+	return result;
+}
+
+template <InputIterator I1, InputIterator I2, Integer N>
+N hamming_distance_n(I1 first1, N n, I2 first2) {
+	typedef typename iterator_traits<I>::value_type value_type;
+	return hamming_distance_n(first1, last1, first2, std::equal<value_type>());
+}
+
 } // namespace xp
 
 #endif __ALGORITHM_H__
