@@ -23,10 +23,10 @@ TEST(can_stringize) {
 	VERIFY(msg == typeid(s).name());
 }
 
-TEST(check_on_scope_exit) {
+TEST(check_at_scope_exit) {
 	bool is_clean = false;
 	try {
-		on_scope_exit cleaup = [&]() { is_clean = true; };
+		at_scope_exit cleaup = [&]() { is_clean = true; };
 
 		// nothing to do
 		noop();

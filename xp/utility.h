@@ -48,19 +48,18 @@ namespace xp {
 	// reset the action. The only use case I found so far is if you want to
 	// rollback (perform he cleanup) or commit (do nothing). But then, it should be
 	// another utility.
-	struct on_scope_exit {
+	class at_scope_exit {
 		typedef std::function<void(void)> action_type;
-
-		template<typename F>
-		on_scope_exit(F fn) try : action(fn) {} catch (...) { fn(); }
-		~on_scope_exit() { action(); }
-
-		on_scope_exit() = delete;
-		on_scope_exit(const on_scope_exit&) = delete;
-		on_scope_exit& operator=(const on_scope_exit&) = delete;
-
-	private:
 		action_type action;
+
+	public:
+		template<typename F>
+		at_scope_exit(F fn) try : action(fn) {} catch (...) { fn(); }
+		~at_scope_exit() { action(); }
+
+		at_scope_exit() = delete;
+		at_scope_exit(const at_scope_exit&) = delete;
+		at_scope_exit& operator=(const at_scope_exit&) = delete;
 	};
 
 } // namespace xp
