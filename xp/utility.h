@@ -43,11 +43,10 @@ namespace xp {
 		return stringize(val, is_same<stream_fallback_t, decltype(cout << val)>::type());
 	}
 
-
-	// inspired by Jon Kalb on_scope_exit but removed the possibility to
+	// inspired by Jon Kalb at_scope_exit but removed the possibility to
 	// reset the action. The only use case I found so far is if you want to
-	// rollback (perform he cleanup) or commit (do nothing). But then, it should be
-	// another utility.
+	// rollback (perform the cleanup) or commit (do nothing). But then, it should 
+	// be another utility.
 	class at_scope_exit {
 		typedef std::function<void(void)> action_type;
 		action_type action;
