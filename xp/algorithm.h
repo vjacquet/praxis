@@ -477,6 +477,75 @@ const T& max(const T& a, const T& b, const T& c) {
 	return max(a, b, c, std::less<T>());
 }
 
+// reduce algorithms are from EoP
+template<InputIterator I, BinaryOperation Op, Function F>
+auto reduce_nonempty(I first, I last, Op op, F fun) -> decltype(op(*first, *first)) {
+	typedef decltype(op(*first, *first)) T;
+	T r = fn(first);
+	++first;
+	while (first != last) {
+		r = op(r, fn(first));
+		++first;
+	}
+	return r;
+}
+
+template<InputIterator I, BinaryOperation Op>
+auto reduce_nonempty(I first, I last, Op op) -> decltype(op(*first, *first)) {
+	typedef decltype(op(*first, *first)) T;
+	T r = *first;
+	++first;
+	while (first != last) {
+		r = op(r, *first);
+		++first;
+	}
+	return r;
+}
+
+template<InputIterator I, typename T, BinaryOperation Op, Function F>
+T reduce(I first, I last, Op op, F fun, const T& z) {
+	if (first == last) return z;
+	return reduce_nonempty(first, last, op, fun);
+}
+
+template<InputIterator I, typename T, BinaryOperation Op>
+T reduce(I first, I last, Op op, const T& z) {
+	if (first == last) return z;
+	return reduce_nonempty(first, last, op);
+}
+
+template<InputIterator I, typename T, BinaryOperation Op, Function F>
+T reduce_nonzeroes(I first, I last, Op op, F fun, const T& z) {
+	T x;
+	do {
+		if (first == last) return z;
+		x = fun(first);
+		++first;
+	} while (x == z);
+	while (first != last) {
+		T y = fun(first);
+		if (y != z) x = op(x, y);
+		++first;
+	}
+	return x;
+}
+
+template<InputIterator I, typename T, BinaryOperation Op>
+T reduce_nonzeroes(I first, I last, Op op, const T& z) {
+	T x;
+	do {
+		if (first == last) return z;
+		x = *first;
+		++first;
+	} while (x == z);
+	while (first != last) {
+		T y = *first;
+		if (y != z) x = op(x, y);
+		++first;
+	}
+	return x;
+}
+
 template <InputIterator I1, InputIterator I2, Relation Pred>
 typename std::iterator_traits<I1>::difference_type
 hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred) {
