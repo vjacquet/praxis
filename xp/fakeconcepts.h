@@ -48,10 +48,10 @@
 // use function traits to define Domain, Codomain, etc. as in EoP
 //template<Function F> using Domain = typename std::decay<typename xp::function_traits<F>::argument<0>::type>::type;
 
-#define Codomain(fn) typename xp::function_traits<decltype(fn)>::return_type
-#define Domain(fn) typename xp::function_traits<decltype((fn))>::argument<0>::type
-#define Arity(fn) xp::function_traits<decltype(fn)>::arity
-#define InputType(fn, arg) typename xp::function_traits<decltype(fn)>::argument<arg>::type
+#define Codomain(fn) typename xp::function_traits<fn>::return_type
+#define Domain(fn) typename xp::function_traits<fn>::argument<0>::type
+#define Arity(fn) xp::function_traits<fn>::arity
+#define InputType(fn, arg) typename xp::function_traits<fn>::argument<arg>::type
 
 #define Regular typename
 #define Semiregular typename

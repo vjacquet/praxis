@@ -30,6 +30,10 @@ struct barrier {
 	}
 };
 
+int select1rst(int x, int y) {
+	return x;
+}
+
 TESTBENCH()
 
 TEST(check_operators) {
@@ -120,6 +124,12 @@ TEST(check_select) {
 
 	auto select = select_element<0, decltype(p)>();
 	VERIFY_EQ(1, select(p));
+}
+
+TEST(check_transpose) {
+	using namespace xp;
+	auto r = transpose(select1rst)(1, 2);
+	VERIFY_EQ(2, r);
 }
 
 TESTFIXTURE(functional)

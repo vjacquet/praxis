@@ -134,7 +134,24 @@ namespace xp {
 
 	template<Function Op>
 	negation_function_t<Op> negation(Op op) {
-		return negation_function_t < Op > {op};
+		return negation_function_t<Op>(op);
+	}
+
+	template<BinaryOperation Op>
+	class transpose_function_t {
+		Op op;
+		typedef Domain(Op) T;
+	public:
+		transpose_function_t(Op op) : op(op) {}
+
+		T operator()(const T& x, const T& y) {
+			return op(y, x);
+		}
+	};
+
+	template<BinaryOperation Op>
+	transpose_function_t<Op> transpose(Op op) {
+		return transpose_function_t<Op>(op);
 	}
 
 	template<StrictWeakOrdering Compare>
