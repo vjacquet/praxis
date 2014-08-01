@@ -118,11 +118,9 @@ namespace xp {
 			friend bool operator>(const I& x, const I& y) {
 				return y < x;
 			}
-
 			friend bool operator<=(const I& x, const I& y) {
 				return !(y < x);
 			}
-
 			friend bool operator>=(const I& x, const I& y) {
 				return !(x < y);
 			}

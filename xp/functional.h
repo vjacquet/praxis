@@ -150,7 +150,7 @@ namespace xp {
 	};
 
 	template<BinaryOperation Op>
-	transpose_function_t<Op> transpose(Op op) {
+	inline transpose_function_t<Op> transpose(Op op) {
 		return transpose_function_t<Op>(op);
 	}
 
@@ -201,10 +201,14 @@ namespace xp {
 		typedef T argument_type;
 		typedef typename std::tuple_element<I, T>::type result_type;
 
-		result_type operator()(const argument_type& x) const {
+		const result_type& operator()(const argument_type& x) const {
+			return std::get<I>(x);
+		}
+		result_type& operator()(argument_type& x) const {
 			return std::get<I>(x);
 		}
 	};
+
 
 	// synonyms
 	using std::plus;
