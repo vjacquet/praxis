@@ -179,10 +179,24 @@ namespace xp {
 	}
 
 	template <typename T, StrictWeakOrdering Compare>
-	between_t<Compare> between(const Compare& cmp, T&& lower, T&& upper) {
+	between_t<Compare> between(T&& lower, T&& upper, const Compare& cmp) {
 		// precondition: !cmp(upper, lower)
 		return between_t<Compare>(std::forward(lower), std::forward(upper), cmp);
 	}
+
+	template<typename T, StrictWeakOrdering R>
+	struct equivalent_to {
+		typedef typename R::first_argument_type first_argument_type;
+		typedef typename R::second_argument_type second_argument_type;
+		typedef typename bool result_type;
+
+		R r;
+		explicit equivalent_to(const R r) : R(r) {}
+
+		bool operator()(const first_argument_type& x, const second_argument_type& y) const {
+			return !r(x, y) && !r(y, x);
+		}
+	};
 
 	// from sgi extensions
 	template<typename T>

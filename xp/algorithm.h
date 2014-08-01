@@ -407,7 +407,7 @@ struct guarded_range {
 	predicate guard;
 
 	guarded_range() : first(), guard() {}
-	guarded_range(I first, Guard is_valid) : first(first), guard(guard) {}
+	guarded_range(I first, Guard guard) : first(first), guard(guard) {}
 
 	inline friend bool operator == (const guarded_range& x, const guarded_range& y) {
 		return x.first == y.first && x.guard == y.guard;
@@ -565,7 +565,6 @@ hamming_distance(I1 first1, I1 last1, I2 first2) {
 	typedef typename iterator_traits<I>::value_type value_type;
 	return hamming_distance(first1, last1, first2, std::equal<value_type>());
 }
-
 
 template <InputIterator I1, InputIterator I2, Integer N, Relation Pred>
 N hamming_distance_n(I1 first1, N n, I2 first2, Pred pred) {
