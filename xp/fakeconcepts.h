@@ -17,6 +17,7 @@
 #define Integer typename
 #define Unsigned typename
 #define Integral typename
+#define UnsignedIntegral typename
 #define InputIterator typename
 #define OutputIterator typename
 #define ForwardIterator typename
@@ -26,17 +27,19 @@
 #define Incrementable typename
 #define StrictWeakOrdering typename
 #define Generator typename
+
+#define Container typename
+#define Sequence typename
+#define Range typename
+
+#define Function typename
+#define UnaryFunction typename
+#define BinaryFunction typename
+#define Predicate typename
+#define Relation typename
 #define UnaryOperation typename
 #define BinaryOperation typename
 #define EquivalenceRelation typename
-#define Sequence typename
-#define UnsignedIntegral typename
-
-#define Container typename
-#define Range typename
-#define Function typename
-#define Predicate typename
-#define Relation typename
 
 #define Size std::size_t
 

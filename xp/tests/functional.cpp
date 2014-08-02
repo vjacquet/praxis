@@ -11,9 +11,11 @@
 //using namespace std;
 using namespace xp;
 
+template<typename T, typename Op = std::multiplies<T>>
 struct square {
-	int operator()(int x) const {
-		return x * x;
+	Op op;
+	T operator()(T x) const {
+		return op(x, x);
 	}
 };
 
@@ -57,9 +59,9 @@ TEST(check_dereference_unary_function) {
 	using namespace std;
 
 	int x = 5;
-	auto op = dereference(square {});
+	auto op = dereference(square<int> {});
 
-	static_assert(is_same<int, dereference_function_t<square>::argument_type>::value, "Argument type should be int");
+	static_assert(is_same<int, dereference_function_t<square<int>>::argument_type>::value, "Argument type should be int");
 
 	VERIFY(op(&x) == 25);
 }
@@ -130,6 +132,17 @@ TEST(check_transpose) {
 	using namespace xp;
 	auto r = transpose(select1rst)(1, 2);
 	VERIFY_EQ(2, r);
+}
+
+TEST(check_compose) {
+	using namespace xp;
+	using namespace std;
+
+	static_assert(function_traits<plus<int>>::arity == 2, "Plus is a BinaryOperation");
+	static_assert(function_traits<square<int>>::arity == 1, "Square is a UnaryOperation");
+
+	auto r = compose(plus<int>{}, square<int>{})(3, 4);
+	VERIFY_EQ(25, r);
 }
 
 TESTFIXTURE(functional)

@@ -27,7 +27,7 @@ namespace xp {
 		struct functor_base<F, 2> {
 			typedef typename function_traits<F>::return_type result_type;
 			typedef typename function_traits<F>::argument<0>::type first_argument_type;
-			typedef typename function_traits<F>::argument<1>::type second_argument_type;
+			typedef typename function_traits<F>::argument<function_traits<F>::arity == 1 ? 0 : 1>::type second_argument_type;
 		};
 
 		template <typename R, typename... Args>
@@ -69,14 +69,14 @@ namespace xp {
 	template <typename R, typename... Args>
 	std::function<R(Args...)> memoize(std::function<R(Args...)> func) {
 		using namespace std;
-		typedef typename integral_constant < bool, is_default_constructible<R>::value
+		typedef typename integral_constant <bool, is_default_constructible<R>::value
 			|| is_trivially_default_constructible<R>::value
 			|| is_nothrow_default_constructible<R>::value > ::type is_result_default_constructible_type;
 		return details::memoize(std::move(func), is_result_default_constructible_type());
 	}
 
 	template<Function Op>
-	class dereference_function_t : public details::functor_base < Op, function_traits<Op>::arity > {
+	class dereference_function_t : public details::functor_base<Op, function_traits<Op>::arity> {
 		Op op;
 
 	public:
@@ -107,20 +107,11 @@ namespace xp {
 	}
 
 	template<Function Op>
-	class negation_function_t : public details::functor_base < Op, function_traits<Op>::arity > {
+	class negation_function_t : public details::functor_base<Op, function_traits<Op>::arity> {
 		Op op;
 
 	public:
 		negation_function_t(Op op) : op(op) {}
-
-		template<typename T, class = std::enable_if<function_traits<Op>::arity == 2>::type>
-		auto operator()(const T& x, const T& y) -> decltype(op(x, y)) {
-			return !op(x, y);
-		}
-		template<typename T, class = std::enable_if<function_traits<Op>::arity == 2>::type>
-		auto operator()(typename const T& x, const T& y) const -> decltype(op(x, y)) {
-			return !op(x, y);
-		}
 
 		template<typename T, class = std::enable_if<function_traits<Op>::arity == 1>::type>
 		auto operator()(const T& x) -> decltype(op(x)) {
@@ -130,11 +121,95 @@ namespace xp {
 		auto operator()(const T& x) const -> decltype(op(x)) {
 			return !op(x);
 		}
+
+		template<typename T, class = std::enable_if<function_traits<Op>::arity == 2>::type>
+		auto operator()(const T& x, const T& y) -> decltype(op(x, y)) {
+			return !op(x, y);
+		}
+		template<typename T, class = std::enable_if<function_traits<Op>::arity == 2>::type>
+		auto operator()(const T& x, const T& y) const -> decltype(op(x, y)) {
+			return !op(x, y);
+		}
 	};
 
 	template<Function Op>
 	negation_function_t<Op> negation(Op op) {
 		return negation_function_t<Op>(op);
+	}
+
+	// compose
+	template<UnaryFunction F, Function G>
+	class unary_compose_t : public details::functor_base<G, function_traits<G>::arity < function_traits<F>::arity ? function_traits<F>::arity : function_traits<G>::arity> {
+		F f;
+		G g;
+
+		template<typename T> 
+		result_type compose(const T& x, const T& y, std::true_type) {
+			return f(g(x, y));
+		}
+		template<typename T>
+		result_type compose(const T& x, const T& y, std::true_type) const {
+			return f(g(x, y));
+		}
+
+		template<typename T>
+		result_type compose(const T& x, const T& y, std::false_type) {
+			return f(g(x), g(y));
+		}
+		template<typename T>
+		result_type compose(const T& x, const T& y, std::false_type) const {
+			return f(g(x), g(y));
+		}
+
+	public:
+		typedef typename F::result_type result_type;
+
+		unary_compose_t(F f, G g) : f(f), g(g) {}
+
+		template<typename T, class = std::enable_if<((function_traits<F>::arity == 1) && (function_traits<G>::arity == 1))>::type>
+		auto operator()(const T& x) -> decltype(f(g(x))) {
+			static_assert(function_traits<F>::arity == 1, "F arity should be 1");
+			static_assert(function_traits<G>::arity == 1, "G arity should be 1");
+			return f(g(x));
+		}
+		template<typename T, class = std::enable_if<((function_traits<F>::arity == 1) && (function_traits<G>::arity == 1))>::type>
+		auto operator()(const T& x) const -> decltype(f(g(x))) {
+			static_assert(function_traits<F>::arity == 1, "F arity should be 1");
+			static_assert(function_traits<G>::arity == 1, "G arity should be 1");
+			return f(g(x));
+		}
+
+		/* I believe it should compile, as both conditions cannot be true at the same time, but it does not ?!
+		template<typename T, class = std::enable_if<function_traits<F>::arity == 1 && function_traits<G>::arity == 2>::type>
+		auto operator()(const T& x, const T& y) -> decltype(f(g(x, y))) {
+			return f(g(x, y));
+		}
+		template<typename T, class = std::enable_if<function_traits<F>::arity == 1 && function_traits<G>::arity == 2>::type>
+		auto operator()(const T& x, const T& y) const -> decltype(f(g(x, y))) {
+			return f(g(x, y));
+		}
+
+		template<typename T, class = std::enable_if<function_traits<F>::arity == 2 && function_traits<G>::arity == 1>::type>
+		auto operator()(const T& x, const T& y) -> decltype(f(g(x), g(y))) {
+			return f(g(x), g(y));
+		}
+		template<typename T, class = std::enable_if<function_traits<F>::arity == 2 && function_traits<G>::arity == 1>::type>
+		auto operator()(const T& x, const T& y) const -> decltype(f(g(x), g(y))) {
+			return f(g(x), g(y));
+		}*/
+		template<typename T, class = std::enable_if<((function_traits<F>::arity == 2) || (function_traits<G>::arity == 2))>::type>
+		result_type operator()(const T& x, const T& y) {
+			return compose(x, y, std::integral_constant<bool, function_traits<G>::arity == 2>::type {});
+		}
+		template<typename T, class = std::enable_if<((function_traits<F>::arity == 2) || (function_traits<G>::arity == 2))>::type>
+		result_type operator()(const T& x, const T& y) const {
+			return compose(x, y, std::integral_constant<bool, function_traits<G>::arity == 2>::type {});
+		}
+	};
+
+	template<UnaryFunction F, Function G>
+	unary_compose_t<F, G> compose(F f, G g) {
+		return unary_compose_t<F, G>(f, g);
 	}
 
 	template<BinaryOperation Op>
@@ -195,6 +270,24 @@ namespace xp {
 
 		bool operator()(const first_argument_type& x, const second_argument_type& y) const {
 			return !r(x, y) && !r(y, x);
+		}
+	};
+
+	template<typename T>
+	struct always_true {
+		typedef T argument_type;
+		typedef bool result_type;
+		bool operator()(const T&) const {
+			return true;
+		}
+	};
+
+	template<typename T>
+	struct always_false {
+		typedef T argument_type;
+		typedef bool result_type;
+		bool operator()(const T&) const {
+			return false;
 		}
 	};
 

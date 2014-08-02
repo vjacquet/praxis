@@ -3,17 +3,12 @@
 
 #include "testbench.h"
 
-using namespace std;
+//using namespace std;
+using std::cout;
+using std::endl;
+using std::forward;
 
 namespace {
-	template<typename T>
-	inline
-	const T& min(const T& a, const T& b) {
-		cout << ">> std min" << endl;
-		if (b < a)
-			return b;
-		return a;
-	}
 
 	template<typename T>
 	inline
@@ -23,6 +18,24 @@ namespace {
 			return forward<T>(b);
 		return forward<T>(a);
 	}
+
+	template<typename T>
+	inline
+	const T& min(const T& a, const T& b) {
+		cout << ">> std min" << endl;
+		if (b < a)
+			return b;
+		return a;
+	}
+
+	//template<typename T>
+	//inline
+	//T& min(T& a, T& b) {
+	//	cout << ">> lvalue min" << endl;
+	//	if (b < a)
+	//		return b;
+	//	return a;
+	//}
 
 	template<typename T>
 	struct logged
