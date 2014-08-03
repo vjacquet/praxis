@@ -140,6 +140,7 @@ namespace xp {
 	// compose
 	template<UnaryFunction F, Function G>
 	class unary_compose_t : public details::functor_base<G, function_traits<G>::arity < function_traits<F>::arity ? function_traits<F>::arity : function_traits<G>::arity> {
+		// could be compressed when f or g are empty classes... (cf. boost::compressed_pair)
 		F f;
 		G g;
 
@@ -214,9 +215,11 @@ namespace xp {
 
 	template<BinaryFunction F, UnaryFunction G, UnaryFunction H>
 	class binary_compose_t {
+		// could be compressed when any of f, g, h are empty classes...
 		F f;
 		G g;
 		H h;
+
 	public:
 		typedef typename F::result_type result_type;
 
