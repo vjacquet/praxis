@@ -11,6 +11,8 @@
 //using namespace std;
 using namespace xp;
 
+struct empty_t {};
+
 template<typename T, typename Op = std::multiplies<T>>
 struct square {
 	Op op;

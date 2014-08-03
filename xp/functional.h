@@ -212,6 +212,31 @@ namespace xp {
 		return unary_compose_t<F, G>(f, g);
 	}
 
+	template<BinaryFunction F, UnaryFunction G, UnaryFunction H>
+	class binary_compose_t {
+		F f;
+		G g;
+		H h;
+	public:
+		typedef typename F::result_type result_type;
+
+		binary_compose_t(F f, G g, H h) : f(f), g(g), h(h) {}
+
+		template<typename T, typename U>
+		result_type operator()(const T& x, const U& y) {
+			return f(g(x), h(y));
+		}
+		template<typename T, typename U>
+		result_type operator()(const T& x, const U& y) const {
+			return f(g(x), h(y));
+		}
+	};
+
+	template<BinaryFunction F, UnaryFunction G, UnaryFunction H>
+	binary_compose_t<F, G, H> compose(F f, G g, H h) {
+		return binary_compose_t<F, G, H>(f, g, h);
+	}
+
 	template<BinaryOperation Op>
 	class transpose_function_t {
 		Op op;
