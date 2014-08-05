@@ -17,14 +17,16 @@ namespace xp {
 
 	public:
 		typedef Cont container_type;
+		typedef Pred key_compare;
 		typedef typename Cont::value_type value_type;
 		typedef typename Cont::size_type size_type;
 		typedef typename Cont::reference reference;
 		typedef typename Cont::const_reference const_reference;
 
-		heap() : c() {}
-		heap(const heap& x) : c(x.c) {}
-		explicit heap(const Cont& c) : c(c) {}
+		heap() : c(), p() {}
+		heap(const heap& x) : c(x.c), p(x.p) {}
+		explicit heap(const Cont& c) : c(c), p() {}
+		explicit heap(const key_compare& p) : c(), p(p) {}
 
 		heap& operator=(const heap& x) {
 			c = x.c;
@@ -32,21 +34,26 @@ namespace xp {
 		}
 
 		template<class Alloc, class = typename std::enable_if<std::uses_allocator<Cont, Alloc>::value, void>::type>
-		explicit heap(const Alloc a) : c(a) {}
+		explicit heap(const Alloc& a) : c(a), p() {}
 		template<class Alloc, class = typename std::enable_if<std::uses_allocator<Cont, Alloc>::value, void>::type>
-		heap(const heap& x, const Alloc a) : c(x.c, a) {}
+		heap(const key_compare& p, const Alloc& a) : c(a), p(p) {}
 		template<class Alloc, class = typename std::enable_if<std::uses_allocator<Cont, Alloc>::value, void>::type>
-		heap(const Cont& c, const Alloc a) : c(c, a) {}
+		heap(const heap& x, const Alloc& a) : c(x.c, a), p(x.p) {}
+		template<class Alloc, class = typename std::enable_if<std::uses_allocator<Cont, Alloc>::value, void>::type>
+		heap(const Cont& c, const Alloc& a) : c(c, a), p() {}
+		template<class Alloc, class = typename std::enable_if<std::uses_allocator<Cont, Alloc>::value, void>::type>
+		heap(const key_compare& p, const Cont& c, const Alloc& a) : c(c, a), p(p) {}
 
 		// TODO: add noexcept when implemented in VS :(
-		heap(heap&& x) : c(std::move(x.c)) {}
-		explicit heap(Cont&& c) : c(std::move(c)) {}
+		heap(heap&& x) : c(std::move(x.c)), p(std::move(x.p)) {}
+		explicit heap(Cont&& c) : c(std::move(c)), p() {}
 		template<class Alloc, class = typename std::enable_if<std::uses_allocator<Cont, Alloc>::value, void>::type>
-		heap(heap&& x, const Alloc a) : c(std::move(x.c), a) {}
+		heap(heap&& x, const Alloc& a) : c(std::move(x.c), a), p(std::move(x.p)) {}
 		template<class Alloc, class = typename std::enable_if<std::uses_allocator<Cont, Alloc>::value, void>::type>
-		heap(Cont&& c, const Alloc a) : c(std::move(c), a) {}
+		heap(Cont&& c, const Alloc& a) : c(std::move(c), a), p() {}
 		heap& operator=(heap&& x) {
 			c = std::move(x.c);
+			p = std::move(x.p);
 			return *this;
 		}
 
