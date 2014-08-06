@@ -5,11 +5,11 @@
 #include <functional>
 #include <utility>
 #include <vector>
+#include <queue>
 
 #include "fakeconcepts.h"
 
 namespace xp {
-
 	template<Semiregular T, Predicate Pred = std::less<T>, typename Cont = std::vector<T>>
 	class heap {
 		Cont c;

@@ -207,6 +207,20 @@ std::pair<I, O> copy_atmost_n(I first, I last, N n, O output) {
 	return details::copy_atmost_n(first, last, n, output, std::iterator_traits<I>::iterator_category());
 }
 
+// stable_max is an attempt to render coherent the fact that std::max is unstable.
+// because stability migth have a small performance cost, as it assign the max for all
+// equivalent values, instead of the just the first one.
+// Nevertheless, the argument does not hold because of minmax, that is stable by definition 
+// for two arguments, and that has been specified as such for more than two.
+// So, having max returning something different from the max of minmax is clearly a bug
+// and not just "too theorical".
+// The naming convention should be:
+// - do not prefix when the stability is expected or when it is not required
+// - do prefix with stable when the stability is a secondary goal that can be reach with an
+//   additional cost
+// - do prefix with unstable when the stability s expected but removing it makes it 
+//   more efficient
+// Therefore, this method is unfortunatelly badly named.
 template<typename T, StrictWeakOrdering Compare>
 const T& stable_max(const T& a, const T& b, Compare cmp) {
 	// Returns the second argument when the arguments are equivalent.

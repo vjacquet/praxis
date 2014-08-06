@@ -270,12 +270,6 @@ namespace xp {
 		reference at(size_type n) { bound_check(n); return *(start + n); }
 		const_reference at(size_type n) const { bound_check(n); return *(start + n); }
 
-		reference front() { return (*this)[0]; }
-		const_reference front() const { return (*this)[0]; }
-
-		reference back() { return (*this)[size() - 1]; }
-		const_reference back() const { return (*this)[size() - 1]; }
-
 		pointer data() noexcept {return start;}
 		const_pointer data() const noexcept {return start;}
 
@@ -285,28 +279,17 @@ namespace xp {
 			construct(finish, std::forward<Args>(args)...);
 			++finish;
 		}
-		template<class... Args>
-		void emplace_back(Args&&... args) {
-			emplace(std::forward<Args>(args)...);
-		}
 
 		void insert(const value_type& val) {
 			reserve_1_more();
 			construct(finish, val);
 			++finish;
 		}
-		void push_back(const value_type& val) {
-			insert(val);
-		}
 		void insert(value_type&& val) {
 			reserve_1_more();
 			construct(finish, std::forward<value_type>(val));
 			++finish;
 		}
-		void push_back(value_type&& val) {
-			insert(std::forward<value_type>(val));
-		}
-
 		template<InputIterator I, class Cat = std::enable_if<!std::is_integral<I>, typename std::iterator_traits<I>::iterator_category>>
 		void insert(I first, I last) {
 			insert(first, last, std::iterator_traits<I>::iterator_category())
@@ -319,9 +302,6 @@ namespace xp {
 			}
 			destroy(finish);
 			return pos;
-		}
-		void pop_back() {
-			destroy(--finish);
 		}
 		size_type erase(const value_type& val) {
 			auto f = finish;
@@ -368,6 +348,37 @@ namespace xp {
 
 		allocator_type get_allocator() const noexcept {
 			return alloc;
+		}
+
+		// methods required for stack but, except pop_back,
+		// they are merely wrappers around existing methods.
+		// moreover, the notion of front, back, push_back or even pop_back 
+		// are meaningless in regard of the notion of bag. 
+		// adobe defines three storage categories block, continuous and node.
+		// So may be there is a difference between storage and container, 
+		// a separation of concerns. This would also address the following issue:
+		// shouldn't set, multiset, map, multimap be adaptors ? The storage could be
+		// balanced binary trees, vectors or hashtable? 
+		reference front() { return (*this)[0]; }
+		const_reference front() const { return (*this)[0]; }
+
+		reference back() { return (*this)[size() - 1]; }
+		const_reference back() const { return (*this)[size() - 1]; }
+
+		template<class... Args>
+		void emplace_back(Args&&... args) {
+			emplace(std::forward<Args>(args)...);
+		}
+
+		void push_back(const value_type& val) {
+			insert(val);
+		}
+		void push_back(value_type&& val) {
+			insert(std::forward<value_type>(val));
+		}
+
+		void pop_back() {
+			destroy(--finish);
 		}
 
 	};
