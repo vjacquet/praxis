@@ -1,4 +1,5 @@
 #include <memory>
+#include <vector>
 
 #include "../bag.h"
 #include "../instrumented.h"
@@ -29,6 +30,11 @@ TEST(can_construct_with_value) {
 
 	VERIFY(b.size() == 5);
 	VERIFY(b[2] == 1);
+}
+
+TEST(can_construct_from_iterator_range) {
+	vector<int> v = {1, 2, 3};
+	bag<int> b(v.begin(), v.end());
 }
 
 TEST(can_swap) {

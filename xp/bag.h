@@ -48,7 +48,7 @@ namespace xp {
 		}
 
 		pointer allocate(size_type n) {
-			return AllocTraits::allocate(this->alloc, size_type(n));
+			return AllocTraits::allocate(alloc, size_type(n));
 		}
 		void deallocate(pointer p, size_type n) {
 			AllocTraits::deallocate(alloc, p, n);
@@ -104,14 +104,14 @@ namespace xp {
 		}
 
 		template<InputIterator I>
-		bag(I first, I last, const allocator_type& alloc, std::input_iterator_tag) : alloc(alloc) {
+		bag(I first, I last, const allocator_type& alloc, std::input_iterator_tag) : bag(alloc) {
 			while (first != last) {
 				insert(*first);
 			}
 		}
 
 		template<InputIterator I>
-		bag(I first, I last, const allocator_type& alloc, std::forward_iterator_tag) : alloc(alloc) {
+		bag(I first, I last, const allocator_type& alloc, std::forward_iterator_tag) : bag(alloc) {
 			auto n = std::distance(first, last);
 			start = allocate(size_type(n));
 			end_of_storage = finish = std::uninitialized_copy_n(first, n, start);
@@ -159,10 +159,10 @@ namespace xp {
 			start = allocate(n);
 			end_of_storage = finish = std::uninitialized_fill_n(start, n, val);
 		}
-		template<InputIterator I, class Cat = std::enable_if<!std::is_integral<I>, typename std::iterator_traits<I>::iterator_category>>
+		template<InputIterator I, class Cat = std::enable_if<!std::is_integral<I>::value, typename std::iterator_traits<I>::iterator_category>::type>
 		bag(I first, I last)
 			: bag(first, last, allocator_type(), Cat()) {}
-		template<InputIterator I, class Cat = std::enable_if<!std::is_integral<I>, typename std::iterator_traits<I>::iterator_category>>
+		template<InputIterator I, class Cat = std::enable_if<!std::is_integral<I>::value, typename std::iterator_traits<I>::iterator_category>::type>
 		bag(I first, I last, const allocator_type& alloc)
 			: bag(first, last, alloc, Cat()) {}
 
