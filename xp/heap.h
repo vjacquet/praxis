@@ -10,6 +10,9 @@
 #include "fakeconcepts.h"
 
 namespace xp {
+
+	// The heap does not have ==, !=, <, >, <=, >= operators because the items might pop in the same order 
+	// without being stored in the same order. So it would require poping items to compare two heaps.
 	template<Semiregular T, Predicate Pred = std::less<T>, typename Cont = std::vector<T>>
 	class heap {
 		Cont c;
@@ -93,25 +96,26 @@ namespace xp {
 			swap(p, x.p);
 		}
 
-		inline friend bool operator==(const heap& x, const heap& y) {
-			// is it true ? the items might pop in the same order without being stored in the same order...
-			return x.c == y.c;
-		}
-		inline friend bool operator!=(const heap& x, const heap& y) {
-			return !(x == y);
-		}
-		inline friend bool operator<(const heap& x, const heap& y) {
-			return x.c < y.c;
-		}
-		inline friend bool operator <=(const heap& x, const heap& y) {
-			return !(y < x);
-		}
-		inline friend bool operator >(const heap& x, const heap& y) {
-			return y < x;
-		}
-		inline friend bool operator >=(const heap& x, const heap& y) {
-			return !(x < y);
-		}
+		// 
+		//inline friend bool operator==(const heap& x, const heap& y) {
+		//	// is it true ? the items might pop in the same order without being stored in the same order...
+		//	return x.c == y.c;
+		//}
+		//inline friend bool operator!=(const heap& x, const heap& y) {
+		//	return !(x == y);
+		//}
+		//inline friend bool operator<(const heap& x, const heap& y) {
+		//	return x.c < y.c;
+		//}
+		//inline friend bool operator <=(const heap& x, const heap& y) {
+		//	return !(y < x);
+		//}
+		//inline friend bool operator >(const heap& x, const heap& y) {
+		//	return y < x;
+		//}
+		//inline friend bool operator >=(const heap& x, const heap& y) {
+		//	return !(x < y);
+		//}
 	};
 
 }

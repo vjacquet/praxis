@@ -17,6 +17,7 @@
 namespace xp {
 
 	// The bag is similar to std::vector except for the erase function, which takes the last items to fill the gap.
+	// So, by definition, the bag does not have ==, !=, <, >, <=, >= operators.
 	template<Semiregular T, typename Alloc = std::allocator<T>>
 	class bag {
 		using AllocTraits = std::allocator_traits<Alloc>;
