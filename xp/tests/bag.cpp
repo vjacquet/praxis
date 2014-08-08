@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -114,7 +115,7 @@ TEST(can_erase_disjoint) {
 
 	b.erase(b.begin() + 2, b.begin() + 4);
 	bag<int> expected {0, 1, 8, 9, 4, 5, 6, 7};
-	VERIFY(expected == b);
+	VERIFY(equal(expected.cbegin(), expected.cend(), b.cbegin()));
 }
 
 TEST(can_erase_overlapped) {
@@ -122,7 +123,7 @@ TEST(can_erase_overlapped) {
 
 	b.erase(b.begin() + 5, b.begin() + 8);
 	bag<int> expected {0, 1, 2, 3, 4, 8, 9};
-	VERIFY(expected == b);
+	VERIFY(equal(expected.cbegin(), expected.cend(), b.cbegin()));
 }
 
 TEST(check_move_on_resize) {
