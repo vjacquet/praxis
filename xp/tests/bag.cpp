@@ -136,13 +136,6 @@ TEST(check_move_on_resize) {
 	VERIFY(instrumented_base::counts[instrumented_base::operations::move_construct] == 5);
 }
 
-TEST(check_relops) {
-	bag<int> x {1, 2, 3};
-	bag<int> y {1, 2, 4};
-
-	VERIFY(x < y);
-}
-
 TEST(check_uninitialize_move) {
 
 	typedef instrumented<int> value_type;

@@ -223,27 +223,6 @@ namespace xp {
 			x.swap(y, typename AllocTraits::propagate_on_container_swap());
 		}
 
-		// retational operators
-		inline friend bool operator ==(const bag& x, const bag& y) {
-			return x.size() == y.size() && std::equal(x.begin(), x.end(), y.begin());
-		}
-		inline friend bool operator !=(const bag& x, const bag& y) {
-			return !(x == y);
-		}
-
-		inline friend bool operator <(const bag& x, const bag& y) {
-			return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
-		}
-		inline friend bool operator <=(const bag& x, const bag& y) {
-			return !(y < x);
-		}
-		inline friend bool operator >(const bag& x, const bag& y) {
-			return y < x;
-		}
-		inline friend bool operator >=(const bag& x, const bag& y) {
-			return !(x < y);
-		}
-
 		// iterators bunch
 		iterator begin() noexcept {return start;}
 		const_iterator begin() const noexcept {return start;}
