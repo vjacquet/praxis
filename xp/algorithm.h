@@ -544,6 +544,32 @@ T reduce_nonzeroes(I first, I last, Op op, F fun, const T& z) {
 	return x;
 }
 
+// slide selection to another position.
+// ...****......
+//          ^
+// .....****....
+// from sean parent
+template<RandomAccessIterator I>
+std::pair<I, I> slide(I first, I last, I point) {
+	using namespace std;
+
+	if (point < first) return {point, rotate(point, first, last)};
+	if (last < point) return {rotate(first, last, point), point};
+	return {first, last};
+}
+
+// gather selected elements around a position.
+// ..**.*....*...
+//        ^
+// ....****......
+// from sean parent
+template<BidirectionalIterator I, Predicate P>
+std::pair<I, I> gather(I first, I last, I point, P pred) {
+	using namespace std;
+
+	return {stable_partition(first, point, not1(pred)), stable_partition(point, last, pred)};
+}
+
 template<InputIterator I, typename T, BinaryOperation Op>
 T reduce_nonzeroes(I first, I last, Op op, const T& z) {
 	T x;
