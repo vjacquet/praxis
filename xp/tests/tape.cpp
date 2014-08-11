@@ -466,7 +466,7 @@ namespace stepanov {
 	struct variable_size_iterator_basis<VariableSizeTypeDescriptor,
 		true,
 		std::forward_iterator_tag>
-		: variable_size_iterator_basis_base<VariableSizeTypeDescriptor>
+		: variable_size_iterator_basis_base < VariableSizeTypeDescriptor >
 	{
 	private:
 		typedef variable_size_iterator_basis_base<VariableSizeTypeDescriptor> base;
@@ -491,7 +491,7 @@ namespace stepanov {
 	struct variable_size_iterator_basis<VariableSizeTypeDescriptor,
 		true,
 		std::bidirectional_iterator_tag>
-		: variable_size_iterator_basis_base<VariableSizeTypeDescriptor>
+		: variable_size_iterator_basis_base < VariableSizeTypeDescriptor >
 	{
 	private:
 		typedef variable_size_iterator_basis_base<VariableSizeTypeDescriptor> base;
@@ -521,7 +521,7 @@ namespace stepanov {
 	struct variable_size_iterator_basis<VariableSizeTypeDescriptor,
 		false,
 		std::forward_iterator_tag>
-		: variable_size_iterator_basis_base<VariableSizeTypeDescriptor>
+		: variable_size_iterator_basis_base < VariableSizeTypeDescriptor >
 	{
 	private:
 		typedef variable_size_iterator_basis_base<VariableSizeTypeDescriptor> base;
@@ -560,7 +560,7 @@ namespace stepanov {
 	struct variable_size_iterator_basis<VariableSizeTypeDescriptor,
 		false,
 		std::bidirectional_iterator_tag>
-		: variable_size_iterator_basis_base<VariableSizeTypeDescriptor>
+		: variable_size_iterator_basis_base < VariableSizeTypeDescriptor >
 	{
 	private:
 		typedef variable_size_iterator_basis_base<VariableSizeTypeDescriptor> base;
@@ -609,9 +609,9 @@ namespace stepanov {
 		bool prefixed_size,
 		typename IteratorCategory>
 		inline
-		bool operator==(const variable_size_iterator_basis<VariableSizeTypeDescriptor,
+		bool operator==(const variable_size_iterator_basis < VariableSizeTypeDescriptor,
 		prefixed_size,
-		IteratorCategory> x,
+		IteratorCategory > x,
 		const variable_size_iterator_basis<VariableSizeTypeDescriptor,
 		prefixed_size,
 		IteratorCategory> y) {
@@ -622,9 +622,9 @@ namespace stepanov {
 		bool prefixed_size,
 		typename IteratorCategory>
 		inline
-		bool operator!=(const variable_size_iterator_basis<VariableSizeTypeDescriptor,
+		bool operator!=(const variable_size_iterator_basis < VariableSizeTypeDescriptor,
 		prefixed_size,
-		IteratorCategory> x,
+		IteratorCategory > x,
 		const variable_size_iterator_basis<VariableSizeTypeDescriptor,
 		prefixed_size,
 		IteratorCategory> y) {
@@ -644,9 +644,9 @@ namespace stepanov {
 		adapter::iterator<variable_size_iterator_basis<VariableSizeTypeDescriptor,
 		prefixed_size,
 		IteratorCategory> >last1,
-		adapter::iterator<variable_size_iterator_basis<VariableSizeTypeDescriptor,
+		adapter::iterator<variable_size_iterator_basis < VariableSizeTypeDescriptor,
 		prefixed_size,
-		IteratorCategory> >first2) {
+		IteratorCategory > >first2) {
 		if (first1.state().dsc.equality_preserving) {
 			return std::equal(first1.state().position,
 							  last1.state().position,
@@ -700,7 +700,7 @@ namespace stepanov {
 		adapter::iterator<variable_size_iterator_basis<WritableVariableSizeTypeDescriptor,
 		prefixed_size,
 		IteratorCategory> > last,
-		adapter::output_iterator<variable_size_output_iterator_basis<WritableVariableSizeTypeDescriptor> >
+		adapter::output_iterator < variable_size_output_iterator_basis<WritableVariableSizeTypeDescriptor> >
 		result) {
 		variable_size_output_iterator_basis<WritableVariableSizeTypeDescriptor> basis
 			(std::copy(first.state().position, last.state().position, result.state().position),
@@ -717,10 +717,10 @@ namespace stepanov {
 		typedef value_type reference;
 		typedef value_type const_reference;
 		//typedef void pointer;
-		typedef variable_size_iterator_basis<
+		typedef variable_size_iterator_basis <
 			descriptor_type,
 			descriptor_type::prefixed_size,
-			typename descriptor_type::iterator_category> iterator_state;
+			typename descriptor_type::iterator_category > iterator_state;
 		typedef adapter::iterator<iterator_state> const_iterator;
 		typedef const_iterator iterator;
 		typedef typename const_iterator::difference_type difference_type;
@@ -1104,19 +1104,15 @@ namespace stepanov {
 namespace xp {
 
 	// changes made:
-	// - changed copy & move methods to return the new result iterator
-	// - renamed end_of_block as end_of_storage, as the former suggests segmented memory instead of contiguous.
-	//   end_of_storage is used in HP implementation of STL, in 1994.
-	// - changed the type of finish and end_of_storage to pointer, as most of the time finish is incremented
-	//   while content_end is used for algorithms.
 	// - the extent inherit from the Copier that some copier could maintain states while we still have empty 
 	//   base class optimization
 	// - in the extent:
-	//   - renamed new_block_start as allocate_bigger
+	//   - removed new_block_start as allocate_bigger
 	//   - renamed replace_start as relocate
 	//   - added unguarded_ version of header access methods
+	//   - removed _space suffix
 	// - removed byte_ prefix from the extent methods as it is a byte extent.
-	// - added allocator but expect a stateless one.
+	// - added allocator
 
 	typedef std::uint8_t byte;
 
@@ -1136,7 +1132,7 @@ namespace xp {
 	// I do not feel the name Copier is adequate, as it also moves and cleans up.
 	template<typename Metadata, typename Copier = byte_copier, typename Alloc = std::allocator<byte>>
 	class extent : private Copier, private Alloc {
-		using AllocTraits = std::allocator_traits<Alloc>;
+		using AllocTraits = std::allocator_traits < Alloc > ;
 
 		typedef typename Alloc allocator_type;
 		typedef typename std::allocator_traits<allocator_type>::pointer pointer;
@@ -1147,73 +1143,114 @@ namespace xp {
 		pointer start;
 
 		struct header_t {
-			pointer finish;
-			pointer end_of_storage; 
+			size_type capacity;
+			size_type size;
 			Metadata metadata;
 		};
 		header_t* unguarded_header() {
-			return reinterpret_cast<header_t*>(start) - 1;
+			return reinterpret_cast<header_t*>(start)-1;
 		}
 		const header_t* unguarded_header() const {
-			return reinterpret_cast<const header_t*>(start) - 1;
+			return reinterpret_cast<const header_t*>(start)-1;
 		}
 		size_type unguarded_size() const {
-			return unguarded_header()->finish - start;
+			return unguarded_header()->size;
 		}
 		size_type unguarded_capacity() const {
-			return unguarded_header()->end_of_storage - start;
+			return unguarded_header()->capacity;
 		}
 
-		pointer allocate(size_type n) {
-			// finish & metadata are not set.
-			auto hdr = reinterpret_cast<header_t*>(AllocTraits::allocate(get_allocator(), n + sizeof(header_t)));
-			auto p = reinterpret_cast<pointer>(hdr + 1);
-			hdr->end_of_storage = p + n;
-			return p;
+		header_t* allocate(size_type n) {
+			return reinterpret_cast<header_t*>(AllocTraits::allocate(get_allocator(), n + sizeof(header_t)));
 		}
-		void deallocate(pointer p) {
-			if (p == nullptr) return;
-			auto hdr = reinterpret_cast<header_t*>(p) - 1;
-			(&hdr->metadata)->~Metadata();
-			AllocTraits::deallocate(get_allocator(), p, (hdr->end_of_storage - p) + sizeof(header_t));
+		void deallocate(header_t* p) {
+			AllocTraits::deallocate(get_allocator(), reinterpret_cast<pointer>(p), p->capacity + sizeof(header_t));
+		}
+		void destroy(header_t* h) {
+			(&h->metadata)->~Metadata();
+		}
+		void relocate(pointer p) {
+			if (start) {
+				auto h = unguarded_header();
+				start = p;
+				destroy(h);
+				deallocate(h);
+			} else {
+				start = p;
+			}
 		}
 
 		pointer initialize_storage(size_type n) {
-			auto p = allocate(n);
-			auto h = reinterpret_cast<header_t*>(p)-1;
-			h->finish = p;
+			auto h = allocate(n);
+			h->capacity = n;
+			h->size = 0;
 			new(&h->metadata) Metadata();
-			return p;
+			return reinterpret_cast<pointer>(h+1);
 		}
 
+		void reallocate(size_type n) {
+			auto h = unguarded_header();
+			auto p = allocate(n);
+			p->capacity = n;
+			p->size = h->size;
+
+			pointer data = reinterpret_cast<pointer>(p + 1);
+			move(start, start + h->size, data);
+
+			new(&h->metadata) Metadata(std::move_if_noexcept(h->metadata));
+
+			start = data;
+			deallocate(h);
+		}
 		void grow(size_type additional) {
-			// too complex
-			if (start) {
-				auto n = unguarded_capacity();
-				auto p = allocate(n + std::max(n, additional));
-				auto h = reinterpret_cast<header_t*>(p) - 1;
-				auto hdr = unguarded_header();
-				new(&h->metadata) Metadata(std::move_if_noexcept(hdr->metadata));
-				h->finish = move(start, hdr->finish, p);
-				std::swap(start, p);
-				deallocate(p);
-			} else {
-				start = initialize_storage(additional);
-			}
+			auto n = unguarded_capacity();
+			reallocate(n + std::max(n, additional));
+		}
+		void grow(size_type additional, size_type offset) {
+			auto h = unguarded_header();
+			auto n = h->capacity;
+			n += std::max(n, additional);
+			auto p = allocate(n);
+			p->capacity = n;
+			p->size = h->size;
+
+			pointer data = reinterpret_cast<pointer>(p + 1);
+			move(start, start + offset, data);
+			move(start, start + h->size, data + offset + additional);
+
+			new(&h->metadata) Metadata(std::move_if_noexcept(h->metadata));
+
+			start = data;
+			deallocate(h);
 		}
 
 	public:
 		extent() : start(nullptr) {}
 		extent(const extent& x) : start(nullptr) {
 			if (!x.empty()) {
-				auto hdr = x.unguarded_header();
-				start = allocate(n);
-				auto h = header();
-				new(h&->metadata) Metadata(*hdr->metadata);
-				h->finish = copy(x.start, hdr->finish, start);
+				auto n = x.unguarded_size();
+				auto h = allocate(n);
+				h->capacity = n;
+				h->size = n;
+				start = reinterpret_cast<pointer>(h + 1);
+
+				copy(x.start, x.start  + n, start);
+
+				new(h&->metadata) Metadata(*x.unguarded_header()->metadata);
 			}
 		}
-		~extent() { deallocate(start); }
+		~extent() { relocate(nullptr); }
+
+		extent& operator=(const extent& x) {
+			if (&x != this) {
+				extent tmp(x);
+				swap(*this, tmp);
+			}
+			return *this;
+		}
+		friend void swap(extent& x, extent& y) {
+			std::swap(x.start, y.start);
+		}
 
 		allocator_type get_allocator() const noexcept {
 			return *static_cast<const Alloc*>(this);
@@ -1221,8 +1258,11 @@ namespace xp {
 
 		pointer begin() { return start; }
 		const_pointer begin() const { return start; }
-		pointer end() { return start ? unguarded_header()->finish : start; }
-		const_pointer end() const { return start ? unguarded_header()->finish : start; }
+		pointer end() { return start + size(); }
+		const_pointer end() const { return start + size(); }
+
+		pointer data() { return start; }
+		const_pointer data() const { return start; }
 
 		Metadata* metadata() {
 			return start ? &(unguarded_header()->metadata) : nullptr;
@@ -1250,17 +1290,59 @@ namespace xp {
 		void remaining_capacity(size_type n) {
 			if (remaining_capacity() == n)
 				return;
-			
+
 			if (start) {
-				auto p = allocate(unguarded_size() + n);
-				auto h = reinterpret_cast<header_t*>(p) - 1;
-				h->finish = move(start, start + unguarded_size(), p);
-				new(h&->metadata) Metadata(std::move_if_noexcept(*hdr->metadata));
-				std::swap(start, p);
-				deallocate(p);
+				reallocate(unguarded_size() + n);
 			} else {
 				start = n ? initialize_storage(n) : nullptr;
 			}
+		}
+
+		template <typename Writer>
+		pointer insert(pointer position, size_t inserted_byte_size, Writer writer) {
+			if (!inserted_byte_size) return position;
+			if (remaining_capacity() < inserted_byte_size) {
+				size_t offset = position - start;
+				grow(inserted_byte_size, offset);
+				position = start + offset;
+			} else {
+				pointer last = end();
+				pointer p = last + inserted_byte_size;
+				move_backward(position, last, p);
+			}
+			writer(position);
+			unguarded_header()->size += inserted_byte_size;
+			return position;
+		}
+
+		template <typename Writer>
+		pointer insert(size_t inserted_byte_size, Writer writer) {
+			if (!inserted_byte_size) return end();
+			if (remaining_capacity() < inserted_byte_size) {
+				grow(inserted_byte_size);
+			}
+			pointer last = end();
+			writer(last);
+			unguarded_header()->size += inserted_byte_size;
+			return last;
+		}
+
+		// Done in a way that is safe for concurrent readers if the erase is at the end.
+		pointer erase(pointer first, size_t erased_byte_size) {
+			if (erased_byte_size) {
+				pointer last = first + erased_byte_size;
+				auto n = unguarded_header()->size - erased_byte_size;
+				if (!n) {
+					clean_up(first, last);
+					relocate(nullptr);
+					return nullptr;
+				} else {
+					move(last, end(), first);
+					unguarded_header()->size = n;
+					if (end() < last) clean_up(end(), last);
+				}
+			}
+			return first;
 		}
 	};
 
@@ -1300,6 +1382,9 @@ TEST(check_storage) {
 
 	extent<int> ext;
 	VERIFY(ext.empty());
+
+	ext.remaining_capacity(16);
+	VERIFY_EQ(16, ext.capacity());
 }
 
 TESTFIXTURE(tape)
