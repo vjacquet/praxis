@@ -271,22 +271,24 @@ template<ForwardIterator I, Function Cost>
 std::pair<I, I> minmax_cost_element(I first, I last, Cost cost) {
 	using namespace std;
 
-	auto result = make_pair(first, first);
 	if (first != last) {
+		auto min = first;
+		auto max = first;
 		auto lowest = cost(*first);
 		auto highest = lowest;
 		for (++first; first != last; ++first) {
 			auto val = cost(*first);
 			if (val < lowest) {
 				lowest = val;
-				result.first = first;
+				min = first;
 			} else if (!(val < highest)) {
 				highest = val;
-				result.second = first;
+				max = first;
 			}
 		}
+		return {min, max};
 	}
-	return result;
+	return {last, last};
 }
 
 template<Range R>
