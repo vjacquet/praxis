@@ -686,7 +686,6 @@ namespace stepanov {
 		}
 	};
 
-
 	/* Specialized Copy */
 
 	template <typename WritableVariableSizeTypeDescriptor,
@@ -1132,7 +1131,7 @@ namespace xp {
 	// I do not feel the name Copier is adequate, as it also moves and cleans up.
 	template<typename Metadata, typename Copier = byte_copier, typename Alloc = std::allocator<byte>>
 	class extent : private Copier, private Alloc {
-		using AllocTraits = std::allocator_traits < Alloc > ;
+		using AllocTraits = std::allocator_traits<Alloc>;
 
 		typedef typename Alloc allocator_type;
 		typedef typename std::allocator_traits<allocator_type>::pointer pointer;
@@ -1352,10 +1351,27 @@ namespace xp {
 			std::size_t number_of_elements;
 		};
 		extent<metadata_t> ext;
+
+		std::size_t& number_of_elements() { // only safe when non-empty
+			return ext.metadata()->number_of_elements;
+		}
+		const std::size_t& number_of_elements() const { // only safe when non-empty
+			return ext.metadata()->number_of_elements;
+		}
+
 	public:
 		typedef Descriptor descriptor_type;
 		typedef typename Descriptor::value_type value_type;
+		typedef std::size_t size_type;
 
+		bool empty() const { return ext.empty(); }
+		
+		size_type size() const { return empty() ? size_type(0) : number_of_elements(); }
+		// returns (a conservative estimate of) the number of values the tape can hold
+		// without reallocation
+		size_type estimated_capacity() const {
+			return size() + (ext.remaining_byte_capacity() / sizeof(value_type));
+		}
 	};
 
 }
@@ -1381,6 +1397,8 @@ TEST(check_storage) {
 	using namespace xp;
 
 	extent<int> ext;
+	VERIFY_EQ(1, sizeof(std::allocator<byte>));
+	SKIP_EQ(sizeof(void*), sizeof(ext), "Damn you, Visual C++! Code boat with > 1 empty base class.");
 	VERIFY(ext.empty());
 
 	ext.remaining_capacity(16);

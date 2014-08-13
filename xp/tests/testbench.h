@@ -114,8 +114,13 @@ if(!(e == a)) { \
 	msg << POS "VERIFY_EQ("#expected","#actual") => (" << e << ")!=(" << a << ")"; \
 	throw std::logic_error(msg.str()); \
 }}
-#define SKIP(expr) \
-{ auto e = (expr); if(e) { cout << "SKIPPED" << endl; return; }  }
+#define SKIP(expr, reason) \
+{ auto e = (expr); if(e) { std::cout << "SKIP: " << reason << std::endl; return; } }
+
+#define SKIP_EQ(expected, actual, reason) \
+{ auto e = (expected); auto a = (actual); \
+if(!(e == a)) { \
+	std::cout << POS "SKIP_EQ("#expected","#actual") : " << reason << std::endl; return; } }
 
 #define TESTFIXTURE(b) struct b##_fixture : public fixture { b##_fixture() : fixture(Q(b)) {} \
 private: virtual void run(size_t& pass, size_t& fail) const { testrange<0, __LINE__>().run(pass, fail); } \
