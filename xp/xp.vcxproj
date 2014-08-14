@@ -67,7 +67,9 @@
   <ItemGroup>
     <ClCompile Include="instrumented.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sandbox\quant.cpp" />
     <ClCompile Include="sandbox\record.cpp" />
+    <ClCompile Include="sandbox\units.cpp" />
     <ClCompile Include="tests\algebra.cpp" />
     <ClCompile Include="tests\algorithm.cpp" />
     <ClCompile Include="tests\bag.cpp" />
@@ -82,7 +84,7 @@
     <ClCompile Include="tests\k_array.cpp" />
     <ClCompile Include="tests\min.cpp" />
     <ClCompile Include="tests\ranges.cpp" />
-    <ClCompile Include="tests\tape.cpp" />
+    <ClCompile Include="sandbox\tape.cpp" />
     <ClCompile Include="tests\trivalent.cpp" />
     <ClCompile Include="tests\utility.cpp" />
     <ClCompile Include="tests\while_each.cpp" />

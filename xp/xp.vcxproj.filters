@@ -72,13 +72,19 @@
     <ClCompile Include="tests\integer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sandbox\record.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sandbox\units.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sandbox\quant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="tests\heap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tests\tape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sandbox\record.cpp">
+    <ClCompile Include="sandbox\tape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -8,6 +8,11 @@
 #include <exception>
 #include <utility>
 
+// /!\ work in progress
+// - implement storage
+// - implement natural (include 0 ? see http://en.wikipedia.org/wiki/Natural_number)
+// - finaly, implement integer...
+
 namespace xp {
 
 	namespace details {

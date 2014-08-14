@@ -2,7 +2,7 @@
 
 #include "../heap.h"
 
-#include "testbench.h"
+#include "../tests/testbench.h"
 
 using namespace std;
 using namespace xp;
