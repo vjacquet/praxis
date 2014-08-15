@@ -87,6 +87,9 @@
     <ClCompile Include="sandbox\tape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sandbox\math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="numeric.h">

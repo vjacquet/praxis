@@ -310,6 +310,8 @@ namespace xp {
 			return f1;
 		}
 
+		// VJA: reserve ensures the capacity will be at least "n". Yet, shouldn't reserve mean
+		//      i want enough room for n more items?
 		void reserve(size_type n) {
 			if (capacity() < n) {
 				reallocate(n);
