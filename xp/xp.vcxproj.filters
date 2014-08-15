@@ -143,5 +143,8 @@
     <ClInclude Include="heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="math\complex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
