@@ -1,3 +1,9 @@
+#ifndef __COMPLEX_H__
+#define __COMPLEX_H__
+
+#include <tuple>
+#include <utility>
+
 namespace xp {
 
 	template<typename T>
@@ -8,7 +14,7 @@ namespace xp {
 		complex(T r, T i) : re(r), im(i) {}
 
 	public:
-		typedef T vaue_type;
+		typedef T value_type;
 
 		// ctor
 		complex() = default;
@@ -44,7 +50,7 @@ namespace xp {
 
 		// arithmetic operators
 		friend complex operator-(const complex& x) {
-			return {-x.re, -y.im};
+			return {-x.re, -x.im};
 		}
 
 		template<typename U>
@@ -92,7 +98,8 @@ namespace xp {
 		template<typename U>
 		complex& operator*=(const complex<U>& x) {
 			auto r = Re(x), i = Im(x);
-			return {re*r - im*i, im*r + re*i};
+			std::tie(re, im) = std::make_pair(re*r - im*i, im*r + re*i);
+			return *this;
 		}
 		template<typename U>
 		complex& operator*=(const U& x) {
@@ -114,7 +121,8 @@ namespace xp {
 		complex& operator/=(const complex<U>& x) {
 			auto r = Re(x), i = Im(x);
 			auto d = r*r + i*i;
-			return {(re*r + im*i) / d, (im*r - re*i) / d};
+			std::tie(re, im) = std::make_pair((re*r + im*i) / d, (im*r - re*i) / d);
+			return *this;
 		}
 		template<typename U>
 		complex& operator/=(const U& x) {
@@ -142,10 +150,6 @@ namespace xp {
 			return !(x == y)
 		}
 
-		friend complex conjugate(const complex& x) {
-			return {x.re, -x.im};
-		}
-
 		// totally ordered is not applicable
 		// see <http://en.wikipedia.org/wiki/Complex_number
 
@@ -154,6 +158,14 @@ namespace xp {
 		friend const T& Re(const complex& x) { return x.re; }
 		friend T& Im(complex& x) { return x.im; }
 		friend const T& Im(const complex& x) { return x.im; }
+
+		friend complex conjugate(const complex& x) {
+			return {x.re, -x.im};
+		}
+		friend complex inverse(const complex& x) {
+			auto d = r*r + i*i;
+			return {x.re/d, -x.im/d};
+		}
 	};
 
 	template<typename T>
@@ -167,22 +179,6 @@ namespace xp {
 		return sqrt(r*r + i*i);
 	}
 
-	// see <http://en.wikipedia.org/wiki/Sign_function>.
-	template<typename T>
-	int csgn(const T& x, const T& zero) {
-		if (x < zero) return -1;
-		if (x > zero) return 1;
-		return 0;
-	}
-	template<typename T>
-	int csgn(const T& x) {
-		return csgn(x, {});
-	}
-
-	template<typename T>
-	T sgn(const T& x) {
-		auto y = abs(x);
-		if (x == y) return T {};
-		return x / y;
-	}
 }
+
+#endif __COMPLEX_H__

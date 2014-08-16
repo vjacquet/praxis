@@ -103,6 +103,8 @@
     <ClInclude Include="iterator.h" />
     <ClInclude Include="k_array.h" />
     <ClInclude Include="math\complex.h" />
+    <ClInclude Include="math\fraction.h" />
+    <ClInclude Include="math\math.h" />
     <ClInclude Include="memory.h" />
     <ClInclude Include="numeric.h" />
     <ClInclude Include="benchmark.h" />

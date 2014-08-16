@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "../math/complex.h"
+#include "../math/fraction.h"
 #include "../tests/testbench.h"
 
 
@@ -45,6 +46,15 @@ TEST(check_imaginary_part) {
 	auto r = 5.;
 
 	VERIFY_EQ(0, Im(r));
+}
+
+TEST(can_compare_fractions) {
+	using namespace xp;
+
+	fraction<double> a {1, 2};
+	fraction<double> b {1, 3};
+
+	VERIFY(b < a);
 }
 
 TESTFIXTURE(math)
