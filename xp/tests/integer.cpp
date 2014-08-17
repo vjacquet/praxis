@@ -1,4 +1,4 @@
-#include "../integer.h"
+#include "../math/integer.h"
 #include "testbench.h"
 
 using namespace xp;

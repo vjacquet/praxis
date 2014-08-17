@@ -137,9 +137,6 @@
     <ClInclude Include="trivalent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="integer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -150,6 +147,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="math\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="math\integer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

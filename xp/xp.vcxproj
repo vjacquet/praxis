@@ -99,7 +99,7 @@
     <ClInclude Include="function_traits.h" />
     <ClInclude Include="heap.h" />
     <ClInclude Include="instrumented.h" />
-    <ClInclude Include="integer.h" />
+    <ClInclude Include="math\integer.h" />
     <ClInclude Include="iterator.h" />
     <ClInclude Include="k_array.h" />
     <ClInclude Include="math\complex.h" />

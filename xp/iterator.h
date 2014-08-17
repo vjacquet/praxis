@@ -61,7 +61,7 @@ namespace xp {
 				self->successor();
 				return *self;
 			}
-			I& operator++(int) {
+			I operator++(int) {
 				I i = *this;
 				++*this;
 				return i;
@@ -73,7 +73,7 @@ namespace xp {
 				self->predecessor();
 				return *self;
 			}
-			I& operator--(int) {
+			I operator--(int) {
 				I i = *this;
 				--*this;
 				return i;
