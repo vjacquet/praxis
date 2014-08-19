@@ -204,7 +204,7 @@ TEST(check_get_lowest_naive) {
 
 TEST(check_get_lowest_wierd) {
 #ifdef _DEBUG
-	SKIP(true)
+	SKIP(true, "Cannot run in debug because of some VC++ checks.")
 #endif
 
 	auto& v = Sample;

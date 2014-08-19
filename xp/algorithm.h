@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <stack>
 #include <utility>
 
 #include "fakeconcepts.h"
@@ -546,6 +547,53 @@ T reduce_nonzeroes(I first, I last, Op op, F fun, const T& z) {
 	return x;
 }
 
+template<InputIterator I, typename T, BinaryOperation Op>
+T reduce_nonzeroes(I first, I last, Op op, const T& z) {
+	T x;
+	do {
+		if (first == last) return z;
+		x = *first;
+		++first;
+	} while (x == z);
+	while (first != last) {
+		T y = *first;
+		if (y != z) x = op(x, y);
+		++first;
+	}
+	return x;
+}
+
+template<InputIterator I, typename T, BinaryOperation Op>
+T foldl(I first, I last, Op op, const T& z) {
+	if (first == last) return z;
+	return reduce_nonempty(first, last, op);
+}
+
+namespace details {
+	template<InputIterator I, typename T, BinaryOperation Op>
+	T foldr_nonempty(I first, I last, Op op, std::input_iterator_tag) {
+		std::stack<std::iterator_traits<I>::value_type> stk;
+		std::copy(first, last, back_inserter(stk));
+		auto r = stk.top();
+		stk.pop();
+		while (!stk.empty()) {
+			r = op(stk.top(), r);
+			stk.pop();
+		}
+		return r;
+	}
+
+	template<BidirectionalIterator I, typename T, BinaryOperation Op>
+	T foldr_nonempty(I first, I last, Op op, std::bidirectional_iterator_tag) {
+		return reduce_nonempty(std::reverse_iterator<I>(last), std::reverse_iterator<I>(first), op);
+	}
+}
+template<InputIterator I, typename T, BinaryOperation Op>
+T foldr(I first, I last, Op op, const T& z) {
+	if (first == last) return z;
+	return foldr_nonempty(first, last, op, std::iterator_traits<I>::iterator_category {});
+}
+
 // slide selection to another position.
 // ...****......
 //          ^
@@ -570,22 +618,6 @@ std::pair<I, I> gather(I first, I last, I point, P pred) {
 	using namespace std;
 
 	return {stable_partition(first, point, not1(pred)), stable_partition(point, last, pred)};
-}
-
-template<InputIterator I, typename T, BinaryOperation Op>
-T reduce_nonzeroes(I first, I last, Op op, const T& z) {
-	T x;
-	do {
-		if (first == last) return z;
-		x = *first;
-		++first;
-	} while (x == z);
-	while (first != last) {
-		T y = *first;
-		if (y != z) x = op(x, y);
-		++first;
-	}
-	return x;
 }
 
 template <InputIterator I1, InputIterator I2, Relation Pred>
