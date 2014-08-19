@@ -61,6 +61,13 @@ namespace xp {
 		at_scope_exit& operator=(const at_scope_exit&) = delete;
 	};
 
+	// from Sedgewick
+	template<typename T>
+	T bits(T x, int k, int j) {
+		static_assert(std::is_unsigned<T>::value, "bits requires unsigned");
+		return (x >> k) & ~(~0 << j);
+	}
+
 } // namespace xp
 
 #endif __UTILITY_H__
