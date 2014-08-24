@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include <iterator>
 #include <vector>
 
@@ -14,7 +16,7 @@ namespace quant {
 	T pv_discrete(I first, I last, Times t, const T& r) {
 		T pv {0};
 		while (first != last) {
-			pv += *first / pow(T {1} +r, *t++);
+			pv += *first / std::pow(T {1} + r, *t++);
 		}
 		return pv;
 	}

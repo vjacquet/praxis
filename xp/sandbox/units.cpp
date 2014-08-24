@@ -41,23 +41,15 @@ namespace xp {
 			inline friend bool operator==(const quantity& x, const quantity& y) {
 				return x.value == y.value;
 			}
-			inline friend bool operator!=(const quantity& x, const quantity& y) {
-				return !(x == y);
-			}
+			inline friend bool operator!=(const quantity& x, const quantity& y) { return !(x == y); }
 
 			// TotallyOrdered
 			inline friend bool operator<(const quantity& x, const quantity& y) {
 				return x.value < y.value;
 			}
-			inline friend bool operator <=(const quantity& x, const quantity& y) {
-				return !(y < x);
-			}
-			inline friend bool operator >(const quantity& x, const quantity& y) {
-				return y < x;
-			}
-			inline friend bool operator >=(const quantity& x, const quantity& y) {
-				return !(x < y);
-			}
+			inline friend bool operator <=(const quantity& x, const quantity& y) { return !(y < x); }
+			inline friend bool operator >(const quantity& x, const quantity& y) { return y < x; }
+			inline friend bool operator >=(const quantity& x, const quantity& y) { return !(x < y); }
 
 			// Arithmetics
 
