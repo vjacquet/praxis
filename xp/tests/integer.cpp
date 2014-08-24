@@ -11,4 +11,12 @@ TEST(can_construct_integer) {
 	VERIFY(sign(i) > 0);
 }
 
+
+TEST(can_lshift_natural) {
+	using namespace xp;
+
+	natural n = 1;
+	n <<= 36;
+}
+
 TESTFIXTURE(integer)

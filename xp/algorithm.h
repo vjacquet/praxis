@@ -594,6 +594,20 @@ T foldr(I first, I last, Op op, const T& z) {
 	return foldr_nonempty(first, last, op, std::iterator_traits<I>::iterator_category {});
 }
 
+template<BidirectionalIterator I, OutputIterator O, UnaryOperation Op>
+O transform_backwards(I first, I last, O result, Op op) {
+	while (first != last)
+		*--result = op(*--last);
+	return result;
+}
+
+template<BidirectionalIterator I1, BidirectionalIterator I2, OutputIterator O, UnaryOperation Op>
+O transform_backwards(I1 first1, I1 last1, I2 last2, O result, Op op) {
+	while (first1 != last1)
+		*--result = op(*--last1, *--last2);
+	return result;
+}
+
 // slide selection to another position.
 // ...****......
 //          ^
