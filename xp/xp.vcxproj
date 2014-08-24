@@ -70,6 +70,7 @@
     <ClCompile Include="sandbox\math.cpp" />
     <ClCompile Include="sandbox\quant.cpp" />
     <ClCompile Include="sandbox\record.cpp" />
+    <ClCompile Include="sandbox\set_operations.cpp" />
     <ClCompile Include="sandbox\units.cpp" />
     <ClCompile Include="tests\algebra.cpp" />
     <ClCompile Include="tests\algorithm.cpp" />
