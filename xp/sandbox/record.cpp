@@ -6,6 +6,8 @@
 
 #include "../tests/testbench.h"
 
+// investigate strongly typed field names and how thy could be used as named parameters.
+
 namespace xp {
 	using std::string;
 	using std::wstring;
@@ -42,7 +44,7 @@ namespace xp {
 	}
 
 	template<class T, class... Types>
-	size_t get_index(const std::tuple<Types...>& t) {
+	size_t get_index(const std::tuple<Types...>& ) {
 		return index_of<T, 0, Types...>::value;
 	}
 
@@ -141,7 +143,7 @@ TEST(can_create_record) {
 	using namespace xp;
 	Person vjacquet {"vjacquet", "vjacquet@example.com", "+1 555 033 1234"};
 
-	VERIFY_EQ(0, get_index<name_tag>(vjacquet.fields));
+	VERIFY_EQ(0U, get_index<name_tag>(vjacquet.fields));
 	VERIFY_EQ(3 * sizeof(std::string), sizeof(Person));
 
 	VERIFY_EQ("vjacquet", vjacquet[fullname]);
@@ -156,6 +158,7 @@ TEST(can_update_record) {
 	VERIFY_EQ("+1 555 033 9871", vjacquet[phone_number]);
 	VERIFY_EQ("jacquet@example.com", vjacquet[email]);
 
+	// Is is possible to enforce that the same parameter is not used twice ?
 	vjacquet.update(phone_number = "+1 555 033 1234", email = "vjacquet@example.com");
 
 	VERIFY_EQ("vjacquet", vjacquet[fullname]);

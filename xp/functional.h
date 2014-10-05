@@ -413,7 +413,7 @@ namespace xp {
 
 			// precondition: n >= 0
 			if (n == 0) return r;
-			while (true) {
+			for (;;) {
 				if (odd(n)) {
 					r = op(r, a);
 					if (n == 1) return r;

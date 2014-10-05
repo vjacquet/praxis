@@ -39,7 +39,7 @@ TEST(check_at_scope_exit) {
 
 TEST(check_bits) {
 	unsigned i = 11;
-	VERIFY_EQ(2, bits(i, 2, 2));
+	VERIFY_EQ(2U, bits(i, 2, 2));
 }
 
 TESTFIXTURE(utility)

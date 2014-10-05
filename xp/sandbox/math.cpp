@@ -4,7 +4,6 @@
 #include "../math/fraction.h"
 #include "../tests/testbench.h"
 
-
 TESTBENCH()
 
 TEST(check_default_ctor) {

@@ -20,8 +20,11 @@ TEST(check_k_array) {
 
 	int iota = 0;
 	size_t m = extent<decltype(a), 0>::value;
+	VERIFY_EQ(2U, m);
 	size_t n = extent<decltype(a), 1>::value;
+	VERIFY_EQ(3U, n);
 	size_t p = extent<decltype(a), 2>::value;
+	VERIFY_EQ(4U, p);
 	for (size_t i = 0; i < dim<0>(a); ++i) {
 		for (size_t j = 0; j < dim<1>(a); ++j) {
 			for (size_t k = 0; k < dim<2>(a); ++k) {

@@ -41,6 +41,8 @@ namespace {
 		void reset() {
 			called = 0;
 		}
+
+		Foo& operator=(const Foo&) = delete;
 	};
 
 	Foo const& get_lowest_naive(const Foo* first, const Foo* last) {

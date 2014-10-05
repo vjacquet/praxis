@@ -24,6 +24,8 @@ struct instrumented {
 		++count;
 		return val == other;
 	}
+
+	instrumented& operator=(const instrumented&) = delete;
 };
 
 struct is_not_end_of_string {

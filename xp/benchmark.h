@@ -108,7 +108,7 @@ namespace xp {
 
 		D threshold {100};
 		N n = 1;
-		while (true) {
+		for (;;) {
 			N i = 0;
 			timer<C> t;
 			while (i < n) {

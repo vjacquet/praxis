@@ -31,6 +31,8 @@ struct fixture {
 		std::cout << std::endl;
 	}
 
+	fixture& operator=(const fixture&) = delete;
+
 protected:
 	fixture(const char* name);
 
@@ -93,7 +95,7 @@ struct testrange {\
 		testrange<mid, end>().run(pass, fail);\
 	}\
 };\
-template <size_t begin> struct testrange<begin, begin> { void run(size_t& pass, size_t& fail) {}; };
+template <size_t begin> struct testrange<begin, begin> { void run(size_t& , size_t& ) {}; };
 
 #define TEST(fun_name) template <> \
 struct testcase<__LINE__> { \
@@ -106,20 +108,20 @@ inline void testcase<__LINE__>::run()
 #define Q(e)  Q_(e)
 #define POS   __FILE__ "(" Q(__LINE__) "): "
 #define VERIFY(expr) \
-{ auto e = (expr); if(!e) { throw std::logic_error(POS "VERIFY("#expr")"); }  }
+{ bool ___e = (expr); if(!___e) { throw std::logic_error(POS "VERIFY("#expr")"); }  }
 #define VERIFY_EQ(expected, actual) \
-{ auto e = (expected); auto a = (actual); \
-if(!(e == a)) { \
+{ auto ___e = (expected); auto ___a = (actual); \
+if(!(___e == ___a)) { \
 	std::stringstream msg; \
-	msg << POS "VERIFY_EQ("#expected","#actual") => (" << e << ")!=(" << a << ")"; \
+	msg << POS "VERIFY_EQ("#expected","#actual") => (" << ___e << ")!=(" << ___a << ")"; \
 	throw std::logic_error(msg.str()); \
 }}
 #define SKIP(expr, reason) \
-{ auto e = (expr); if(e) { std::cout << "SKIP: " << reason << std::endl; return; } }
+{ auto ___e = (expr); if(___e) { std::cout << "SKIP: " << reason << std::endl; return; } }
 
 #define SKIP_EQ(expected, actual, reason) \
-{ auto e = (expected); auto a = (actual); \
-if(!(e == a)) { \
+{ auto ___e = (expected); auto ___a = (actual); \
+if(!(___e == ___a)) { \
 	std::cout << POS "SKIP_EQ("#expected","#actual") : " << reason << std::endl; return; } }
 
 #define TESTFIXTURE(b) struct b##_fixture : public fixture { b##_fixture() : fixture(Q(b)) {} \

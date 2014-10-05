@@ -31,8 +31,6 @@ namespace xp {
 		matrix(matrix&& x) noexcept : data(std::move(x.data)) {}
 		matrix(std::initializer_list<T> il) : data(N*N) {
 			using namespace std;
-			size_t n = data.size();
-			auto first = begin(il);
 			copy_atmost_n(begin(il), end(il), data.size(), begin(data));
 		}
 
@@ -255,7 +253,6 @@ TEST(check_who_knows_who_power) {
 	typedef semiring<bool, logical_or<bool>, logical_and<bool>> boolean;
 
 	auto relations = get_relations();
-	auto n = relations.size();
 
 	//vector<string> persons;
 	//persons.reserve(n * 2);

@@ -1251,8 +1251,11 @@ namespace xp {
 			std::swap(x.start, y.start);
 		}
 
-		allocator_type get_allocator() const noexcept {
+		const allocator_type& get_allocator() const noexcept {
 			return *static_cast<const Alloc*>(this);
+		}
+		allocator_type& get_allocator() noexcept {
+			return *static_cast<Alloc*>(this);
 		}
 
 		pointer begin() { return start; }
@@ -1397,12 +1400,12 @@ TEST(check_storage) {
 	using namespace xp;
 
 	extent<int> ext;
-	VERIFY_EQ(1, sizeof(std::allocator<byte>));
+	VERIFY_EQ(1U, sizeof(std::allocator<byte>));
 	SKIP_EQ(sizeof(void*), sizeof(ext), "Damn you, Visual C++! Code boat with > 1 empty base class.");
 	VERIFY(ext.empty());
 
 	ext.remaining_capacity(16);
-	VERIFY_EQ(16, ext.capacity());
+	VERIFY_EQ(16U, ext.capacity());
 }
 
 TESTFIXTURE(tape)

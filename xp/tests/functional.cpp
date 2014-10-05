@@ -34,7 +34,7 @@ struct barrier {
 	}
 };
 
-int select1rst(int x, int y) {
+int select1rst(int x, int /*y*/) {
 	return x;
 }
 

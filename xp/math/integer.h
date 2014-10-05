@@ -135,12 +135,12 @@ namespace xp {
 				if (ptr == nullptr) throw std::bad_alloc();
 				return reinterpret_cast<pointer>(ptr);
 			}
-			pointer reallocate(pointer p, size_type n, size_type request) {
+			pointer reallocate(pointer p, size_type /*n*/, size_type request) {
 				auto ptr = reinterpret_cast<pointer>(std::realloc(p, sizeof(unsigned) * (request + 1)));
 				if (ptr == nullptr) throw std::bad_alloc();
 				return reinterpret_cast<pointer>(ptr);
 			}
-			pointer deallocate(pointer p, size_type n) {
+			pointer deallocate(pointer p, size_type /*n*/) {
 				free(p);
 			}
 			void deallocate() {
@@ -345,23 +345,23 @@ namespace xp {
 			}
 			return *this;
 		}
-		natural operator <<(int x) {
+		natural operator <<(unsigned x) {
 			natural tmp(*this);
 			tmp <<= x;
 			return tmp;
 		}
-		natural& operator>>=(int x) {
-			int q = x / (sizeof(unsigned) * 8);
+		natural& operator>>=(unsigned x) {
+			auto q = x / (sizeof(unsigned) * 8);
 			if (!storage.empty()) {
 				if (storage.unguarded_size() < q)
 
-				int r = x % (sizeof(unsigned) * 8);
+				auto r = x % (sizeof(unsigned) * 8);
 			} else {
 				storage.deallocate();
 			}
 			return *this;
 		}
-		natural operator >>(int x) {
+		natural operator >>(unsigned x) {
 			natural tmp(*this);
 			tmp >>= x;
 			return tmp;

@@ -29,9 +29,9 @@ namespace xp {
 		}
 
 		template<typename T>
-		std::string stringize(const T& val, std::true_type) {
+		std::string stringize(const T& /*val*/, std::true_type) {
 			//static_assert(false, "unsupported type");
-			return typeid(val).name();
+			return typeid(T).name();
 		}
 
 	} // namespace details

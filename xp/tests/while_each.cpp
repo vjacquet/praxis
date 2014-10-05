@@ -61,11 +61,13 @@ namespace {
 				operator++();
 				return tmp;
 			}
-			bool operator==(const iterator_t& rhs) { return it == rhs.it; }
-			bool operator!=(const iterator_t& rhs) { return it != rhs.it; }
+			bool operator==(iterator_t const& rhs) { return it == rhs.it; }
+			bool operator!=(iterator_t const& rhs) { return it != rhs.it; }
 			value_type& operator*() {
 				return *it;
 			}
+
+			iterator_t& operator=(iterator_t const&) = delete;
 		};
 		Pred pred;
 		I first;
@@ -79,6 +81,8 @@ namespace {
 		iterator_t end() {
 			return last;
 		}
+
+		take_while_adapter& operator=(take_while_adapter const&) = delete;
 	};
 
 	template<InputIterator I, Predicate Pred>
@@ -127,6 +131,8 @@ namespace {
 			++count;
 			return true;
 		}
+
+		counting_t& operator=(counting_t const&) = delete;
 	};
 
 	template<InputIterator I, Predicate Pred, Function Func>
@@ -140,14 +146,14 @@ namespace {
 }
 
 struct predicate_t {
-	int stop;
-	int count;
+	unsigned stop;
+	unsigned count;
 
-	predicate_t(int stop) : stop(stop), count(0) {}
+	predicate_t(unsigned stop) : stop(stop), count(0) {}
 	predicate_t(const predicate_t& other) = default;
 	predicate_t& operator=(const predicate_t& other) = default;
 
-	bool operator()(int v) {
+	bool operator()(int ) {
 		return count++ != stop;
 	}
 };
@@ -175,7 +181,7 @@ size_t scenario3(vector<int>& v, predicate_t pred) {
 size_t scenario4(vector<int>& v, predicate_t pred) {
 	// custom algorithm with lambda predicate
 	size_t count = 0;
-	while_each(begin(v), end(v), pred, [&](int i) { ++count; });
+	while_each(begin(v), end(v), pred, [&](int) { ++count; });
 	return count;
 }
 
@@ -189,7 +195,7 @@ TESTBENCH()
 
 TEST(bench_count_while_scenarii) {
 	const int attempts = 20000;
-	const uniform_int_distribution<int> distribution(400000, 500000);
+	const uniform_int_distribution<unsigned> distribution(400000, 500000);
 
 	vector<int> v;
 	v.reserve(500000);

@@ -6,6 +6,9 @@
 #include <random>
 #include "fakeconcepts.h"
 
+// work in progress.
+// check Knuth's AoCP Vol 2, p 266 for operations on non negative integers.
+
 namespace xp {
 
 	namespace integers {
@@ -236,7 +239,7 @@ namespace xp {
 		auto val = *first;
 		*result = val;
 		while (--n != 0) {
-			val += *++first;
+			val = op(val, *++first);
 			*++result = val;
 		}
 		++result;
