@@ -93,6 +93,9 @@
     <ClCompile Include="sandbox\set_operations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sandbox\perfect_forwarding.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="numeric.h">

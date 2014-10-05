@@ -68,6 +68,7 @@
     <ClCompile Include="instrumented.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sandbox\math.cpp" />
+    <ClCompile Include="sandbox\perfect_forwarding.cpp" />
     <ClCompile Include="sandbox\quant.cpp" />
     <ClCompile Include="sandbox\record.cpp" />
     <ClCompile Include="sandbox\set_operations.cpp" />
