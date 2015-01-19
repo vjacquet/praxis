@@ -46,11 +46,22 @@ TESTBENCH()
 TEST(check_find_backwards) {
 	vector<int> v{0, 11, 22, 33, 44, 55, 66, 77, 88, 99};
 
-	auto found = find_backwards(v.cbegin(), v.cend(), 44);
+	auto found = find_backward(v.cbegin(), v.cend(), 44);
 	auto d = distance(v.cbegin(), found);
 	VERIFY(d == 4);
 
-	auto not_found = find_backwards(v.cbegin(), v.cend(), 60);
+	auto not_found = find_backward(v.cbegin(), v.cend(), 60);
+	VERIFY(not_found == v.cend());
+}
+
+TEST(check_find_if_not_backwards) {
+	vector<int> v {0, 11, 22, 33, 44, 55, 66, 77, 88, 99};
+
+	auto found = find_if_not_backward(v.cbegin(), v.cend(), [](int x) { return x != 44; });
+	auto d = distance(v.cbegin(), found);
+	VERIFY(d == 4);
+
+	auto not_found = find_if_not_backward(v.cbegin(), v.cend(), [](int x) { return x != 60; });
 	VERIFY(not_found == v.cend());
 }
 

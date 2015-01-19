@@ -269,7 +269,7 @@ namespace xp {
 		void twice() {
 			if (!storage.empty()) {
 				auto op = details::lshift {1};
-				transform_backwards(storage.cbegin(), storage.cend(), storage.cend(), std::ref(op));
+				transform_backward(storage.cbegin(), storage.cend(), storage.cend(), std::ref(op));
 				if (op.carry)
 					storage.push(1);
 			}
@@ -337,7 +337,7 @@ namespace xp {
 					++q;
 				storage.reserve(q);
 				auto op = details::lshift {r};
-				auto e = transform_backwards(storage.cbegin(), storage.cend(), storage.end() + q, std::ref(op));
+				auto e = transform_backward(storage.cbegin(), storage.cend(), storage.end() + q, std::ref(op));
 				storage.header()->size += q;
 				if (q && op.carry)
 					*e-- = op.carry;

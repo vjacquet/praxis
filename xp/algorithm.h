@@ -7,13 +7,14 @@
 #include <utility>
 
 #include "fakeconcepts.h"
+#include "functional.h"
 
 namespace xp {
 
 	namespace details {
 
 		template<BidirectionalIterator I, class T>
-		I find_backwards_with_not_found_value(I first, I last, I not_found, const T& val) {
+		I find_backward_with_not_found_value(I first, I last, I not_found, const T& val) {
 			auto it = last;
 			while(it != first) {
 				--it;
@@ -23,7 +24,7 @@ namespace xp {
 		}
 
 		template<BidirectionalIterator I, Predicate Pred>
-		I find_if_backwards_with_not_found_value(I first, I last, I not_found, Pred pred) {
+		I find_if_backward_with_not_found_value(I first, I last, I not_found, Pred pred) {
 			auto it = last;
 			while(it != first) {
 				--it;
@@ -67,13 +68,18 @@ namespace xp {
 	}
 
 template<BidirectionalIterator I, typename T>
-I find_backwards(I first, I last, const T& val) {
-	return details::find_backwards_with_not_found_value(first, last, last, val);
+I find_backward(I first, I last, const T& val) {
+	return details::find_backward_with_not_found_value(first, last, last, val);
 }
 
 template<BidirectionalIterator I, Predicate Pred>
-I find_if_backwards(I first, I last, Pred pred) {
-	return details::find_if_backwards_with_not_found_value(first, last, last, pred);
+I find_if_backward(I first, I last, Pred pred) {
+	return details::find_if_backward_with_not_found_value(first, last, last, pred);
+}
+
+template<BidirectionalIterator I, Predicate Pred>
+I find_if_not_backward(I first, I last, Pred pred) {
+	return details::find_if_backward_with_not_found_value(first, last, last, negation(pred));
 }
 
 template<BidirectionalIterator I, typename T>
@@ -83,7 +89,7 @@ I find(I first, I last, I hint, const T& val) {
 	I hi = hint + 1;
 	for(;;) {
 		if(*lo == val) return lo;
-		if(hi == last) return details::find_backwards_with_not_found_value(first, lo, last, val);
+		if(hi == last) return details::find_backward_with_not_found_value(first, lo, last, val);
 		if(*hi == val) return hi;
 		++hi;
 		if(lo == first) return find(hi, last, val);
@@ -99,7 +105,7 @@ I find_if(I first, I last, I hint, Pred pred) {
 	I hi = hint + 1;
 	for(;;) {
 		if(pred(*lo)) return lo;
-		if(hi == last) return details::find_if_backwards_with_not_found_value(first, lo, last, pred);
+		if(hi == last) return details::find_if_backward_with_not_found_value(first, lo, last, pred);
 		if(pred(*hi)) return hi;
 		++hi;
 		if(lo == first) return find_if(hi, last, pred);
@@ -206,6 +212,15 @@ namespace details {
 template<InputIterator I, Integer N, OutputIterator O>
 std::pair<I, O> copy_atmost_n(I first, I last, N n, O output) {
 	return details::copy_atmost_n(first, last, n, output, std::iterator_traits<I>::iterator_category());
+}
+
+template<InputIterator I, Function F>
+void for_each_element(I f, I l, F fn) {
+	while (f != l) {
+		fn(f);
+		++f;
+	}
+	return std::move(fn);
 }
 
 // stable_max is an attempt to render coherent the fact that std::max is unstable.
@@ -595,14 +610,14 @@ T foldr(I first, I last, Op op, const T& z) {
 }
 
 template<BidirectionalIterator I, OutputIterator O, UnaryOperation Op>
-O transform_backwards(I first, I last, O result, Op op) {
+O transform_backward(I first, I last, O result, Op op) {
 	while (first != last)
 		*--result = op(*--last);
 	return result;
 }
 
 template<BidirectionalIterator I1, BidirectionalIterator I2, OutputIterator O, UnaryOperation Op>
-O transform_backwards(I1 first1, I1 last1, I2 last2, O result, Op op) {
+O transform_backward(I1 first1, I1 last1, I2 last2, O result, Op op) {
 	while (first1 != last1)
 		*--result = op(*--last1, *--last2);
 	return result;
