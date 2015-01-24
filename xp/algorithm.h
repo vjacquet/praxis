@@ -2,6 +2,7 @@
 #define __ALGORITHM_H__
 
 #include <algorithm>
+#include <functional>
 #include <iterator>
 #include <stack>
 #include <utility>
@@ -191,6 +192,7 @@ O unique_copy_with_count(I first, I last, O output) {
 }
 
 namespace details {
+
 	template<InputIterator I, Integer N, OutputIterator O>
 	std::pair<I, O> copy_atmost_n(I first, I last, N n, O output, std::input_iterator_tag) {
 		while (first != last && n != 0) {
@@ -207,6 +209,7 @@ namespace details {
 		last = first + std::min(std::iterator_traits<I>::difference_type (n), std::distance(first, last));
 		return {last, std::copy(first, last, output)};
 	}
+
 }
 
 template<InputIterator I, Integer N, OutputIterator O>
@@ -435,7 +438,7 @@ struct guarded_range {
 	typedef typename I iterator;
 	typedef typename Guard predicate;
 
-	I first;
+	iterator first;
 	predicate guard;
 
 	guarded_range() : first(), guard() {}
@@ -448,10 +451,10 @@ struct guarded_range {
 		return !(x == y);
 	}
 
-	I begin() const { return first; }
+	iterator begin() const { return first; }
 };
 
-// The predicate returns true is the iterator is valid.
+// The predicate returns true if the iterator is valid.
 template<InputIterator I, Predicate Guard, OutputIterator O>
 O copy_while(I first, Guard guard, O result) {
 	while (guard(first)) {
@@ -487,6 +490,42 @@ I find_if_while(I first, Guard guard, Pred pred)
 		++first;
 	}
 	return first;
+}
+
+template<InputIterator I, Predicate Guard, OutputIterator O, UnaryOperation Op>
+O transform_while(I first, Guard guard, O result, Op op)
+{
+	while (guard(first)) {
+		*result = op(*first);
+		++first;
+		++result;
+	}
+	return result;
+}
+
+// both iterators are guarded
+template<InputIterator I1, Predicate Guard1, InputIterator I2, Predicate Guard2, OutputIterator O, BinaryOperation Op>
+O transform_while(I1 first1, Guard1 guard1, I2 first2, Guard1 guard2, O result, Op op)
+{
+	while (guard1(first1) && guard2(first2)) {
+		*result = op(*first1, *first2);
+		++first1;
+		++first2;
+		++result;
+	}
+	return result;
+}
+
+template<InputIterator I1, InputIterator I2, Relation Guard, OutputIterator O, BinaryOperation Op>
+O transform_while(I1 first1, I2 first2, Guard guard, O result, Op op)
+{
+	while (guard(first1, first2)) {
+		*result = op(*first1, *first2);
+		++first1;
+		++first2;
+		++result;
+	}
+	return result;
 }
 
 template<typename T, StrictWeakOrdering Compare>
@@ -585,10 +624,11 @@ T foldl(I first, I last, Op op, const T& z) {
 }
 
 namespace details {
+
 	template<InputIterator I, typename T, BinaryOperation Op>
 	T foldr_nonempty(I first, I last, Op op, std::input_iterator_tag) {
 		std::stack<std::iterator_traits<I>::value_type> stk;
-		std::copy(first, last, back_inserter(stk));
+		std::copy(first, last, std::back_inserter(stk));
 		auto r = stk.top();
 		stk.pop();
 		while (!stk.empty()) {
@@ -602,11 +642,12 @@ namespace details {
 	T foldr_nonempty(I first, I last, Op op, std::bidirectional_iterator_tag) {
 		return reduce_nonempty(std::reverse_iterator<I>(last), std::reverse_iterator<I>(first), op);
 	}
+
 }
 template<InputIterator I, typename T, BinaryOperation Op>
 T foldr(I first, I last, Op op, const T& z) {
 	if (first == last) return z;
-	return foldr_nonempty(first, last, op, std::iterator_traits<I>::iterator_category {});
+	return details::foldr_nonempty(first, last, op, std::iterator_traits<I>::iterator_category {});
 }
 
 template<BidirectionalIterator I, OutputIterator O, UnaryOperation Op>
@@ -650,9 +691,11 @@ std::pair<I, I> gather(I first, I last, I point, P pred) {
 }
 
 template <InputIterator I1, InputIterator I2, Relation Pred>
-typename std::iterator_traits<I1>::difference_type
-hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred) {
-	typename iterator_traits<I>::difference_type result = 0;
+auto hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred) 
+-> typename std::iterator_traits<I1>::difference_type {
+	using namespace std;
+
+	typename iterator_traits<I>::difference_type result {};
 	while (first1 != last1) {
 		if (pred(*first1, *first2))
 			++result;
@@ -663,8 +706,10 @@ hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred) {
 }
 
 template <InputIterator I1, InputIterator I2>
-typename std::iterator_traits<I1>::difference_type
-hamming_distance(I1 first1, I1 last1, I2 first2) {
+auto hamming_distance(I1 first1, I1 last1, I2 first2) 
+-> typename std::iterator_traits<I1>::difference_type {
+	using namespace std;
+
 	typedef typename iterator_traits<I>::value_type value_type;
 	return hamming_distance(first1, last1, first2, std::equal<value_type>());
 }
@@ -683,8 +728,68 @@ N hamming_distance_n(I1 first1, N n, I2 first2, Pred pred) {
 
 template <InputIterator I1, InputIterator I2, Integer N>
 N hamming_distance_n(I1 first1, N n, I2 first2) {
+	using namespace std;
+
 	typedef typename iterator_traits<I>::value_type value_type;
 	return hamming_distance_n(first1, last1, first2, std::equal<value_type>());
+}
+
+namespace details {
+
+	template <ForwardIterator I, Relation R>
+	auto unique_count(I first, I last, R rel, std::input_iterator_tag)
+	-> typename std::iterator_traits<I>::difference_type 
+	{
+		using namespace std;
+
+		typename iterator_traits<I>::difference_type result {};
+		if (first == last) return result;
+
+		typename iterator_traits<I>::value_type r = *first;
+		while (++first != last) {
+			if (!rel(r, *first)) {
+				++result;
+				r = *first;
+			}
+		}
+		return ++result;
+	}
+
+	template <ForwardIterator I, Relation R>
+	auto unique_count(I first, I last, R rel, std::forward_iterator_tag)
+	-> typename std::iterator_traits<I>::difference_type
+	{
+		using namespace std;
+
+		typename iterator_traits<I>::difference_type result {};
+		if (first == last) return result;
+
+		typename I r = first;
+		while (++first != last) {
+			if (!rel(*r, *first)) {
+				++result;
+				r = first;
+			}
+		}
+		return ++result;
+	}
+}
+
+template <ForwardIterator I, Relation R>
+auto unique_count(I first, I last, R rel)
+-> typename std::iterator_traits<I>::difference_type
+{
+	return details::unique_count(first, last, rel, std::iterator_traits<I>::iterator_category());
+}
+
+template <ForwardIterator I>
+auto unique_count(I first, I last)
+-> typename std::iterator_traits<I>::difference_type
+{
+	using namespace std;
+
+	typedef typename iterator_traits<I>::value_type value_type;
+	return details::unique_count(first, last, equal_to<value_type>(), iterator_traits<I>::iterator_category());
 }
 
 } // namespace xp
