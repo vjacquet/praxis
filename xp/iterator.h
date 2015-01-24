@@ -216,21 +216,21 @@ namespace xp {
 
 		explicit unary_insert_iterator(C& x) : c(&x) {}
 
-		unary_insert_iterator<C>& operator= (const typename C::value_type& value) {
+		unary_insert_iterator& operator= (const typename C::value_type& value) {
 			c->insert(value); 
 			return *this;
 		}
-		unary_insert_iterator<C>& operator= (typename C::value_type&& value){
+		unary_insert_iterator& operator= (typename C::value_type&& value){
 			c->insert(std::move(value));
 			return *this;
 		}
-		unary_insert_iterator<C>& operator* () {
+		unary_insert_iterator& operator* () {
 			return *this;
 		}
-		unary_insert_iterator<C>& operator++ () {
+		unary_insert_iterator& operator++ () {
 			return *this;
 		}
-		unary_insert_iterator<C> operator++ (int) {
+		unary_insert_iterator operator++ (int) {
 			return *this;
 		}
 	};

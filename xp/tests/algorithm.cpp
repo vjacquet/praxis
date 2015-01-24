@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <exception>
 #include <iomanip>
 #include <iostream>
@@ -41,7 +42,43 @@ struct first_less {
 	}
 };
 
+struct counting_iterator : public std::iterator<std::output_iterator_tag, void, void, void, void>
+{
+	std::ptrdiff_t count;
+
+	counting_iterator() : count() {}
+	counting_iterator(counting_iterator const& x) : count(x.count) {}
+
+	template<typename T>
+	counting_iterator& operator= (T const &) {
+		++count;
+		return *this;
+	}
+	counting_iterator& operator* () {
+		return *this;
+	}
+	counting_iterator& operator++ () {
+		return *this;
+	}
+	counting_iterator& operator++ (int) {
+		return *this;
+	}
+};
+
+
 TESTBENCH()
+
+TEST(check_unique_count_with_adapter) {
+	vector<int> v {0, 11, 33, 33, 44, 66, 66, 77, 88, 99};
+	auto counter = std::unique_copy(v.begin(), v.end(), counting_iterator {});
+	VERIFY_EQ(8, counter.count);
+}
+
+TEST(check_unique_count) {
+	vector<int> v {0, 11, 33, 33, 44, 66, 66, 77, 88, 99};
+	auto counter = xp::unique_count(v.begin(), v.end());
+	VERIFY_EQ(8, counter);
+}
 
 TEST(check_find_backwards) {
 	vector<int> v{0, 11, 22, 33, 44, 55, 66, 77, 88, 99};
