@@ -702,7 +702,7 @@ auto hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred)
 
 	typename iterator_traits<I>::difference_type result {};
 	while (first1 != last1) {
-		if (pred(*first1, *first2))
+		if (!pred(*first1, *first2))
 			++result;
 		++first1;
 		++first2;
@@ -723,7 +723,7 @@ template <InputIterator I1, InputIterator I2, Integer N, Relation Pred>
 N hamming_distance_n(I1 first1, N n, I2 first2, Pred pred) {
 	N result = 0;
 	while (n--) {
-		if (pred(*first1, *first2))
+		if (!pred(*first1, *first2))
 			++result;
 		++first1;
 		++first2;
