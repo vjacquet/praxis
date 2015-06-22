@@ -204,9 +204,9 @@ namespace details {
 
 	template<RandomAccessIterator I, Integer N, OutputIterator O>
 	std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::random_access_iterator_tag) {
-		auto d = std::iterator_traits<I>::difference_type {n};
+		auto d = std::iterator_traits<I>::difference_type (n);
 		if (d < std::distance(first, last))
-			last = std::advance(first, d);
+			last = std::next(first, d);
 		return {last, std::copy(first, last, output)};
 	}
 
