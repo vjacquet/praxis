@@ -192,7 +192,7 @@ O unique_copy_with_count(I first, I last, O output) {
 namespace details {
 
 	template<InputIterator I, Integer N, OutputIterator O>
-	std::pair<I, O> copy_atmost_n(I first, I last, N n, O output, std::input_iterator_tag) {
+	std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::input_iterator_tag) {
 		while (first != last && n != 0) {
 			*output = *first;
 			++first;
@@ -203,16 +203,18 @@ namespace details {
 	}
 
 	template<RandomAccessIterator I, Integer N, OutputIterator O>
-	std::pair<I, O> copy_atmost_n(I first, I last, N n, O output, std::random_access_iterator_tag) {
-		last = first + std::min(std::iterator_traits<I>::difference_type (n), std::distance(first, last));
+	std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::random_access_iterator_tag) {
+		auto d = std::iterator_traits<I>::difference_type {n};
+		if (d < std::distance(first, last))
+			last = std::advance(first, d);
 		return {last, std::copy(first, last, output)};
 	}
 
 }
 
 template<InputIterator I, Integer N, OutputIterator O>
-std::pair<I, O> copy_atmost_n(I first, I last, N n, O output) {
-	return details::copy_atmost_n(first, last, n, output, std::iterator_traits<I>::iterator_category());
+std::pair<I, O> copy_at_most_n(I first, I last, N n, O output) {
+	return details::copy_at_most_n(first, last, n, output, std::iterator_traits<I>::iterator_category());
 }
 
 template<InputIterator I, Function F>
@@ -295,7 +297,7 @@ template<ForwardIterator I, Function Cost>
 std::pair<I, I> minmax_cost_element(I first, I last, Cost cost) {
 	using namespace std;
 
-	if (first == last) {
+	if (first == last)
 		return {last, last};
 
 	auto min = first;

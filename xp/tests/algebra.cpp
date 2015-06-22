@@ -31,7 +31,7 @@ namespace xp {
 		matrix(matrix&& x) noexcept : data(std::move(x.data)) {}
 		matrix(std::initializer_list<T> il) : data(N*N) {
 			using namespace std;
-			copy_atmost_n(begin(il), end(il), data.size(), begin(data));
+			copy_at_most_n(begin(il), end(il), data.size(), begin(data));
 		}
 
 		matrix& operator=(const matrix& x) {
