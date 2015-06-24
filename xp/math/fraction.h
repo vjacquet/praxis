@@ -90,7 +90,7 @@ namespace xp {
 			return fraction {x} -= y;
 		}
 		friend fraction operator-(const T& x, const fraction& y) {
-			return y - x; // commutative
+			return -(y - x);
 		}
 
 		template<typename U>

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <chrono>
 #include <ratio>
+#include <string>
 #include <tuple>
 
 #include "fakeconcepts.h"
@@ -131,6 +132,14 @@ namespace xp {
 		}
 		return t.elapsed<D>();
 	}
+
+	template<typename T, typename Tag = std::string>
+	struct tagged : public T {
+		Tag tag;
+
+		template<typename... Args>
+		tagged(Tag tag, Args&&... args) : T(std::forward<Args>(args)...), tag(tag) {}
+	};
 
 } // namespace xp
 
