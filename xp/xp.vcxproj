@@ -72,7 +72,6 @@
     <ClCompile Include="sandbox\quant.cpp" />
     <ClCompile Include="sandbox\record.cpp" />
     <ClCompile Include="sandbox\set_operations.cpp" />
-    <ClCompile Include="sandbox\units.cpp" />
     <ClCompile Include="tests\algebra.cpp" />
     <ClCompile Include="tests\algorithm.cpp" />
     <ClCompile Include="tests\bag.cpp" />
@@ -93,6 +92,7 @@
     <ClCompile Include="tests\utility.cpp" />
     <ClCompile Include="tests\while_each.cpp" />
     <ClCompile Include="tests\numeric.cpp" />
+    <ClCompile Include="tests\units.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="algorithm.h" />
@@ -115,6 +115,7 @@
     <ClInclude Include="algebra.h" />
     <ClInclude Include="tests\testbench.h" />
     <ClInclude Include="trivalent.h" />
+    <ClInclude Include="units.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
