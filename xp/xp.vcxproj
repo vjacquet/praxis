@@ -88,6 +88,7 @@
     <ClCompile Include="tests\min.cpp" />
     <ClCompile Include="tests\ranges.cpp" />
     <ClCompile Include="sandbox\tape.cpp" />
+    <ClCompile Include="tests\stick.cpp" />
     <ClCompile Include="tests\trivalent.cpp" />
     <ClCompile Include="tests\utility.cpp" />
     <ClCompile Include="tests\while_each.cpp" />
@@ -113,6 +114,7 @@
     <ClInclude Include="numeric.h" />
     <ClInclude Include="benchmark.h" />
     <ClInclude Include="algebra.h" />
+    <ClInclude Include="stick.h" />
     <ClInclude Include="tests\testbench.h" />
     <ClInclude Include="trivalent.h" />
     <ClInclude Include="units.h" />
