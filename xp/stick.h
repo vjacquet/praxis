@@ -7,6 +7,7 @@
 
 namespace xp {
 
+	// a stick is a mutable window on a const string.
 	template<class T, class Traits = std::char_traits<T>, class Alloc = std::allocator<T>>
 	class basic_stick {
 		typedef std::basic_string<T, Traits, Alloc>   storage_type;
