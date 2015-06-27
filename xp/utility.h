@@ -68,6 +68,15 @@ namespace xp {
 		return (x >> k) & ~(~0 << j);
 	}
 
+	// from Stroustup (c++ programming language, 4th edition, p. 299)
+	template<typename T, typename U>
+	T narrow_cast(U x) {
+		auto r = static_cast<T>(x);
+		if (static_cast<U>(r) != x)
+			throw std::runtime_error("narrowing failed.");
+		return r;
+	}
+
 } // namespace xp
 
 #endif __UTILITY_H__

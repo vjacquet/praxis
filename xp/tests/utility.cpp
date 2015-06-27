@@ -42,4 +42,8 @@ TEST(check_bits) {
 	VERIFY_EQ(2U, bits(i, 2, 2));
 }
 
+TEST(can_narrow) {
+	VERIFY_EQ(100, narrow_cast<short>(100));
+}
+
 TESTFIXTURE(utility)
