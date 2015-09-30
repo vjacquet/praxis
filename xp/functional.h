@@ -33,13 +33,13 @@ namespace xp {
 		template <typename R, typename... Args>
 		std::function<R(Args...)> memoize(std::function<R(Args...)>&& func, std::true_type) {
 			// when R is default constructible
-			using namespace std;
+			typedef std::map<std::tuple<Args...>, R> cache_t;
 
-			map<tuple<Args...>, R> cache;
+			cache_t cache;
 			return ([=](Args... args) mutable {
-				tuple<Args...> t(args...);
+				cache_t::key_type t(args...);
 				bool inserted;
-				map<tuple<Args...>, R>::iterator pos;
+				cache_t::iterator pos;
 				tie(pos, inserted) = cache.insert(make_pair(t, R {}));
 				if (inserted) {
 					pos->second = func(args...);
@@ -71,7 +71,7 @@ namespace xp {
 		using namespace std;
 		typedef typename integral_constant <bool, is_default_constructible<R>::value
 			|| is_trivially_default_constructible<R>::value
-			|| is_nothrow_default_constructible<R>::value > ::type is_result_default_constructible_type;
+			|| is_nothrow_default_constructible<R>::value >::type is_result_default_constructible_type;
 		return details::memoize(std::move(func), is_result_default_constructible_type());
 	}
 

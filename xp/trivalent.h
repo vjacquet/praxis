@@ -8,7 +8,7 @@ namespace xp {
 	class trivalent
 	{
 		std::int8_t v;
-		trivalent(std::int8_t v) : v(v) { }
+		trivalent(int v) : v((std::int8_t)v) { }
 
 	public:
 		trivalent() : v(0) { }
@@ -19,7 +19,7 @@ namespace xp {
 			v = other.v;
 			return *this;
 		}
-		trivalent operator !() { return trivalent((std::int8_t) - v); }
+		trivalent operator !() { return trivalent(-v); }
 
 		friend bool is_true(trivalent tv) { return tv.v == 1; }
 		friend bool is_false(trivalent tv) { return tv.v == -1; }
@@ -53,14 +53,11 @@ namespace xp {
 		}
 
 		// logical operators
-		inline friend trivalent operator && (trivalent lhs, trivalent rhs) {
-			if (is_unknown(lhs) || is_unknown(rhs)) return trivalent();
-			return is_true(lhs) && is_true(rhs);
+		inline friend trivalent operator &&(trivalent lhs, trivalent rhs) {
+			return trivalent(std::min(lhs.v, rhs.v));
 		}
 		inline friend trivalent operator ||(trivalent lhs, trivalent rhs) {
-			if (is_true(lhs) || is_true(rhs)) return true;
-			if (is_false(lhs) && is_false(rhs)) return false;
-			return trivalent();
+			return trivalent(std::max(lhs.v, rhs.v));
 		}
 
 		inline friend bool equivalent(trivalent lhs, trivalent rhs) {
@@ -75,6 +72,5 @@ namespace xp {
 	const trivalent unknown;
 
 }
-
 
 #endif __TRIVALENT_H__

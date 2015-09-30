@@ -72,7 +72,6 @@
     <ClCompile Include="sandbox\quant.cpp" />
     <ClCompile Include="sandbox\record.cpp" />
     <ClCompile Include="sandbox\set_operations.cpp" />
-    <ClCompile Include="sandbox\units.cpp" />
     <ClCompile Include="tests\algebra.cpp" />
     <ClCompile Include="tests\algorithm.cpp" />
     <ClCompile Include="tests\bag.cpp" />
@@ -85,13 +84,16 @@
     <ClCompile Include="tests\integer.cpp" />
     <ClCompile Include="tests\iterator.cpp" />
     <ClCompile Include="tests\k_array.cpp" />
+    <ClCompile Include="tests\lazy.cpp" />
     <ClCompile Include="tests\min.cpp" />
     <ClCompile Include="tests\ranges.cpp" />
     <ClCompile Include="sandbox\tape.cpp" />
+    <ClCompile Include="tests\stick.cpp" />
     <ClCompile Include="tests\trivalent.cpp" />
     <ClCompile Include="tests\utility.cpp" />
     <ClCompile Include="tests\while_each.cpp" />
     <ClCompile Include="tests\numeric.cpp" />
+    <ClCompile Include="tests\units.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="algorithm.h" />
@@ -101,6 +103,7 @@
     <ClInclude Include="function_traits.h" />
     <ClInclude Include="heap.h" />
     <ClInclude Include="instrumented.h" />
+    <ClInclude Include="lazy.h" />
     <ClInclude Include="math\integer.h" />
     <ClInclude Include="iterator.h" />
     <ClInclude Include="k_array.h" />
@@ -111,8 +114,10 @@
     <ClInclude Include="numeric.h" />
     <ClInclude Include="benchmark.h" />
     <ClInclude Include="algebra.h" />
+    <ClInclude Include="stick.h" />
     <ClInclude Include="tests\testbench.h" />
     <ClInclude Include="trivalent.h" />
+    <ClInclude Include="units.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

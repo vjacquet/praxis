@@ -75,9 +75,6 @@
     <ClCompile Include="sandbox\record.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sandbox\units.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="sandbox\quant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -94,6 +91,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sandbox\perfect_forwarding.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\lazy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\units.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\stick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -156,6 +162,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="math\integer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lazy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="units.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

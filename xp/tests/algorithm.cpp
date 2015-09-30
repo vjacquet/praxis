@@ -186,6 +186,13 @@ TEST(check_max_cost_element) {
 	VERIFY(distance(v.begin(), result) == 5);
 }
 
+TEST(check_stable_max_cost_element) {
+	vector<int> v {2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1};
+	auto result = stable_max_cost_element(v.begin(), v.end(), [](int i) { return i * i; });
+
+	VERIFY(distance(v.begin(), result) == 7);
+}
+
 TEST(check_minmax_cost_element) {
 	vector<int> v {2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1};
 	auto result = minmax_cost_element(v.begin(), v.end(), [](int i) { return i * i; });

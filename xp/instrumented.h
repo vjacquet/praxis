@@ -21,7 +21,7 @@ namespace xp {
 		T value;
 
 		// conversion
-		instrumented(const T& v) : value(v) {
+		instrumented(T const& v) : value(v) {
 			++counts[construct];
 		}
 
@@ -30,10 +30,10 @@ namespace xp {
 			++counts[default_construct];
 		}
 
-		instrumented(const instrumented& x) : value(x.value) {
+		instrumented(instrumented const& x) : value(x.value) {
 			++counts[copy_construct];
 		}
-		instrumented(instrumented&& x) noexcept : value(std::move(x.value)) {
+		instrumented(instrumented&& x) noexcept : value(std::move_if_noexcept(x.value)) {
 			++counts[move_construct];
 		}
 
@@ -41,7 +41,7 @@ namespace xp {
 			++counts[destruct];
 		}
 
-		instrumented& operator=(const instrumented& x) {
+		instrumented& operator=(instrumented const& x) {
 			++counts[copy_assign];
 			value = x.value;
 			return *this;
@@ -53,26 +53,26 @@ namespace xp {
 		}
 
 		// Regular
-		inline friend bool operator==(const instrumented& x, const instrumented& y) {
+		inline friend bool operator==(instrumented const& x, instrumented const& y) {
 			++counts[equal];
 			return x.value == y.value;
 		}
-		inline friend bool operator!=(const instrumented& x, const instrumented& y) {
+		inline friend bool operator!=(instrumented const& x, instrumented const& y) {
 			return !(x == y);
 		}
 
 		// TotallyOrdered
-		inline friend bool operator<(const instrumented& x, const instrumented& y) {
+		inline friend bool operator<(instrumented const& x, instrumented const& y) {
 			++counts[compare];
 			return x.value < y.value;
 		}
-		inline friend bool operator <=(const instrumented& x, const instrumented& y) {
+		inline friend bool operator <=(instrumented const& x, instrumented const& y) {
 			return !(y < x);
 		}
-		inline friend bool operator >(const instrumented& x, const instrumented& y) {
+		inline friend bool operator >(instrumented const& x, instrumented const& y) {
 			return y < x;
 		}
-		inline friend bool operator >=(const instrumented& x, const instrumented& y) {
+		inline friend bool operator >=(instrumented const& x, instrumented const& y) {
 			return !(x < y);
 		}
 	};

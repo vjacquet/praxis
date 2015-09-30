@@ -35,36 +35,34 @@ namespace xp {
 		}
 
 		// The cost function returns a value supporting LessThanComparable
-		template<ForwardIterator I, Function Cost>
+		template<ForwardIterator I, Function Cost, Relation Compare>
 		inline
-		I min_cost_element_nonempty(I first, I last, Cost cost) {
-			typedef decltype(cost(*first)) C;
-			C lowest = cost(*first);
+		I compare_cost_element_nonempty(I first, I last, Cost cost, Compare cmp) {
+			auto lowest = cost(*first);
 			auto found = first;
 			while (++first != last) {
 				auto val = cost(*first);
-				if (val < lowest) {
+				if (cmp(val, lowest)) {
 					lowest = val;
 					found = first;
 				}
 			}
 			return found;
 		}
-
-		// The cost function returns a value supporting LessThanComparable
-		template<ForwardIterator I, Function Cost>
-		I max_cost_element_nonempty(I first, I last, Cost cost) {
-			auto highest = cost(*first);
-			auto found = first;
-			for (++first; first != last; ++first) {
-				auto val = cost(*first);
-				if (highest < val) {
-					highest = val;
-					found = first;
-				}
+		template<Relation Compare>
+		struct transpose {
+			template<typename T, typename U>
+			bool operator()(T x, U y) {
+				return Compare()(y, x);
 			}
-			return found;
-		}
+		};
+		template<Relation Compare>
+		struct negate {
+			template<typename T, typename U>
+			bool operator()(T x, U y) {
+				return !Compare()(x, y);
+			}
+		};
 
 	}
 
@@ -194,7 +192,7 @@ O unique_copy_with_count(I first, I last, O output) {
 namespace details {
 
 	template<InputIterator I, Integer N, OutputIterator O>
-	std::pair<I, O> copy_atmost_n(I first, I last, N n, O output, std::input_iterator_tag) {
+	std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::input_iterator_tag) {
 		while (first != last && n != 0) {
 			*output = *first;
 			++first;
@@ -205,16 +203,18 @@ namespace details {
 	}
 
 	template<RandomAccessIterator I, Integer N, OutputIterator O>
-	std::pair<I, O> copy_atmost_n(I first, I last, N n, O output, std::random_access_iterator_tag) {
-		last = first + std::min(std::iterator_traits<I>::difference_type (n), std::distance(first, last));
+	std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::random_access_iterator_tag) {
+		auto d = std::iterator_traits<I>::difference_type (n);
+		if (d < std::distance(first, last))
+			last = std::next(first, d);
 		return {last, std::copy(first, last, output)};
 	}
 
 }
 
 template<InputIterator I, Integer N, OutputIterator O>
-std::pair<I, O> copy_atmost_n(I first, I last, N n, O output) {
-	return details::copy_atmost_n(first, last, n, output, std::iterator_traits<I>::iterator_category());
+std::pair<I, O> copy_at_most_n(I first, I last, N n, O output) {
+	return details::copy_at_most_n(first, last, n, output, std::iterator_traits<I>::iterator_category());
 }
 
 template<InputIterator I, Function F>
@@ -275,14 +275,21 @@ template<ForwardIterator I, Function Cost>
 inline
 I min_cost_element(I first, I last, Cost cost) {
 	if (first == last) return last;
-	return details::min_cost_element_nonempty(first, last, cost);
+	return details::compare_cost_element_nonempty(first, last, cost, std::less<>());
 }
 
 // The cost function returns a value supporting LessThanComparable
 template<ForwardIterator I, Function Cost>
 I max_cost_element(I first, I last, Cost cost) {
 	if (first == last) return last;
-	return details::max_cost_element_nonempty(first, last, cost);
+	return details::compare_cost_element_nonempty(first, last, cost, details::transpose<std::less<>>());
+}
+
+// The cost function returns a value supporting LessThanComparable
+template<ForwardIterator I, Function Cost>
+I stable_max_cost_element(I first, I last, Cost cost) {
+	if (first == last) return last;
+	return details::compare_cost_element_nonempty(first, last, cost, details::negate<std::less<>>());
 }
 
 // The cost function returns a value supporting LessThanComparable
@@ -290,24 +297,24 @@ template<ForwardIterator I, Function Cost>
 std::pair<I, I> minmax_cost_element(I first, I last, Cost cost) {
 	using namespace std;
 
-	if (first != last) {
-		auto min = first;
-		auto max = first;
-		auto lowest = cost(*first);
-		auto highest = lowest;
-		for (++first; first != last; ++first) {
-			auto val = cost(*first);
-			if (val < lowest) {
-				lowest = val;
-				min = first;
-			} else if (!(val < highest)) {
-				highest = val;
-				max = first;
-			}
+	if (first == last)
+		return {last, last};
+
+	auto min = first;
+	auto max = first;
+	auto lowest = cost(*first);
+	auto highest = lowest;
+	for (++first; first != last; ++first) {
+		auto val = cost(*first);
+		if (val < lowest) {
+			lowest = val;
+			min = first;
+		} else if (!(val < highest)) {
+			highest = val;
+			max = first;
 		}
-		return {min, max};
 	}
-	return {last, last};
+	return {min, max};
 }
 
 template<Range R>
@@ -697,7 +704,7 @@ auto hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred)
 
 	typename iterator_traits<I>::difference_type result {};
 	while (first1 != last1) {
-		if (pred(*first1, *first2))
+		if (!pred(*first1, *first2))
 			++result;
 		++first1;
 		++first2;
@@ -718,7 +725,7 @@ template <InputIterator I1, InputIterator I2, Integer N, Relation Pred>
 N hamming_distance_n(I1 first1, N n, I2 first2, Pred pred) {
 	N result = 0;
 	while (n--) {
-		if (pred(*first1, *first2))
+		if (!pred(*first1, *first2))
 			++result;
 		++first1;
 		++first2;
