@@ -167,7 +167,7 @@ namespace xp {
 		bag(I first, I last, const allocator_type& alloc)
 			: bag(first, last, alloc, Cat()) {}
 
-		bag(const bag& x) : bag(x.begin(), x.end(), alloc.select_on_container_copy_construction(), std::random_access_iterator_tag()) {}
+		bag(const bag& x) : bag(x.begin(), x.end(), AllocTraits::select_on_container_copy_construction(alloc), std::random_access_iterator_tag()) {}
 		bag(const bag& x, const allocator_type& alloc) : bag(x.begin(), x.end(), alloc) {}
 
 		bag(const bag&& x) : bag(std::forward<bag>(x), x.alloc, true_type) {}

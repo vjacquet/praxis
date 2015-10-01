@@ -84,10 +84,12 @@ namespace xp {
 			return *this;
 		}
 		friend fraction operator-(const fraction& x, const fraction& y) {
-			return fraction {x} -= y;
+			auto q = x;
+			return q -= y;
 		}
 		friend fraction operator-(const fraction& x, const T& y) {
-			return fraction {x} -= y;
+			auto q = x;
+			return q -= y;
 		}
 		friend fraction operator-(const T& x, const fraction& y) {
 			return -(y - x);

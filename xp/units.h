@@ -40,8 +40,9 @@ namespace xp {
 		value_type val;
 
 		// conversion
+		// TODO: check why val{v} doesn't compile on VS2015 (narrowing conversion from int to double !)
 		template <typename V>
-		explicit quantity(const V& v) : val {v} {}
+		explicit quantity(const V& v) : val (v) {}
 
 		// Semiregular
 		quantity() {}
@@ -76,26 +77,22 @@ namespace xp {
 	};
 
 	template<typename U, typename T1, typename T2>
-	auto operator +(quantity<U, T1> x, quantity<U, T2> y) -> quantity<U, decltype(x.val + y.val)>
-	{
+	auto operator +(quantity<U, T1> x, quantity<U, T2> y) -> quantity<U, decltype(x.val + y.val)> {
 		return quantity<U, decltype(x.val + y.val)> {x.val + y.val};
 	}
 
 	template<typename U, typename T1, typename T2>
-	auto operator -(quantity<U, T1> x, quantity<U, T2> y) -> quantity<U, decltype(x.val - y.val)>
-	{
+	auto operator -(quantity<U, T1> x, quantity<U, T2> y) -> quantity<U, decltype(x.val - y.val)> {
 		return quantity<U, decltype(x.val - y.val)> {x.val - y.val};
 	}
 
 	template<typename U1, typename T1, typename U2, typename T2>
-	auto operator *(quantity<U1, T1> x, quantity<U2, T2> y) -> quantity<units::si::unit_add<U1,U2>, decltype(x.val * y.val)>
-	{
+	auto operator *(quantity<U1, T1> x, quantity<U2, T2> y) -> quantity<units::si::unit_add<U1,U2>, decltype(x.val * y.val)> {
 		return quantity<units::si::unit_add<U1, U2>, decltype(x.val * y.val)> {x.val * y.val};
 	}
 
 	template<typename U1, typename T1, typename U2, typename T2>
-	auto operator /(quantity<U1, T1> x, quantity<U2, T2> y) -> quantity<units::si::unit_subtract<U1, U2>, decltype(x.val / y.val)>
-	{
+	auto operator /(quantity<U1, T1> x, quantity<U2, T2> y) -> quantity<units::si::unit_subtract<U1, U2>, decltype(x.val / y.val)> {
 		return quantity<units::si::unit_subtract<U1, U2>, decltype(x.val / y.val)> {x.val / y.val};
 	}
 }
