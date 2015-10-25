@@ -3,34 +3,40 @@
 
 #include <utility>
 
-namespace xp { 
-	
-	namespace units { namespace si {
+namespace xp {
 
-		template<int L, int M, int T, int I, int Th, int N, int J>
-		struct unit {
-			enum { m=L, kg=M, s=T, A=J, K=Th, mol=N, cd=J};
-		};
+	namespace units {
+		namespace si {
 
-		namespace details {
-			template<typename U1, typename U2>
-			struct Unit_add {
-				using type = unit<U1::m + U2::m, U1::kg + U2::kg, U1::s + U2::s, U1::A + U2::A, U1::K + U2::K, U1::mol + U2::mol, U1::cd + U2::cd>;
+			template<int L, int M, int T, int I, int Th, int N, int J>
+			struct unit {
+				enum { m = L, kg = M, s = T, A = J, K = Th, mol = N, cd = J };
 			};
 
+			namespace details {
+				template<typename U1, typename U2>
+				struct Unit_add {
+					using type = unit<U1::m + U2::m, U1::kg + U2::kg, U1::s + U2::s, U1::A + U2::A, U1::K + U2::K, U1::mol + U2::mol, U1::cd + U2::cd>;
+				};
+
+				template<typename U1, typename U2>
+				struct Unit_subtract {
+					using type = unit<U1::m - U2::m, U1::kg - U2::kg, U1::s - U2::s, U1::A - U2::A, U1::K - U2::K, U1::mol - U2::mol, U1::cd - U2::cd>;
+				};
+			}
+
 			template<typename U1, typename U2>
-			struct Unit_subtract {
-				using type = unit<U1::m - U2::m, U1::kg - U2::kg, U1::s - U2::s, U1::A - U2::A, U1::K - U2::K, U1::mol - U2::mol, U1::cd - U2::cd>;
-			};
+			using unit_add = typename details::Unit_add<U1, U2>::type;
+
+			template<typename U1, typename U2>
+			using unit_subtract = typename details::Unit_subtract<U1, U2>::type;
+
+			using M = unit<1, 0, 0, 0, 0, 0, 0>;
+			using Kg = unit<0, 1, 0, 0, 0, 0, 0>;
+			using S = unit<0, 1, 0, 0, 0, 0, 0>;
+
 		}
-
-		template<typename U1, typename U2>
-		using unit_add = typename details::Unit_add<U1, U2>::type;
-
-		template<typename U1, typename U2>
-		using unit_subtract = typename details::Unit_subtract<U1, U2>::type;
-
-	} } 
+	}
 
 	template<typename U, typename T = double>
 	struct quantity {
@@ -42,7 +48,7 @@ namespace xp {
 		// conversion
 		// TODO: check why val{v} doesn't compile on VS2015 (narrowing conversion from int to double !)
 		template <typename V>
-		explicit quantity(const V& v) : val (v) {}
+		explicit quantity(const V& v) : val(v) {}
 
 		// Semiregular
 		quantity() {}
@@ -87,7 +93,7 @@ namespace xp {
 	}
 
 	template<typename U1, typename T1, typename U2, typename T2>
-	auto operator *(quantity<U1, T1> x, quantity<U2, T2> y) -> quantity<units::si::unit_add<U1,U2>, decltype(x.val * y.val)> {
+	auto operator *(quantity<U1, T1> x, quantity<U2, T2> y) -> quantity<units::si::unit_add<U1, U2>, decltype(x.val * y.val)> {
 		return quantity<units::si::unit_add<U1, U2>, decltype(x.val * y.val)> {x.val * y.val};
 	}
 
@@ -95,6 +101,17 @@ namespace xp {
 	auto operator /(quantity<U1, T1> x, quantity<U2, T2> y) -> quantity<units::si::unit_subtract<U1, U2>, decltype(x.val / y.val)> {
 		return quantity<units::si::unit_subtract<U1, U2>, decltype(x.val / y.val)> {x.val / y.val};
 	}
+
+	// TODO: constexpr, as in The C++ programming language, 4th edition, p822, did not compiled
+	auto operator ""_m (long double d) { return quantity<units::si::M, long double> {d}; }
+	auto operator ""_km(long double d) { return quantity<units::si::M, long double> {d * 1000}; }
+	auto operator ""_cm(long double d) { return quantity<units::si::M, long double> {d / 100}; }
+	auto operator ""_mm(long double d) { return quantity<units::si::M, long double> {d / 1000}; }
+
+	auto operator ""_kg(long double d) { return quantity<units::si::Kg, long double> {d}; }
+	auto operator ""_cg(long double d) { return quantity<units::si::Kg, long double> {d / 100}; }
+	auto operator ""_g (long double d) { return quantity<units::si::Kg, long double> {d / 1000}; }
+
 }
 
 #endif __UNITS_H__
