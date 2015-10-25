@@ -1,5 +1,7 @@
 #include <cstddef>
 #include <exception>
+#include <functional>
+#include <initializer_list>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
@@ -65,8 +67,23 @@ struct counting_iterator : public std::iterator<std::output_iterator_tag, void, 
 	}
 };
 
+template<class F, class...Ts>
+F for_each_arg(F f, Ts&&...a) {
+	return std::initializer_list<int>{(f(a), 0)...}, f;
+}
+
+struct dump {
+	template<typename T>
+	void operator()(T const& t) {
+		std::cout << t << endl;
+	}
+};
 
 TESTBENCH()
+
+TEST(check_for_each_arg) {
+	for_each_arg(dump {}, "a", 'b', 3);
+}
 
 TEST(check_unique_count_with_adapter) {
 	vector<int> v {0, 11, 33, 33, 44, 66, 66, 77, 88, 99};
