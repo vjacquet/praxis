@@ -100,12 +100,12 @@ namespace xp {
 		}
 
 		template<typename F>
-		typename std::tuple_element<index_type<F>::value, storage>::type::value_type& operator[](F) {
-			return get<F>(fields).val;
+		typename field<F>::value_type& operator[](F) {
+			return std::get<field<F>>(fields).val;
 		}
 		template<typename F>
-		typename const std::tuple_element<index_type<F>::value, storage>::type::value_type& operator[](F) const {
-			return get<F>(fields).val;
+		typename field<F>::value_type& operator[](F) const {
+			return std::get<field<F>>(fields).val;
 		}
 
 		template<typename... Args>
@@ -113,15 +113,15 @@ namespace xp {
 			int count[] = {0, (set(values), 1)...};
 		}
 
-		template<typename Tag, typename V>
-		void set(const std::pair<Tag, V>& arg) {
-			get<Tag>(fields).val = arg.second;
+		template<typename F, typename V>
+		void set(const std::pair<F, V>& arg) {
+			std::get<field<F>>(fields).val = arg.second;
 		}
 	};
 
-	struct name_tag : field_tag < name_tag, std::string > { using field_tag::operator=; } fullname;
+	struct name_tag : field_tag<name_tag, std::string> { using field_tag::operator=; } fullname;
 	struct phone_number_tag : field_tag<phone_number_tag, std::string> { using field_tag::operator=; } phone_number;
-	struct email_tag : field_tag < email_tag, std::string > { using field_tag::operator=; } email;
+	struct email_tag : field_tag<email_tag, std::string> { using field_tag::operator=; } email;
 
 
 	//struct Name : field < string, Name > { using field::field;/*using field<string, Name>::operator =;*/ } fullname;
