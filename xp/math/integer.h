@@ -392,10 +392,10 @@ namespace xp {
 
 	class integer : natural {
 	public:
-		integer() : integer() {}
+		integer() : natural() {}
 		~integer() {}
 
-		integer(const integer& x) : integer(x) {}
+		integer(const integer& x) : natural(x) {}
 		integer& operator=(const integer& x) {
 			if (&x != this) {
 				integer tmp(x);
