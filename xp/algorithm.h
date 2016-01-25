@@ -647,7 +647,7 @@ namespace details {
 
 	template<BidirectionalIterator I, typename T, BinaryOperation Op>
 	T foldr_nonempty(I first, I last, Op op, std::bidirectional_iterator_tag) {
-		return reduce_nonempty(std::reverse_iterator<I>(last), std::reverse_iterator<I>(first), op);
+		return reduce_nonempty(std::reverse_iterator<I>(last), std::reverse_iterator<I>(first), transpose(op));
 	}
 
 }
