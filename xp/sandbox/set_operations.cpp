@@ -92,7 +92,7 @@ void scenario2(vector<int>& a, vector<int>& b) {
 
 TESTBENCH()
 
-TEST(bench_partion_sets) {
+TEST(bench_partition_sets) {
 	const int attempts = 500;
 
 	vector<int> v(50000);

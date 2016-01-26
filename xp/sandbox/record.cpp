@@ -119,23 +119,26 @@ namespace xp {
 		}
 	};
 
-	struct name_tag : field_tag<name_tag, std::string> { using field_tag::operator=; } fullname;
-	struct phone_number_tag : field_tag<phone_number_tag, std::string> { using field_tag::operator=; } phone_number;
-	struct email_tag : field_tag<email_tag, std::string> { using field_tag::operator=; } email;
-
+	struct name_tag : field_tag<name_tag, std::string> { using field_tag::operator=; };
+	struct phone_number_tag : field_tag<phone_number_tag, std::string> { using field_tag::operator=; };
+	struct email_tag : field_tag<email_tag, std::string> { using field_tag::operator=; };
 
 	//struct Name : field < string, Name > { using field::field;/*using field<string, Name>::operator =;*/ } fullname;
 	//struct PhoneNumber : field < string, PhoneNumber > { /*using field<string, PhoneNumber>::operator =;*/ } phone_number;
 
 	struct Person : record< 
-		field<decltype(fullname)>,
-		field<decltype(email)>,
-		field<decltype(phone_number)>
+		field<name_tag>,
+		field<email_tag>,
+		field<phone_number_tag>
 	> {
 		Person(string name, string email, string phone_number) : base(std::move(name), std::move(email), std::move(phone_number)) {}
 	};
 
 } // namespace xp
+
+xp::name_tag fullname;
+xp::phone_number_tag  phone_number;
+xp::email_tag email;
 
 TESTBENCH()
 
@@ -158,7 +161,7 @@ TEST(can_update_record) {
 	VERIFY_EQ("+1 555 033 9871", vjacquet[phone_number]);
 	VERIFY_EQ("jacquet@example.com", vjacquet[email]);
 
-	// Is is possible to enforce that the same parameter is not used twice ?
+	// Is is possible to enforce that the same parameter is not used twice?
 	vjacquet.update(phone_number = "+1 555 033 1234", email = "vjacquet@example.com");
 
 	VERIFY_EQ("vjacquet", vjacquet[fullname]);
