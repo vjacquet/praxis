@@ -80,12 +80,12 @@ namespace xp {
 		}
 	};
 
-	template <typename... Fields>
+	template <typename... Tags>
 	struct record {
-		template<typename F>
-		using index_type = typename index_of<F, 0, Fields...>;
+		//template<typename F>
+		//using index_type = typename index_of<F, 0, Fields...>;
 
-		typedef std::tuple<Fields...> storage;
+		typedef std::tuple<field<Tags>...> storage;
 		storage fields;
 
 		//template<typename F>
@@ -127,17 +127,19 @@ namespace xp {
 	//struct PhoneNumber : field < string, PhoneNumber > { /*using field<string, PhoneNumber>::operator =;*/ } phone_number;
 
 	struct Person : record< 
-		field<name_tag>,
-		field<email_tag>,
-		field<phone_number_tag>
+		name_tag,
+		email_tag,
+		phone_number_tag
 	> {
-		Person(string name, string email, string phone_number) : base(std::move(name), std::move(email), std::move(phone_number)) {}
+		Person(string name, string email, string phone_number) 
+			: base(std::move(name), std::move(email), std::move(phone_number)) {
+		}
 	};
 
 } // namespace xp
 
 xp::name_tag fullname;
-xp::phone_number_tag  phone_number;
+xp::phone_number_tag phone_number;
 xp::email_tag email;
 
 TESTBENCH()
@@ -147,6 +149,8 @@ TEST(can_create_record) {
 	Person vjacquet {"vjacquet", "vjacquet@example.com", "+1 555 033 1234"};
 
 	VERIFY_EQ(0U, get_index<name_tag>(vjacquet.fields));
+	VERIFY_EQ(1U, get_index<email_tag>(vjacquet.fields));
+	VERIFY_EQ(2U, get_index<phone_number_tag>(vjacquet.fields));
 	VERIFY_EQ(3 * sizeof(std::string), sizeof(Person));
 
 	VERIFY_EQ("vjacquet", vjacquet[fullname]);
