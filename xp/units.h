@@ -1,6 +1,7 @@
 #ifndef __UNITS_H__
 #define __UNITS_H__
 
+#include <type_traits>
 #include <utility>
 
 namespace xp {
@@ -46,17 +47,17 @@ namespace xp {
 		value_type val;
 
 		// conversion
-		// TODO: check why val{v} doesn't compile on VS2015 (narrowing conversion from int to double !)
+		// val{v} doesn't compile on VS2015 (narrowing conversion from int to double !)
 		template <typename V>
-		explicit quantity(const V& v) : val(v) {}
+		constexpr explicit quantity(V&& v) : val( v ) {}
 
 		// Semiregular
-		quantity() {}
+		quantity() = default;
 
 		quantity(const quantity& x) : val(x.val) {}
-		quantity(quantity&& x) : val(std::move(x.val)) {}
+		quantity(quantity&& x) : val(std::forward(x.val)) {}
 
-		~quantity() {}
+		~quantity() = default;
 
 		quantity& operator=(const quantity& x) {
 			val = x.val;
@@ -102,15 +103,25 @@ namespace xp {
 		return quantity<units::si::unit_subtract<U1, U2>, decltype(x.val / y.val)> {x.val / y.val};
 	}
 
-	// TODO: constexpr, as in The C++ programming language, 4th edition, p822, did not compiled
-	auto operator ""_m (long double d) { return quantity<units::si::M, long double> {d}; }
-	auto operator ""_km(long double d) { return quantity<units::si::M, long double> {d * 1000}; }
-	auto operator ""_cm(long double d) { return quantity<units::si::M, long double> {d / 100}; }
-	auto operator ""_mm(long double d) { return quantity<units::si::M, long double> {d / 1000}; }
+	// constexpr, as in The C++ programming language, 4th edition, p822, now compiles
+	// but the type should be long double and a version with unsigned long long should also be provided for 1_km
+	constexpr auto operator ""_m (long double d) { return quantity<units::si::M> {static_cast<double>(d)}; }
+	constexpr auto operator ""_km(long double d) { return quantity<units::si::M> {static_cast<double>(d) * 1000}; }
+	constexpr auto operator ""_cm(long double d) { return quantity<units::si::M> {static_cast<double>(d) / 100}; }
+	constexpr auto operator ""_mm(long double d) { return quantity<units::si::M> {static_cast<double>(d) / 1000}; }
 
-	auto operator ""_kg(long double d) { return quantity<units::si::Kg, long double> {d}; }
-	auto operator ""_cg(long double d) { return quantity<units::si::Kg, long double> {d / 100}; }
-	auto operator ""_g (long double d) { return quantity<units::si::Kg, long double> {d / 1000}; }
+	constexpr auto operator ""_kg(long double d) { return quantity<units::si::Kg> {static_cast<double>(d)}; }
+	constexpr auto operator ""_cg(long double d) { return quantity<units::si::Kg> {static_cast<double>(d) / 100}; }
+	constexpr auto operator ""_g (long double d) { return quantity<units::si::Kg> {static_cast<double>(d) / 1000}; }
+
+	constexpr auto operator ""_m(unsigned long long d) { return quantity<units::si::M> {static_cast<double>(d)}; }
+	constexpr auto operator ""_km(unsigned long long d) { return quantity<units::si::M> {static_cast<double>(d) * 1000}; }
+	constexpr auto operator ""_cm(unsigned long long d) { return quantity<units::si::M> {static_cast<double>(d) / 100}; }
+	constexpr auto operator ""_mm(unsigned long long d) { return quantity<units::si::M> {static_cast<double>(d) / 1000}; }
+
+	constexpr auto operator ""_kg(unsigned long long d) { return quantity<units::si::Kg> {static_cast<double>(d)}; }
+	constexpr auto operator ""_cg(unsigned long long d) { return quantity<units::si::Kg> {static_cast<double>(d) / 100}; }
+	constexpr auto operator ""_g(unsigned long long d) { return quantity<units::si::Kg> {static_cast<double>(d) / 1000}; }
 
 }
 
