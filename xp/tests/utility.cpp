@@ -32,7 +32,7 @@ TEST(check_at_scope_exit) {
 		noop();
 	}
 	catch (...) {
-		std::cout << "Caught exception" << endl;
+		std::cout << "Caught exception" << std::endl;
 	}
 	VERIFY_EQ(true, is_clean);
 }

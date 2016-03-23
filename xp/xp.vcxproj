@@ -117,6 +117,7 @@
     <ClInclude Include="benchmark.h" />
     <ClInclude Include="algebra.h" />
     <ClInclude Include="sandbox\expr.h" />
+    <ClInclude Include="sandbox\positive.h" />
     <ClInclude Include="stick.h" />
     <ClInclude Include="tests\testbench.h" />
     <ClInclude Include="trivalent.h" />

@@ -182,5 +182,8 @@
     <ClInclude Include="sandbox\expr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="sandbox\positive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
