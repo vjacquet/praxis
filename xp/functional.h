@@ -144,23 +144,23 @@ namespace xp {
 		F f;
 		G g;
 
-		template<typename T> 
-		result_type compose(const T& x, const T& y, std::true_type) {
-			return f(g(x, y));
-		}
-		template<typename T>
-		result_type compose(const T& x, const T& y, std::true_type) const {
-			return f(g(x, y));
-		}
+		//template<typename T> 
+		//result_type compose(const T& x, const T& y, std::true_type) {
+		//	return f(g(x, y));
+		//}
+		//template<typename T>
+		//result_type compose(const T& x, const T& y, std::true_type) const {
+		//	return f(g(x, y));
+		//}
 
-		template<typename T>
-		result_type compose(const T& x, const T& y, std::false_type) {
-			return f(g(x), g(y));
-		}
-		template<typename T>
-		result_type compose(const T& x, const T& y, std::false_type) const {
-			return f(g(x), g(y));
-		}
+		//template<typename T>
+		//result_type compose(const T& x, const T& y, std::false_type) {
+		//	return f(g(x), g(y));
+		//}
+		//template<typename T>
+		//result_type compose(const T& x, const T& y, std::false_type) const {
+		//	return f(g(x), g(y));
+		//}
 
 	public:
 		typedef typename F::result_type result_type;
@@ -180,35 +180,28 @@ namespace xp {
 			return f(g(x));
 		}
 
-		/* I believe it should compile, as both conditions cannot be true at the same time, but it does not ?!
+		/* I believe it should compile, as both conditions cannot be true at the same time, but it does not ?!*/
 		template<typename T, class = std::enable_if<function_traits<F>::arity == 1 && function_traits<G>::arity == 2>::type>
 		auto operator()(const T& x, const T& y) -> decltype(f(g(x, y))) {
 			return f(g(x, y));
 		}
-		template<typename T, class = std::enable_if<function_traits<F>::arity == 1 && function_traits<G>::arity == 2>::type>
-		auto operator()(const T& x, const T& y) const -> decltype(f(g(x, y))) {
-			return f(g(x, y));
-		}
 
-		template<typename T, class = std::enable_if<function_traits<F>::arity == 2 && function_traits<G>::arity == 1>::type>
-		auto operator()(const T& x, const T& y) -> decltype(f(g(x), g(y))) {
-			return f(g(x), g(y));
-		}
 		template<typename T, class = std::enable_if<function_traits<F>::arity == 2 && function_traits<G>::arity == 1>::type>
 		auto operator()(const T& x, const T& y) const -> decltype(f(g(x), g(y))) {
 			return f(g(x), g(y));
-		}*/
-		template<typename T, class = std::enable_if<((function_traits<F>::arity == 2) || (function_traits<G>::arity == 2))>::type>
-		result_type operator()(const T& x, const T& y) {
-			return compose(x, y, std::integral_constant<bool, function_traits<G>::arity == 2>::type {});
 		}
-		template<typename T, class = std::enable_if<((function_traits<F>::arity == 2) || (function_traits<G>::arity == 2))>::type>
-		result_type operator()(const T& x, const T& y) const {
-			return compose(x, y, std::integral_constant<bool, function_traits<G>::arity == 2>::type {});
-		}
+
+		//template<typename T, class = std::enable_if<((function_traits<F>::arity == 2) || (function_traits<G>::arity == 2))>::type>
+		//result_type operator()(const T& x, const T& y) {
+		//	return compose(x, y, std::integral_constant<bool, function_traits<G>::arity == 2>::type {});
+		//}
+		//template<typename T, class = std::enable_if<((function_traits<F>::arity == 2) || (function_traits<G>::arity == 2))>::type>
+		//result_type operator()(const T& x, const T& y) const {
+		//	return compose(x, y, std::integral_constant<bool, function_traits<G>::arity == 2>::type {});
+		//}
 	};
 
-	template<UnaryFunction F, Function G>
+	template<Function F, Function G>
 	unary_compose_t<F, G> compose(F f, G g) {
 		return unary_compose_t<F, G>(f, g);
 	}
