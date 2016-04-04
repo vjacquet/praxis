@@ -33,9 +33,6 @@
     <ClCompile Include="tests\ranges.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tests\function_traits.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="tests\min.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -106,6 +103,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sandbox\operators.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sandbox\clone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tests\function_traits.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
