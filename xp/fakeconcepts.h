@@ -4,12 +4,6 @@
 #include <iterator>
 #include "function_traits.h"
 
-#ifdef _MSC_VER
-
-#define noexcept throw()
-
-#endif
-
 // list seen in Stepanov's programming conversations lecture 4
 #define TotallyOrdered typename
 //#define Pointer typename
@@ -17,6 +11,7 @@
 #define Integer typename
 #define Unsigned typename
 #define Integral typename
+#define EuclideanDomain typename
 #define UnsignedIntegral typename
 #define InputIterator typename
 #define OutputIterator typename

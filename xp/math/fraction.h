@@ -5,10 +5,13 @@
 
 namespace xp {
 
+	// TODO: change to use canonical form. See John Lakos CppCon 2015 presentation on value semantics <http://youtu.be/0EvSxHxFknM?t=516>.
 	template<typename T>
 	class fraction {
 		T n;
 		T d;
+
+		fraction(T n, T d, T gcd) : n(n / gcd), d(d / gcd) {}
 
 	public:
 		typedef T value_type;
@@ -32,10 +35,10 @@ namespace xp {
 		fraction& operator=(const fraction& x) = default;
 
 		// conversion
-		fraction(T x) : n(x), d(T {1}) {}
+		fraction(T x) : n{ x }, d{ 1 } {}
 		fraction& operator=(const T& x) {
 			n = x;
-			d = T {1};
+			d = T{ 1 };
 			return *this;
 		}
 
@@ -48,7 +51,7 @@ namespace xp {
 
 		// arithmetic operators
 		friend fraction operator-(const fraction& x) {
-			return {-x.num, x.denom};
+			return{ -x.num, x.denom };
 		}
 
 		template<typename U>
@@ -63,10 +66,10 @@ namespace xp {
 			return *this;
 		}
 		friend fraction operator+(const fraction& x, const fraction& y) {
-			return fraction {x} += y;
+			return fraction{ x } += y;
 		}
 		friend fraction operator+(const fraction& x, const T& y) {
-			return fraction {x} += y;
+			return fraction{ x } += y;
 		}
 		friend fraction operator+(const T& x, const fraction& y) {
 			return y + x; // commutative
@@ -84,10 +87,12 @@ namespace xp {
 			return *this;
 		}
 		friend fraction operator-(const fraction& x, const fraction& y) {
-			return fraction {x} -= y;
+			auto q = x;
+			return q -= y;
 		}
 		friend fraction operator-(const fraction& x, const T& y) {
-			return fraction {x} -= y;
+			auto q = x;
+			return q -= y;
 		}
 		friend fraction operator-(const T& x, const fraction& y) {
 			return -(y - x);
@@ -96,7 +101,7 @@ namespace xp {
 		template<typename U>
 		fraction& operator*=(const fraction<U>& x) {
 			auto r = num(x), i = denom(x);
-			return {num*r - denom*i, denom*r + num*i};
+			return{ num*r - denom*i, denom*r + num*i };
 		}
 		template<typename U>
 		fraction& operator*=(const U& x) {
@@ -105,10 +110,10 @@ namespace xp {
 			return *this;
 		}
 		friend fraction operator*(const fraction& x, const fraction& y) {
-			return fraction {x} *= y;
+			return fraction{ x } *= y;
 		}
 		friend fraction operator*(const fraction& x, const T& y) {
-			return fraction {x} *= y;
+			return fraction{ x } *= y;
 		}
 		friend fraction operator*(const T& x, const fraction& y) {
 			return y * x; // commutative
@@ -116,7 +121,7 @@ namespace xp {
 
 		template<typename U>
 		fraction& operator/=(const fraction<U>& x) {
-			return {n*x.denominator(), d*x.numerator()};
+			return{ n*x.denominator(), d*x.numerator() };
 		}
 		template<typename U>
 		fraction& operator/=(const U& x) {
@@ -124,13 +129,13 @@ namespace xp {
 			return *this;
 		}
 		friend fraction operator/(const fraction& x, const fraction& y) {
-			return fraction {x} /= y;
+			return fraction{ x } /= y;
 		}
 		friend fraction operator/(const fraction& x, const T& y) {
-			return fraction {x.n, x.d * y};
+			return fraction{ x.n, x.d * y };
 		}
 		friend fraction operator/(const T& x, const fraction& y) {
-			return {x*y.d, y.n};
+			return{ x*y.d, y.n };
 		}
 
 		// semiregular 
@@ -158,7 +163,7 @@ namespace xp {
 
 	template<typename T>
 	fraction<T> abs(const fraction<T>& x) {
-		return {abs(x.numerator()), abs(x.denominator())};
+		return{ abs(x.numerator()), abs(x.denominator()) };
 	}
 
 	// see <http://en.wikipedia.org/wiki/Sign_function>.
@@ -173,16 +178,16 @@ namespace xp {
 
 	template<typename T>
 	T sgn(const fraction<T>& x) {
-		return csgn(x) * T {1};
+		return csgn(x) * T { 1 };
 	}
 
 	template<typename T>
 	fraction<T> inverse(const fraction<T>& x) {
-		return {x.denominator(), x.numerator()};
+		return{ x.denominator(), x.numerator() };
 	}
 	template<typename T>
 	fraction<T> inverse(const T& x) {
-		return {T {1}, x};
+		return{ T {1}, x };
 	}
 }
 

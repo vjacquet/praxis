@@ -21,7 +21,6 @@ namespace quant {
 		return pv;
 	}
 
-
 } // namespace quant
 
 } // namespace xp

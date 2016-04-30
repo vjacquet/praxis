@@ -80,12 +80,12 @@ namespace xp {
 		}
 	};
 
-	template <typename... Fields>
+	template <typename... Tags>
 	struct record {
-		template<typename F>
-		using index_type = typename index_of<F, 0, Fields...>;
+		//template<typename F>
+		//using index_type = typename index_of<F, 0, Fields...>;
 
-		typedef std::tuple<Fields...> storage;
+		typedef std::tuple<field<Tags>...> storage;
 		storage fields;
 
 		//template<typename F>
@@ -100,12 +100,12 @@ namespace xp {
 		}
 
 		template<typename F>
-		typename std::tuple_element<index_type<F>::value, storage>::type::value_type& operator[](F) {
-			return get<F>(fields).val;
+		typename field<F>::value_type& operator[](F) {
+			return std::get<field<F>>(fields).val;
 		}
 		template<typename F>
-		typename const std::tuple_element<index_type<F>::value, storage>::type::value_type& operator[](F) const {
-			return get<F>(fields).val;
+		typename field<F>::value_type& operator[](F) const {
+			return std::get<field<F>>(fields).val;
 		}
 
 		template<typename... Args>
@@ -113,29 +113,34 @@ namespace xp {
 			int count[] = {0, (set(values), 1)...};
 		}
 
-		template<typename Tag, typename V>
-		void set(const std::pair<Tag, V>& arg) {
-			get<Tag>(fields).val = arg.second;
+		template<typename F, typename V>
+		void set(const std::pair<F, V>& arg) {
+			std::get<field<F>>(fields).val = arg.second;
 		}
 	};
 
-	struct name_tag : field_tag < name_tag, std::string > { using field_tag::operator=; } fullname;
-	struct phone_number_tag : field_tag<phone_number_tag, std::string> { using field_tag::operator=; } phone_number;
-	struct email_tag : field_tag < email_tag, std::string > { using field_tag::operator=; } email;
-
+	struct name_tag : field_tag<name_tag, std::string> { using field_tag::operator=; };
+	struct phone_number_tag : field_tag<phone_number_tag, std::string> { using field_tag::operator=; };
+	struct email_tag : field_tag<email_tag, std::string> { using field_tag::operator=; };
 
 	//struct Name : field < string, Name > { using field::field;/*using field<string, Name>::operator =;*/ } fullname;
 	//struct PhoneNumber : field < string, PhoneNumber > { /*using field<string, PhoneNumber>::operator =;*/ } phone_number;
 
 	struct Person : record< 
-		field<decltype(fullname)>,
-		field<decltype(email)>,
-		field<decltype(phone_number)>
+		name_tag,
+		email_tag,
+		phone_number_tag
 	> {
-		Person(string name, string email, string phone_number) : base(std::move(name), std::move(email), std::move(phone_number)) {}
+		Person(string name, string email, string phone_number) 
+			: base(std::move(name), std::move(email), std::move(phone_number)) {
+		}
 	};
 
 } // namespace xp
+
+xp::name_tag fullname;
+xp::phone_number_tag phone_number;
+xp::email_tag email;
 
 TESTBENCH()
 
@@ -144,6 +149,8 @@ TEST(can_create_record) {
 	Person vjacquet {"vjacquet", "vjacquet@example.com", "+1 555 033 1234"};
 
 	VERIFY_EQ(0U, get_index<name_tag>(vjacquet.fields));
+	VERIFY_EQ(1U, get_index<email_tag>(vjacquet.fields));
+	VERIFY_EQ(2U, get_index<phone_number_tag>(vjacquet.fields));
 	VERIFY_EQ(3 * sizeof(std::string), sizeof(Person));
 
 	VERIFY_EQ("vjacquet", vjacquet[fullname]);
@@ -158,7 +165,7 @@ TEST(can_update_record) {
 	VERIFY_EQ("+1 555 033 9871", vjacquet[phone_number]);
 	VERIFY_EQ("jacquet@example.com", vjacquet[email]);
 
-	// Is is possible to enforce that the same parameter is not used twice ?
+	// Is is possible to enforce that the same parameter is not used twice?
 	vjacquet.update(phone_number = "+1 555 033 1234", email = "vjacquet@example.com");
 
 	VERIFY_EQ("vjacquet", vjacquet[fullname]);

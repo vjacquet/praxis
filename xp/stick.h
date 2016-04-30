@@ -2,6 +2,7 @@
 #define __STICK_H__
 
 #include <iostream>
+#include <iterator>
 #include <memory>
 #include <string>
 
@@ -56,7 +57,7 @@ namespace xp {
 			: ptr(x.ptr), pos(x.pos), count(x.count)
 		{}
 
-		void swap(basic_stick& x) {
+		void swap(basic_stick& x) noexcept {
 			ptr.swap(x.ptr);
 			swap(pos, x.pos);
 			swap(count, x.count);

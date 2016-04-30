@@ -56,7 +56,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -67,7 +67,10 @@
   <ItemGroup>
     <ClCompile Include="instrumented.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sandbox\clone.cpp" />
+    <ClCompile Include="sandbox\expr.cpp" />
     <ClCompile Include="sandbox\math.cpp" />
+    <ClCompile Include="sandbox\operators.cpp" />
     <ClCompile Include="sandbox\perfect_forwarding.cpp" />
     <ClCompile Include="sandbox\quant.cpp" />
     <ClCompile Include="sandbox\record.cpp" />
@@ -114,6 +117,8 @@
     <ClInclude Include="numeric.h" />
     <ClInclude Include="benchmark.h" />
     <ClInclude Include="algebra.h" />
+    <ClInclude Include="sandbox\expr.h" />
+    <ClInclude Include="sandbox\positive.h" />
     <ClInclude Include="stick.h" />
     <ClInclude Include="tests\testbench.h" />
     <ClInclude Include="trivalent.h" />

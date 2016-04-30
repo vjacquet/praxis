@@ -83,7 +83,6 @@ namespace xp {
 		inline friend matrix operator-(matrix x, const matrix& y) {
 			return x -= y;
 		}
-
 	};
 
 	template<typename T>

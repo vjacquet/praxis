@@ -35,7 +35,6 @@ namespace my {
 			name_ = std::forward<String>(name);
 		}
 	};
-
 }
 
 TESTBENCH()

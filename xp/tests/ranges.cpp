@@ -70,7 +70,7 @@ TEST(check_bounded_range_is_semiregular) {
 TEST(check_counted_range) {
 	string s {"hello word"};
 	auto r = make_counted_range(s.begin(), s.find(' '));
-	auto n = size(r);
+	auto n = xp::size(r);
 	VERIFY(!empty(r));
 	VERIFY(n == 5);
 }

@@ -15,6 +15,8 @@ struct empty_t {};
 
 template<typename T, typename Op = std::multiplies<T>>
 struct square {
+	typedef typename Op::result_type result_type;
+
 	Op op;
 	T operator()(T x) const {
 		return op(x, x);
@@ -115,6 +117,7 @@ TEST(can_memoize_with_non_default_constructible_result) {
 
 TEST(check_negation) {
 	using namespace std;
+	using xp::negation; // c++ 17 added a negation in the type_traits. Should have been better in another namespace :( !
 	using namespace xp::integers;
 
 	auto op = odd<int>;
@@ -143,8 +146,11 @@ TEST(check_compose) {
 	static_assert(function_traits<plus<int>>::arity == 2, "Plus is a BinaryOperation");
 	static_assert(function_traits<square<int>>::arity == 1, "Square is a UnaryOperation");
 
-	auto r = compose(plus<int>{}, square<int>{})(3, 4);
-	VERIFY_EQ(25, r);
+	auto r1 = compose(plus<int>{}, square<int>{})(3, 4);
+	VERIFY_EQ(25, r1);
+
+	auto r2 = compose(square<int>{}, plus<int>{})(3, 4);
+	VERIFY_EQ(49, r2);
 }
 
 TESTFIXTURE(functional)

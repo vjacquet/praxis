@@ -122,7 +122,7 @@ namespace xp {
 
 	template<RandomAccessIterator I, typename T>
 	I random_iota(I first, I last, T val) {
-		auto seed = std::random_device();
+		std::random_device seed;
 		return random_iota(first, last, val, std::default_random_engine {seed()});
 	}
 
@@ -135,7 +135,7 @@ namespace xp {
 
 	template<RandomAccessIterator I, typename N, typename T>
 	I random_iota_n(I first, N n, T val) {
-		auto seed = std::random_device();
+		std::random_device seed;
 		return random_iota_n(first, n, val, std::default_random_engine {seed()});
 	}
 
