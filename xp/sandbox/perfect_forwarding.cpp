@@ -32,9 +32,10 @@ namespace my {
 
 		template<class String>
 		void set_name(String&& name) /*noexcept(std::is_nothrow_assignable<std::string&, String>::value)*/ {
-			name_ = std::forward<S>(name);
+			name_ = std::forward<String>(name);
 		}
 	};
+
 }
 
 TESTBENCH()
