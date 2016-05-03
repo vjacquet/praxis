@@ -374,15 +374,39 @@ namespace xp {
 		return reciprocal<T>();
 	}
 
-	// from EoP
-	template<typename Pred>
-	struct complement_of_converse {
-		Pred pred;
-		typedef typename Pred::argument_type argument_type;
+	// from Stepanov & McJones (EoP, p. 50)
+	template<Predicate P>
+	struct complement {
+		P pred;
+		typedef typename P::argument_type argument_type;
 
-		complement_of_converse(Pred pred) :pred(pred) {}
+		complement(P pred) :pred(pred) {}
 		bool operator ()(const argument_type& x, const argument_type& y) {
-			return !pred(b, a);
+			return !pred(x, y);
+		}
+	};
+
+	// from Stepanov & McJones (EoP, p. 50)
+	template<Predicate P>
+	struct converse {
+		P pred;
+		typedef typename P::argument_type argument_type;
+
+		converse(P pred) :pred(pred) {}
+		bool operator ()(const argument_type& x, const argument_type& y) {
+			return pred(y, x);
+		}
+	};
+
+	// from Stepanov & McJones (EoP, p. 50)
+	template<Predicate P>
+	struct complement_of_converse {
+		P pred;
+		typedef typename P::argument_type argument_type;
+
+		complement_of_converse(P pred) :pred(pred) {}
+		bool operator ()(const argument_type& x, const argument_type& y) {
+			return !pred(y, x);
 		}
 	};
 
