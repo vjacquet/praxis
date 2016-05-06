@@ -46,7 +46,7 @@ namespace eop {
 	//     void power_unary(Domain<A>& x, N n, A a)
 	template<Action A, Integral N, typename D = Domain<A>>
 	void power_unary(D& x, N n, A a) {
-		// Precondition: n≥0 ∧(∀i∈N), 0<i≤n ⇒ fi(x) is defined
+		// Precondition: n≥0 ∧(∀i∈N), 0<i≤n ⇒ a^i(x) is defined
 		while (n != N(0)) {
 			--n;
 			a(x);
@@ -63,6 +63,44 @@ namespace eop {
 			++n;
 		}
 		return n;
+	}
+
+	template<Action A, Predicate P, typename D = Domain<A>>
+	void collision_point(D& x, A a, P p) {
+		// Precondition: p(x) ⇔ a(x) is defined
+		if (!p(x)) return;
+		D slow = x;
+		const D& fast = x;
+		a(fast);
+		while (fast != slow) {
+			if (!p(fast)) return;
+			a(fast);
+			if (!p(fast)) return;
+			a(fast);
+			a(slow);
+		}
+		// Postcondition: x is terminal point or collision_point
+	}
+
+	template<Action A, Predicate P, typename D = Domain<A>>
+	bool terminating(D& x, A a, P p) {
+		// Precondition: p(x) ⇔ a(x) is defined
+		collision_point(x, a, p);
+		return !p(x);
+	}
+
+	template<Action A, typename D = Domain<A>>
+	void collision_point_nonterminating_orbit(D& x, A a) {
+		if (!p(x)) return;
+		D slow = x;
+		const D& fast = x;
+		a(fast);
+		while (fast != slow) {
+			a(fast);
+			a(fast);
+			a(slow);
+		}
+		// Postcondition: x is terminal point or collision_point
 	}
 }
 
