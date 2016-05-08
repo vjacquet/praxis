@@ -102,6 +102,24 @@ namespace eop {
 		}
 		// Postcondition: x is terminal point or collision_point
 	}
+
+	template<Action A, typename D = Domain<A>>
+	bool circular_nonterminating_orbit(D& x, A a) {
+		D t = x;
+		a(collision_point_nonterminating_orbit(x, a));
+		return t == x;
+	}
+
+	template<Action A, Predicate P, typename D = Domain<A>>
+	bool circular(D& x, A a, P p) {
+		D t = x;
+		collision_point(x, a, p);
+		if (p(x)) {
+			a(x);
+			return t == x;
+		}
+		return false;
+	}
 }
 
 namespace {
