@@ -17,15 +17,16 @@ namespace {
 		return a + b;
 	}
 
-	struct functor {
-		//int operator()() {
-		//	return 0;
-		//}
+}
 
-		int operator()(int a, int b) {
+namespace my {
+
+	struct functor_t {
+		int operator()(int a, int b) const {
 			return a + b;
 		}
 	};
+
 }
 
 TESTBENCH()
@@ -56,7 +57,9 @@ TEST(check_less) {
 }
 
 TEST(check_functor) {
-	using Traits = function_traits<functor>;
+	// /!\ I had an internal compiler error with VS 2015 Update 2 when declaring functor_t in an unamed namespace
+	using Traits = function_traits<my::functor_t>;
+
 	static_assert(Traits::arity == 2, "Arity should be 2");
 	static_assert(std::is_same<Traits::return_type, int>::value, "Return type should be int");
 	static_assert(std::is_same<Traits::argument<0>::type, int>::value, "First parameter should be int");

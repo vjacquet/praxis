@@ -18,7 +18,7 @@ namespace xp {
 	{
 		using return_type = R;
 
-		static const std::size_t arity = sizeof...(Args);
+		static constexpr std::size_t arity = sizeof...(Args);
 
 		template <std::size_t N>
 		struct argument
@@ -53,10 +53,11 @@ namespace xp {
 	{
 	private:
 		using call_type = function_traits<decltype(&F::operator())>;
+
 	public:
 		using return_type = typename call_type::return_type;
 
-		static const std::size_t arity = call_type::arity - 1;
+		static constexpr std::size_t arity = call_type::arity - 1;
 
 		template <std::size_t N>
 		struct argument
