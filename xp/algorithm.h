@@ -394,6 +394,8 @@ struct bounded_range {
 
 	I begin() const { return first; }
 	I end() const { return last; }
+	I cbegin() const { return first; }
+	I cend() const { return last; }
 };
 
 template<ForwardIterator I>
