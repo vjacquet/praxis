@@ -47,9 +47,9 @@ namespace xp {
 		value_type val;
 
 		// conversion
-		// val{v} doesn't compile on VS2015 (narrowing conversion from int to double !)
+		// val{v} doesn't compile on VS2015 (narrowing conversion from int to double!)
 		template <typename V>
-		constexpr explicit quantity(V&& v) : val( v ) {}
+		constexpr explicit quantity(V&& v) : val(v) {}
 
 		// Semiregular
 		quantity() = default;
