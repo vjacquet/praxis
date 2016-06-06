@@ -12,59 +12,59 @@
 
 namespace xp {
 
-	namespace details {
+namespace details {
 
-		template<BidirectionalIterator I, class T>
-		I find_backward_with_not_found_value(I first, I last, I not_found, const T& val) {
-			auto it = last;
-			while(it != first) {
-				--it;
-				if(*it == val) return it;
-			}
-			return not_found;
-		}
-
-		template<BidirectionalIterator I, Predicate Pred>
-		I find_if_backward_with_not_found_value(I first, I last, I not_found, Pred pred) {
-			auto it = last;
-			while(it != first) {
-				--it;
-				if(pred(*it)) return it;
-			}
-			return not_found;
-		}
-
-		// The cost function returns a value supporting LessThanComparable
-		template<ForwardIterator I, Function Cost, Relation Compare>
-		inline
-		I compare_cost_element_nonempty(I first, I last, Cost cost, Compare cmp) {
-			auto lowest = cost(*first);
-			auto found = first;
-			while (++first != last) {
-				auto val = cost(*first);
-				if (cmp(val, lowest)) {
-					lowest = val;
-					found = first;
-				}
-			}
-			return found;
-		}
-		template<Relation Compare>
-		struct transpose {
-			template<typename T, typename U>
-			bool operator()(T x, U y) {
-				return Compare()(y, x);
-			}
-		};
-		template<Relation Compare>
-		struct negate {
-			template<typename T, typename U>
-			bool operator()(T x, U y) {
-				return !Compare()(x, y);
-			}
-		};
-
+template<BidirectionalIterator I, class T>
+I find_backward_with_not_found_value(I first, I last, I not_found, const T& val) {
+	auto it = last;
+	while (it != first) {
+		--it;
+		if (*it == val) return it;
 	}
+	return not_found;
+}
+
+template<BidirectionalIterator I, Predicate Pred>
+I find_if_backward_with_not_found_value(I first, I last, I not_found, Pred pred) {
+	auto it = last;
+	while (it != first) {
+		--it;
+		if (pred(*it)) return it;
+	}
+	return not_found;
+}
+
+// The cost function returns a value supporting LessThanComparable
+template<ForwardIterator I, Function Cost, Relation Compare>
+inline
+I compare_cost_element_nonempty(I first, I last, Cost cost, Compare cmp) {
+	auto lowest = cost(*first);
+	auto found = first;
+	while (++first != last) {
+		auto val = cost(*first);
+		if (cmp(val, lowest)) {
+			lowest = val;
+			found = first;
+		}
+	}
+	return found;
+}
+template<Relation Compare>
+struct transpose {
+	template<typename T, typename U>
+	bool operator()(T x, U y) {
+		return Compare()(y, x);
+	}
+};
+template<Relation Compare>
+struct negate {
+	template<typename T, typename U>
+	bool operator()(T x, U y) {
+		return !Compare()(x, y);
+	}
+};
+
+}
 
 template<BidirectionalIterator I, typename T>
 I find_backward(I first, I last, const T& val) {
@@ -86,12 +86,12 @@ requires(first <= hint && hint < last)
 I find(I first, I last, I hint, const T& val) {
 	I lo = hint;
 	I hi = hint + 1;
-	for(;;) {
-		if(*lo == val) return lo;
-		if(hi == last) return details::find_backward_with_not_found_value(first, lo, last, val);
-		if(*hi == val) return hi;
+	for (;;) {
+		if (*lo == val) return lo;
+		if (hi == last) return details::find_backward_with_not_found_value(first, lo, last, val);
+		if (*hi == val) return hi;
 		++hi;
-		if(lo == first) return find(hi, last, val);
+		if (lo == first) return find(hi, last, val);
 		--lo;
 	}
 }
@@ -102,12 +102,12 @@ requires(first <= hint && hint < last)
 I find_if(I first, I last, I hint, Pred pred) {
 	I lo = hint;
 	I hi = hint + 1;
-	for(;;) {
-		if(pred(*lo)) return lo;
-		if(hi == last) return details::find_if_backward_with_not_found_value(first, lo, last, pred);
-		if(pred(*hi)) return hi;
+	for (;;) {
+		if (pred(*lo)) return lo;
+		if (hi == last) return details::find_if_backward_with_not_found_value(first, lo, last, pred);
+		if (pred(*hi)) return hi;
 		++hi;
-		if(lo == first) return find_if(hi, last, pred);
+		if (lo == first) return find_if(hi, last, pred);
 		--lo;
 	}
 }
@@ -145,35 +145,35 @@ T tighten(U val, T min, T max) {
 template<typename T>
 std::pair<const T&, const T&> adjust_minmax(const T& cmin, const T& cmax, const T& c) {
 	// precondition: cmin < cmax
-	if (c < cmin) return {c, cmax};
-	if (cmax < c) return {cmin, c};
-	return {cmin, cmax};
+	if (c < cmin) return{ c, cmax };
+	if (cmax < c) return{ cmin, c };
+	return{ cmin, cmax };
 }
 
 template<typename T, StrictWeakOrdering Compare>
 std::pair<const T&, const T&> adjust_minmax(const T& cmin, const T& cmax, const T& c, Compare cmp) {
 	// precondition: cmp(cmin, cmax)
-	if (cmp(c, cmin)) return {c, cmax};
-	if (cmp(cmax, c)) return {cmin, c};
-	return {cmin, cmax};
+	if (cmp(c, cmin)) return{ c, cmax };
+	if (cmp(cmax, c)) return{ cmin, c };
+	return{ cmin, cmax };
 }
 
 template <ForwardIterator I>
 std::pair<DifferenceType(I), I> count_while_adjacent(I first, I last)
 {
-	DifferenceType(I) n {0};
+	DifferenceType(I) n { 0 };
 	if (first != last) {
 		I next = first;
 		++n;
 		++next;
 		while (next != last) {
 			if (*first != *next)
-				return {n, next};
+				return{ n, next };
 			++n;
 			++next;
 		}
 	}
-	return {n, last};
+	return{ n, last };
 }
 
 template<ForwardIterator I, OutputIterator O>
@@ -182,7 +182,7 @@ O unique_copy_with_count(I first, I last, O output) {
 	DifferenceType(I) n;
 	while (first != last) {
 		tie(n, next) = count_while_adjacent(first, last);
-		*output = {n, *first};
+		*output = { n, *first };
 		++output;
 		first = next;
 	}
@@ -191,24 +191,24 @@ O unique_copy_with_count(I first, I last, O output) {
 
 namespace details {
 
-	template<InputIterator I, Integer N, OutputIterator O>
-	std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::input_iterator_tag) {
-		while (first != last && n != 0) {
-			*output = *first;
-			++first;
-			--n;
-			++output;
-		}
-		return {first, output};
+template<InputIterator I, Integer N, OutputIterator O>
+std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::input_iterator_tag) {
+	while (first != last && n != 0) {
+		*output = *first;
+		++first;
+		--n;
+		++output;
 	}
+	return{ first, output };
+}
 
-	template<RandomAccessIterator I, Integer N, OutputIterator O>
-	std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::random_access_iterator_tag) {
-		auto d = std::iterator_traits<I>::difference_type (n);
-		if (d < std::distance(first, last))
-			last = std::next(first, d);
-		return {last, std::copy(first, last, output)};
-	}
+template<RandomAccessIterator I, Integer N, OutputIterator O>
+std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::random_access_iterator_tag) {
+	auto d = std::iterator_traits<I>::difference_type(n);
+	if (d < std::distance(first, last))
+		last = std::next(first, d);
+	return{ last, std::copy(first, last, output) };
+}
 
 }
 
@@ -224,6 +224,23 @@ void for_each_element(I f, I l, F fn) {
 		++f;
 	}
 	return std::move(fn);
+}
+
+template<InputIterator I1, InputIterator I2, Integer N, Predicate Pred>
+bool equal_n(I1 f1, I2 f2, N n, Pred pred) {
+	while (n) {
+		if (!pred(*f1, *f2))
+			return false;
+		--n;
+		++f1;
+		++f2;
+	}
+	return true;
+}
+
+template<InputIterator I1, InputIterator I2, Integer N>
+bool equal_n(I1 f1, I2 f2, N n) {
+	return equal_n(f1, f2, n, std::equal_to<>());
 }
 
 // stable_max is an attempt to render coherent the fact that std::max is unstable.
@@ -298,7 +315,7 @@ std::pair<I, I> minmax_cost_element(I first, I last, Cost cost) {
 	using namespace std;
 
 	if (first == last)
-		return {last, last};
+		return{ last, last };
 
 	auto min = first;
 	auto max = first;
@@ -309,12 +326,13 @@ std::pair<I, I> minmax_cost_element(I first, I last, Cost cost) {
 		if (val < lowest) {
 			lowest = val;
 			min = first;
-		} else if (!(val < highest)) {
+		}
+		else if (!(val < highest)) {
 			highest = val;
 			max = first;
 		}
 	}
-	return {min, max};
+	return{ min, max };
 }
 
 template<Range R>
@@ -323,8 +341,8 @@ R range_before(R const& range, decltype(*std::cbegin(range)) const& val) {
 	auto last = std::cend(range);
 	auto found = std::find(first, last, val);
 	if (found == last)
-		return {last, last};
-	return {first, found};
+		return{ last, last };
+	return{ first, found };
 }
 
 template<Range R>
@@ -334,7 +352,7 @@ R range_after(R const& range, decltype(*std::cbegin(range)) const& val) {
 	auto found = std::find(first, last, val);
 	if (found != last)
 		++found;
-	return {found, last};
+	return{ found, last };
 }
 
 template<Range R1, Range R2>
@@ -343,8 +361,8 @@ R1 range_before(R1 const& range1, R2 const& range2) {
 	auto last1 = std::cend(range1);
 	auto found = std::search(first1, last1, std::cbegin(range2), std::cend(range2));
 	if (found == last1)
-		return {last1, last1};
-	return {first1, found};
+		return{ last1, last1 };
+	return{ first1, found };
 }
 
 template<Range R1, Range R2>
@@ -354,7 +372,7 @@ R1 range_after(R1 const& range1, R2 const& range2) {
 	auto found = std::search(first1, last1, std::cbegin(range2), std::cend(range2));
 	if (found != last1)
 		++found;
-	return {found, last1};
+	return{ found, last1 };
 }
 
 template<ForwardIterator I>
@@ -632,29 +650,29 @@ T foldl(I first, I last, Op op, const T& z) {
 
 namespace details {
 
-	template<InputIterator I, typename T, BinaryOperation Op>
-	T foldr_nonempty(I first, I last, Op op, std::input_iterator_tag) {
-		std::stack<std::iterator_traits<I>::value_type> stk;
-		std::copy(first, last, std::back_inserter(stk));
-		auto r = stk.top();
+template<InputIterator I, typename T, BinaryOperation Op>
+T foldr_nonempty(I first, I last, Op op, std::input_iterator_tag) {
+	std::stack<std::iterator_traits<I>::value_type> stk;
+	std::copy(first, last, std::back_inserter(stk));
+	auto r = stk.top();
+	stk.pop();
+	while (!stk.empty()) {
+		r = op(stk.top(), r);
 		stk.pop();
-		while (!stk.empty()) {
-			r = op(stk.top(), r);
-			stk.pop();
-		}
-		return r;
 	}
+	return r;
+}
 
-	template<BidirectionalIterator I, typename T, BinaryOperation Op>
-	T foldr_nonempty(I first, I last, Op op, std::bidirectional_iterator_tag) {
-		return reduce_nonempty(std::reverse_iterator<I>(last), std::reverse_iterator<I>(first), transpose(op));
-	}
+template<BidirectionalIterator I, typename T, BinaryOperation Op>
+T foldr_nonempty(I first, I last, Op op, std::bidirectional_iterator_tag) {
+	return reduce_nonempty(std::reverse_iterator<I>(last), std::reverse_iterator<I>(first), transpose(op));
+}
 
 }
 template<InputIterator I, typename T, BinaryOperation Op>
 T foldr(I first, I last, Op op, const T& z) {
 	if (first == last) return z;
-	return details::foldr_nonempty(first, last, op, std::iterator_traits<I>::iterator_category {});
+	return details::foldr_nonempty(first, last, op, std::iterator_traits<I>::iterator_category{});
 }
 
 template<BidirectionalIterator I, OutputIterator O, UnaryOperation Op>
@@ -680,9 +698,9 @@ template<RandomAccessIterator I>
 std::pair<I, I> slide(I first, I last, I point) {
 	using namespace std;
 
-	if (point < first) return {point, rotate(point, first, last)};
-	if (last < point) return {rotate(first, last, point), point};
-	return {first, last};
+	if (point < first) return{ point, rotate(point, first, last) };
+	if (last < point) return{ rotate(first, last, point), point };
+	return{ first, last };
 }
 
 // gather selected elements around a position.
@@ -694,15 +712,15 @@ template<BidirectionalIterator I, Predicate P>
 std::pair<I, I> gather(I first, I last, I point, P pred) {
 	using namespace std;
 
-	return {stable_partition(first, point, not1(pred)), stable_partition(point, last, pred)};
+	return{ stable_partition(first, point, not1(pred)), stable_partition(point, last, pred) };
 }
 
 template <InputIterator I1, InputIterator I2, Relation Pred>
-auto hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred) 
+auto hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred)
 -> typename std::iterator_traits<I1>::difference_type {
 	using namespace std;
 
-	typename iterator_traits<I>::difference_type result {};
+	typename iterator_traits<I>::difference_type result{};
 	while (first1 != last1) {
 		if (!pred(*first1, *first2))
 			++result;
@@ -713,7 +731,7 @@ auto hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred)
 }
 
 template <InputIterator I1, InputIterator I2>
-auto hamming_distance(I1 first1, I1 last1, I2 first2) 
+auto hamming_distance(I1 first1, I1 last1, I2 first2)
 -> typename std::iterator_traits<I1>::difference_type {
 	using namespace std;
 
@@ -743,55 +761,53 @@ N hamming_distance_n(I1 first1, N n, I2 first2) {
 
 namespace details {
 
-	template <ForwardIterator I, Relation R>
-	auto unique_count(I first, I last, R rel, std::input_iterator_tag)
-	-> typename std::iterator_traits<I>::difference_type 
-	{
-		using namespace std;
+template <ForwardIterator I, Relation R>
+auto unique_count(I first, I last, R rel, std::input_iterator_tag)
+-> typename std::iterator_traits<I>::difference_type
+{
+	using namespace std;
 
-		typename iterator_traits<I>::difference_type result {};
-		if (first == last) return result;
+	typename iterator_traits<I>::difference_type result{};
+	if (first == last) return result;
 
-		typename iterator_traits<I>::value_type r = *first;
-		while (++first != last) {
-			if (!rel(r, *first)) {
-				++result;
-				r = *first;
-			}
+	typename iterator_traits<I>::value_type r = *first;
+	while (++first != last) {
+		if (!rel(r, *first)) {
+			++result;
+			r = *first;
 		}
-		return ++result;
 	}
-
-	template <ForwardIterator I, Relation R>
-	auto unique_count(I first, I last, R rel, std::forward_iterator_tag)
-	-> typename std::iterator_traits<I>::difference_type
-	{
-		using namespace std;
-
-		typename iterator_traits<I>::difference_type result {};
-		if (first == last) return result;
-
-		typename I r = first;
-		while (++first != last) {
-			if (!rel(*r, *first)) {
-				++result;
-				r = first;
-			}
-		}
-		return ++result;
-	}
+	return ++result;
 }
 
 template <ForwardIterator I, Relation R>
-auto unique_count(I first, I last, R rel)
+auto unique_count(I first, I last, R rel, std::forward_iterator_tag)
 -> typename std::iterator_traits<I>::difference_type
+{
+	using namespace std;
+
+	typename iterator_traits<I>::difference_type result{};
+	if (first == last) return result;
+
+	typename I r = first;
+	while (++first != last) {
+		if (!rel(*r, *first)) {
+			++result;
+			r = first;
+		}
+	}
+	return ++result;
+}
+}
+
+template <ForwardIterator I, Relation R>
+auto unique_count(I first, I last, R rel)-> typename std::iterator_traits<I>::difference_type
 {
 	return details::unique_count(first, last, rel, std::iterator_traits<I>::iterator_category());
 }
 
 template <ForwardIterator I>
-auto unique_count(I first, I last)
--> typename std::iterator_traits<I>::difference_type
+auto unique_count(I first, I last)-> typename std::iterator_traits<I>::difference_type
 {
 	using namespace std;
 
