@@ -378,6 +378,7 @@ R1 range_after(R1 const& range1, R2 const& range2) {
 template<ForwardIterator I>
 struct bounded_range {
 	typedef typename I iterator;
+	typedef typename const I const_iterator;
 
 	I first;
 	I last;
@@ -392,10 +393,12 @@ struct bounded_range {
 		return !(x == y);
 	}
 
-	I begin() const { return first; }
-	I end() const { return last; }
-	I cbegin() const { return first; }
-	I cend() const { return last; }
+	I begin() { return first; }
+	I end() { return last; }
+	const_iterator begin() const { return first; }
+	const_iterator end() const { return last; }
+	const_iterator cbegin() const { return first; }
+	const_iterator cend() const { return last; }
 };
 
 template<ForwardIterator I>
