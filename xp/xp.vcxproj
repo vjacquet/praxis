@@ -69,6 +69,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sandbox\clone.cpp" />
     <ClCompile Include="sandbox\expr.cpp" />
+    <ClCompile Include="sandbox\lru.cpp" />
     <ClCompile Include="sandbox\math.cpp" />
     <ClCompile Include="sandbox\operators.cpp" />
     <ClCompile Include="sandbox\perfect_forwarding.cpp" />
