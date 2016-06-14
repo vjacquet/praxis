@@ -4,6 +4,7 @@
 #include <functional>
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <type_traits>
 #include <utility>
 
@@ -75,6 +76,16 @@ namespace xp {
 		if (static_cast<U>(r) != x)
 			throw std::runtime_error("narrowing failed.");
 		return r;
+	}
+
+	// from Stroustrup (Programming Principles & Practice Using C++, 2nd edition, p. 854)
+	template<typename T, typename U>
+	T convert_cast(U x) {
+		std::stringstream io;
+		T result;
+		if (!(io << x) || !(io >> result) || !(io >> std::ws).eof())
+			throw std::runtime_error{ "conversion_cast failed." };
+		return result;
 	}
 
 } // namespace xp

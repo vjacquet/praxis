@@ -30,9 +30,9 @@ namespace my {
 			return name_;
 		}
 
-		template<class S>
-		void set_name(S&& name) /*noexcept(std::is_nothrow_assignable<std::string&, String>::value)*/ {
-			name_ = std::forward<S>(name);
+		template<class String>
+		void set_name(String&& name) /*noexcept(std::is_nothrow_assignable<std::string&, String>::value)*/ {
+			name_ = std::forward<String>(name);
 		}
 	};
 }

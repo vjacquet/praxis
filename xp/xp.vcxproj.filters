@@ -114,6 +114,9 @@
     <ClCompile Include="sandbox\lru.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sandbox\eop-2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="numeric.h">

@@ -1,4 +1,6 @@
+#include <list>
 #include <set>
+#include <utility>
 #include <vector>
 
 #include "../iterator.h"
@@ -7,6 +9,34 @@
 
 using namespace std;
 using namespace xp;
+
+namespace {
+
+template<typename T>
+struct segmented {
+	typedef T value_type;
+	typedef std::vector<T> segment;
+	std::list<segment> segments;
+};
+
+template<typename T>
+struct segmented_iterator {
+	typename std::list<segmented<T>>::iterator seg;
+	typename segmented<T>::segment::iterator it;
+
+	T& operator*() const {
+		return *it;
+	}
+	segmented_iterator& operator++() {
+		if (++it == seg->end()) {
+			++seg;
+			return it = seg->begin();
+		}
+		return ++it;
+	}
+};
+
+}
 
 TESTBENCH()
 

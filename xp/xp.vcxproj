@@ -68,6 +68,7 @@
     <ClCompile Include="instrumented.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sandbox\clone.cpp" />
+    <ClCompile Include="sandbox\eop-2.cpp" />
     <ClCompile Include="sandbox\expr.cpp" />
     <ClCompile Include="sandbox\lru.cpp" />
     <ClCompile Include="sandbox\math.cpp" />

@@ -11,27 +11,27 @@ namespace xp {
 		// TODO: The use of the curiously recurring template pattern makes things a little bit too complicated to my taste.
 		//       Stepanov uses a template and a typedef
 
-		/* 
+		/*
 		 *                          curiously recurring template pattern
 		 * +--------------------------------------------+--------------------------------------------+
-		 * |                    pros                   |                   cons                    |
+		 * |                    pros                    |                   cons                     |
 		 * +--------------------------------------------+--------------------------------------------+
-		 * | * the implementation defines the ctrs     | * must make iterator_scaffolding friend   |
-		 * | * the state is the implemention itself    |   to hide implementation details          |
-		 * |                                           | * must define all typedefs or adapt trait |
-		 * |                                           | * must cast scaffolding as implementation |
-		 * |                                           |   before calling                          |
+		 * | * the implementation defines the ctrs      | * must make iterator_scaffolding friend    |
+		 * | * the state is the implemention itself     |   to hide implementation details           |
+		 * |                                            | * must define all typedefs or adapt trait  |
+		 * |                                            | * must cast scaffolding as implementation  |
+		 * |                                            |   before calling                           |
 		 * +--------------------------------------------+--------------------------------------------+
 		 *
 		 *                          templatized implementation and typedef
 		 * +--------------------------------------------+--------------------------------------------+
-		 * |                    pros                   |                   cons                    |
+		 * |                    pros                    |                   cons                     |
 		 * +--------------------------------------------+--------------------------------------------+
-		 * | * the implementation can be in a separate | * the scaffoling must forward the ctrs to |
-		 * |   namespace and the typedef makes it      |   the implementation                      |
-		 * |   opaque                                  | * the state is a data member              |
-		 * | * the implementation can inherit from     |                                           |
-		 * |   iterator to define the typedefs         |                                           |
+		 * | * the implementation can be in a separate  | * the scaffoling must forward the ctrs to  |
+		 * |   namespace and the typedef makes it       |   the implementation                       |
+		 * |   opaque                                   | * the state is a data member               |
+		 * | * the implementation can inherit from      |                                            |
+		 * |   iterator to define the typedefs          |                                            |
 		 * +--------------------------------------------+--------------------------------------------+
 		 *
 		 */
@@ -52,7 +52,7 @@ namespace xp {
 				return static_cast<const I*>(this)->source();
 			}
 			pointer operator->() const {
-				return &(**this); 
+				return &(**this);
 			}
 
 			// forward
@@ -126,7 +126,7 @@ namespace xp {
 			}
 		};
 
-		template<typename I, typename Traits> 
+		template<typename I, typename Traits>
 		using iterator_scaffolding_adapter = iterator_scaffolding<I
 			, typename Traits::iterator_category
 			, typename Traits::value_type
@@ -217,10 +217,10 @@ namespace xp {
 		explicit unary_insert_iterator(C& x) : c(&x) {}
 
 		unary_insert_iterator& operator= (const typename C::value_type& value) {
-			c->insert(value); 
+			c->insert(value);
 			return *this;
 		}
-		unary_insert_iterator& operator= (typename C::value_type&& value){
+		unary_insert_iterator& operator= (typename C::value_type&& value) {
 			c->insert(std::move(value));
 			return *this;
 		}
@@ -242,8 +242,30 @@ namespace xp {
 
 	template <BidirectionalIterator I>
 	reverse_iterator<I> reverse(I it) {
-		return reverse_iterator {it};
+		return reverse_iterator{ it };
 	}
+
+	/*
+	 * alternate iterator categories, from EoP
+	 * Added because some algorithms are based on indexed iterator. For instance see k_rotate_from_permutation
+	 */
+
+	struct input_iterator_tag {};
+	struct forward_iterator_tag : input_iterator_tag {};
+	struct indexed_iterator_tag : forward_iterator_tag {};
+	struct bidirectional_iterator_tag : input_iterator_tag {};
+	struct random_iterator_tag : bidirectional_iterator_tag, indexed_iterator_tag {};
+
+	struct output_iterator_tag {};
+	struct bulk_iterator_tag : output_iterator_tag {};
+
+	/* 
+	 * test for orthogonal specifications
+	 */
+	struct sparse_storage_tag { };
+	struct segmented_storage_tag { };
+	struct strided_storage_tag { };
+	struct contiguous_storage_tag : strided_storage_tag { };
 
 }
 
