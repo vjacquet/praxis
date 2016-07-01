@@ -75,14 +75,16 @@ F for_each_arg(F f, Ts&&...a) {
 struct dump {
 	template<typename T>
 	void operator()(T const& t) {
-		std::cout << t << endl;
+		std::cout << ' ' << t;
 	}
 };
 
 TESTBENCH()
 
 TEST(check_for_each_arg) {
+	std::cout << "   ";
 	for_each_arg(dump {}, "a", 'b', 3);
+	std::cout << endl;
 }
 
 TEST(check_unique_count_with_adapter) {
@@ -265,6 +267,12 @@ TEST(check_find_while) {
 	auto s = "hello world!";
 	auto w = find_while(s, is_not_end_of_string {}, ' ');
 	VERIFY(distance(s, w) == 5);
+}
+
+TEST(check_reverse_forward_iterator) {
+	vector<int> v{ 9, 8, 7, 6, 5,4, 3, 2, 1 };
+	reverse(v.begin(), v.end(), std::forward_iterator_tag{});
+	VERIFY(std::is_sorted(v.begin(), v.end()));
 }
 
 TESTFIXTURE(algorithm)

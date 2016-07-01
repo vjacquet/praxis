@@ -84,7 +84,7 @@ I find_if_not_backward(I first, I last, Pred pred) {
 
 template<BidirectionalIterator I, typename T>
 requires(first <= hint && hint < last)
-I find(I first, I last, I hint, const T& val) {
+	I find(I first, I last, I hint, const T& val) {
 	I lo = hint;
 	I hi = hint + 1;
 	for (;;) {
@@ -100,7 +100,7 @@ I find(I first, I last, I hint, const T& val) {
 // because of cache misses, it might not be best if the hint is too far from the target
 template<BidirectionalIterator I, Predicate Pred>
 requires(first <= hint && hint < last)
-I find_if(I first, I last, I hint, Pred pred) {
+	I find_if(I first, I last, I hint, Pred pred) {
 	I lo = hint;
 	I hi = hint + 1;
 	for (;;) {
@@ -719,6 +719,21 @@ std::pair<I, I> gather(I first, I last, I point, P pred) {
 	using namespace std;
 
 	return{ stable_partition(first, point, not1(pred)), stable_partition(point, last, pred) };
+}
+
+// from sean parent <https://youtu.be/giNtMitSdfQ?t=3688>
+// remarks (VJA 20160701): 
+// - could be optimized by implementing a reverse_n (why counting everytime?)
+template<ForwardIterator I>
+void reverse(I f, I l, std::forward_iterator_tag) {
+	auto n = distance(f, l);
+
+	if (n == 0 || n == 1) return;
+	
+	auto m = std::next(f, n / 2);
+	reverse(f, m);
+	reverse(m, l);
+	std::rotate(f, m, l);
 }
 
 template <InputIterator I1, InputIterator I2, Relation Pred>
