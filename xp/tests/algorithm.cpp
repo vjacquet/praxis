@@ -83,24 +83,24 @@ TESTBENCH()
 
 TEST(check_for_each_arg) {
 	std::cout << "   ";
-	for_each_arg(dump {}, "a", 'b', 3);
+	for_each_arg(dump{}, "a", 'b', 3);
 	std::cout << endl;
 }
 
 TEST(check_unique_count_with_adapter) {
-	vector<int> v {0, 11, 33, 33, 44, 66, 66, 77, 88, 99};
-	auto counter = std::unique_copy(v.begin(), v.end(), counting_iterator {});
+	vector<int> v{ 0, 11, 33, 33, 44, 66, 66, 77, 88, 99 };
+	auto counter = std::unique_copy(v.begin(), v.end(), counting_iterator{});
 	VERIFY_EQ(8, counter.count);
 }
 
 TEST(check_unique_count) {
-	vector<int> v {0, 11, 33, 33, 44, 66, 66, 77, 88, 99};
+	vector<int> v{ 0, 11, 33, 33, 44, 66, 66, 77, 88, 99 };
 	auto counter = xp::unique_count(v.begin(), v.end());
 	VERIFY_EQ(8, counter);
 }
 
 TEST(check_find_backwards) {
-	vector<int> v{0, 11, 22, 33, 44, 55, 66, 77, 88, 99};
+	vector<int> v{ 0, 11, 22, 33, 44, 55, 66, 77, 88, 99 };
 
 	auto found = find_backward(v.cbegin(), v.cend(), 44);
 	auto d = distance(v.cbegin(), found);
@@ -111,7 +111,7 @@ TEST(check_find_backwards) {
 }
 
 TEST(check_find_if_not_backwards) {
-	vector<int> v {0, 11, 22, 33, 44, 55, 66, 77, 88, 99};
+	vector<int> v{ 0, 11, 22, 33, 44, 55, 66, 77, 88, 99 };
 
 	auto found = find_if_not_backward(v.cbegin(), v.cend(), [](int x) { return x != 44; });
 	auto d = distance(v.cbegin(), found);
@@ -123,7 +123,7 @@ TEST(check_find_if_not_backwards) {
 
 TEST(check_find_with_hint) {
 	using namespace std;
-	vector<int> v{0, 11, 22, 33, 44, 55, 66, 77, 88, 99};
+	vector<int> v{ 0, 11, 22, 33, 44, 55, 66, 77, 88, 99 };
 
 	auto found = find(v.cbegin(), v.cend(), v.cbegin() + 5, 44);
 	auto d = distance(v.cbegin(), found);
@@ -138,7 +138,7 @@ TEST(check_find_with_hint) {
 
 TEST(check_find_if_with_hint) {
 	using namespace std;
-	vector<int> v{0, 11, 22, 33, 44, 55, 66, 77, 88, 99};
+	vector<int> v{ 0, 11, 22, 33, 44, 55, 66, 77, 88, 99 };
 
 	int count = 0;
 	instrumented pred(count, 44);
@@ -175,37 +175,37 @@ TEST(check_tighten_with_overflow) {
 }
 
 TEST(check_min_cost_element) {
-	vector<int> v { 2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1 };
+	vector<int> v{ 2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1 };
 	auto result = min_cost_element(v.begin(), v.end(), [](int i) { return i * i; });
 
 	VERIFY(distance(v.begin(), result) == 8);
 }
 
 TEST(check_max_cost_element) {
-	vector<int> v {2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1};
+	vector<int> v{ 2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1 };
 	auto result = max_cost_element(v.begin(), v.end(), [](int i) { return i * i; });
 
 	VERIFY(distance(v.begin(), result) == 5);
 }
 
 TEST(check_stable_max_cost_element) {
-	vector<int> v {2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1};
+	vector<int> v{ 2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1 };
 	auto result = stable_max_cost_element(v.begin(), v.end(), [](int i) { return i * i; });
 
 	VERIFY(distance(v.begin(), result) == 7);
 }
 
 TEST(check_minmax_cost_element) {
-	vector<int> v {2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1};
+	vector<int> v{ 2, 5, 7, 8, 2, 42, 8, 42, 1, 23, 1 };
 	auto result = minmax_cost_element(v.begin(), v.end(), [](int i) { return i * i; });
 
 	VERIFY(distance(v.begin(), result.first) == 8);
 	// Different from max_cost_element but consistent with minmax_element
-	VERIFY(distance(v.begin(), result.second) == 7); 
+	VERIFY(distance(v.begin(), result.second) == 7);
 }
 
 TEST(check_count_while_adjacent) {
-	vector<int> v {1, 1, 1, 2, 2, 3, 4, 4, 4, 4};
+	vector<int> v{ 1, 1, 1, 2, 2, 3, 4, 4, 4, 4 };
 
 	auto f = v.begin();
 	auto l = v.end();
@@ -221,8 +221,8 @@ TEST(check_count_while_adjacent) {
 }
 
 TEST(check_unique_copy_with_count) {
-	vector<int> v {1, 1, 1, 2, 2, 3, 4, 4, 4, 4};
-	vector<pair<int, int>> expected {{3, 1}, {2, 2}, {1, 3}, {4, 4}};
+	vector<int> v{ 1, 1, 1, 2, 2, 3, 4, 4, 4, 4 };
+	vector<pair<int, int>> expected{ {3, 1}, {2, 2}, {1, 3}, {4, 4} };
 	vector<pair<int, int>> actual;
 	unique_copy_with_count(v.begin(), v.end(), back_inserter(actual));
 	VERIFY(expected.size() == actual.size());
@@ -232,8 +232,8 @@ TEST(check_unique_copy_with_count) {
 TEST(check_stable_max) {
 	first_less<int> cmp;
 
-	pair<int, int> x {0, 1};
-	pair<int, int> y {0, 2};
+	pair<int, int> x{ 0, 1 };
+	pair<int, int> y{ 0, 2 };
 	VERIFY(std::max(x, y, cmp).second == 1);
 	VERIFY(stable_max(x, y, cmp).second == 2);
 }
@@ -241,7 +241,7 @@ TEST(check_stable_max) {
 TEST(check_stable_max_element) {
 	first_less<int> cmp;
 
-	vector<pair<int, int>> v {{3, 1}, {2, 2}, {1, 3}, {3, 4}};
+	vector<pair<int, int>> v{ {3, 1}, {2, 2}, {1, 3}, {3, 4} };
 
 	VERIFY(std::max_element(v.begin(), v.end(), cmp)->second == 1);
 	VERIFY(stable_max_element(v.begin(), v.end(), cmp)->second == 4);
@@ -249,7 +249,7 @@ TEST(check_stable_max_element) {
 
 TEST(check_copy_while) {
 	vector<char> v;
-	copy_while("hello world!", is_not_end_of_string {}, back_inserter(v));
+	copy_while("hello world!", is_not_end_of_string{}, back_inserter(v));
 
 	VERIFY(v.size() == 12);
 	VERIFY(v.front() == 'h');
@@ -258,20 +258,20 @@ TEST(check_copy_while) {
 
 TEST(check_fill_while) {
 	char s[] = "hello world!";
-	fill_while(s, is_not_end_of_string {}, '_');
+	fill_while(s, is_not_end_of_string{}, '_');
 	VERIFY(*s == '_');
 	VERIFY(count(s, s + 12, '_') == 12);
 }
 
 TEST(check_find_while) {
 	auto s = "hello world!";
-	auto w = find_while(s, is_not_end_of_string {}, ' ');
+	auto w = find_while(s, is_not_end_of_string{}, ' ');
 	VERIFY(distance(s, w) == 5);
 }
 
 TEST(check_reverse_forward_iterator) {
 	vector<int> v{ 9, 8, 7, 6, 5,4, 3, 2, 1 };
-	reverse(v.begin(), v.end(), std::forward_iterator_tag{});
+	reverse_forward(v.begin(), v.end());
 	VERIFY(std::is_sorted(v.begin(), v.end()));
 }
 

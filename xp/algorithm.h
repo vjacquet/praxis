@@ -245,7 +245,7 @@ bool equal_n(I1 f1, I2 f2, N n) {
 }
 
 // stable_max is an attempt to render coherent the fact that std::max is unstable.
-// because stability migth have a small performance cost, as it assign the max for all
+// Stability migth have a small performance cost, as it assign the max for all
 // equivalent values, instead of the just the first one.
 // Nevertheless, the argument does not hold because of minmax, that is stable by definition 
 // for two arguments, and that has been specified as such for more than two.
@@ -255,7 +255,7 @@ bool equal_n(I1 f1, I2 f2, N n) {
 // - do not prefix when the stability is expected or when it is not required
 // - do prefix with stable when the stability is a secondary goal that can be reach with an
 //   additional cost
-// - do prefix with unstable when the stability s expected but removing it makes it 
+// - do prefix with unstable when the stability is expected but removing it makes it 
 //   more efficient
 // Therefore, this method is unfortunatelly badly named.
 template<typename T, StrictWeakOrdering Compare>
@@ -724,16 +724,21 @@ std::pair<I, I> gather(I first, I last, I point, P pred) {
 // from sean parent <https://youtu.be/giNtMitSdfQ?t=3688>
 // remarks (VJA 20160701): 
 // - could be optimized by implementing a reverse_n (why counting everytime?)
-template<ForwardIterator I>
-void reverse(I f, I l, std::forward_iterator_tag) {
-	auto n = distance(f, l);
 
-	if (n == 0 || n == 1) return;
-	
-	auto m = std::next(f, n / 2);
-	reverse(f, m);
-	reverse(m, l);
-	std::rotate(f, m, l);
+template<ForwardIterator I, Integer N>
+I reverse_n_forward(I f, N n) {
+	if (n < 2) return f + n;
+	N h = n / 2;
+	I m = reverse_n_forward(f, h);
+	I l = std::swap_ranges(f, m, m + n % 2);
+	reverse_n_forward(f, h);
+	return l;
+}
+
+template<ForwardIterator I>
+void reverse_forward(I f, I l) {
+	auto n = distance(f, l);
+	reverse_n_forward(f, n);
 }
 
 template <InputIterator I1, InputIterator I2, Relation Pred>
@@ -754,9 +759,8 @@ auto hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred)
 template <InputIterator I1, InputIterator I2>
 auto hamming_distance(I1 first1, I1 last1, I2 first2)
 -> typename std::iterator_traits<I1>::difference_type {
-	using namespace std;
+	typedef typename std::iterator_traits<I>::value_type value_type;
 
-	typedef typename iterator_traits<I>::value_type value_type;
 	return hamming_distance(first1, last1, first2, std::equal<value_type>());
 }
 
@@ -774,9 +778,8 @@ N hamming_distance_n(I1 first1, N n, I2 first2, Pred pred) {
 
 template <InputIterator I1, InputIterator I2, Integer N>
 N hamming_distance_n(I1 first1, N n, I2 first2) {
-	using namespace std;
+	typedef typename std::iterator_traits<I>::value_type value_type;
 
-	typedef typename iterator_traits<I>::value_type value_type;
 	return hamming_distance_n(first1, last1, first2, std::equal<value_type>());
 }
 
