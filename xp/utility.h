@@ -74,7 +74,7 @@ namespace xp {
 	T narrow_cast(U x) {
 		auto r = static_cast<T>(x);
 		if (static_cast<U>(r) != x)
-			throw std::runtime_error("narrowing failed.");
+			throw std::domain_error("narrowing failed."); // VJA: the source value is not representable in the target domain.
 		return r;
 	}
 
@@ -84,7 +84,7 @@ namespace xp {
 		std::stringstream io;
 		T result;
 		if (!(io << x) || !(io >> result) || !(io >> std::ws).eof())
-			throw std::runtime_error{ "conversion_cast failed." };
+			throw std::invalid_argument{ "conversion_cast failed." }; // VJA: changed to mimic stoi behavior.
 		return result;
 	}
 
