@@ -117,6 +117,9 @@
     <ClCompile Include="sandbox\eop-2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sandbox\flags.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="numeric.h">
@@ -192,6 +195,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sandbox\positive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="flags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

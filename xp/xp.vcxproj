@@ -67,6 +67,7 @@
   <ItemGroup>
     <ClCompile Include="instrumented.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sandbox\flags.cpp" />
     <ClCompile Include="sandbox\clone.cpp" />
     <ClCompile Include="sandbox\eop-2.cpp" />
     <ClCompile Include="sandbox\expr.cpp" />
@@ -120,6 +121,7 @@
     <ClInclude Include="benchmark.h" />
     <ClInclude Include="algebra.h" />
     <ClInclude Include="sandbox\expr.h" />
+    <ClInclude Include="flags.h" />
     <ClInclude Include="sandbox\positive.h" />
     <ClInclude Include="stick.h" />
     <ClInclude Include="tests\testbench.h" />
