@@ -381,8 +381,8 @@ struct bounded_range {
 	typedef typename I iterator;
 	typedef typename const I const_iterator;
 
-	I first;
-	I last;
+	iterator first;
+	iterator last;
 
 	bounded_range() : first(), last(first) {}
 	bounded_range(I first, I last) : first(first), last(last) {}
@@ -394,8 +394,8 @@ struct bounded_range {
 		return !(x == y);
 	}
 
-	I begin() { return first; }
-	I end() { return last; }
+	iterator begin() { return first; }
+	iterator end() { return last; }
 	const_iterator begin() const { return first; }
 	const_iterator end() const { return last; }
 	const_iterator cbegin() const { return first; }
@@ -412,7 +412,7 @@ struct counted_range {
 	typedef typename I iterator;
 	typedef typename std::iterator_traits<I>::difference_type size_type;
 
-	I first;
+	iterator first;
 	size_type n;
 
 	counted_range() : first(), n(size_type(0)) {}
@@ -425,7 +425,7 @@ struct counted_range {
 		return !(x == y);
 	}
 
-	I begin() const { return first; }
+	iterator begin() const { return first; }
 	size_type size() const { return n; }
 };
 
@@ -906,6 +906,14 @@ public:
 	T reduce() {
 		return reduce_counter(counter.begin(), counter.end(), op, zero);
 	}
+};
+
+template<typename T, Integer N>
+struct counter {
+	N n;
+	counter() : n{0} {}
+	counter(N n) : n{n}{}
+	void operator()(const T&) { ++n; }
 };
 
 } // namespace xp
