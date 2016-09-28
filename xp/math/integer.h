@@ -276,6 +276,10 @@ namespace xp {
 		}
 
 	public:
+		friend void swap(natural& x, natural& y) {
+			std::swap(x.storage, y.storage);
+		}
+
 		natural() : storage() {}
 		~natural() {}
 
@@ -293,10 +297,6 @@ namespace xp {
 			if (x) {
 				storage.push(x);
 			}
-		}
-
-		friend void swap(natural& x, natural& y) {
-			std::swap(x.storage, y.storage);
 		}
 
 		friend int sign(const natural& i) {

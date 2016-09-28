@@ -31,6 +31,7 @@
 #define UnaryFunction typename
 #define BinaryFunction typename
 #define Predicate typename
+#define UnaryPredicate typename
 #define Relation typename
 #define UnaryOperation typename
 #define BinaryOperation typename

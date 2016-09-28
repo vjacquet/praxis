@@ -14,7 +14,7 @@ namespace xp {
 	using std::size_t;
 
 	template<size_t N>
-	struct constant { 
+	struct constant {
 		static const size_t value = N;
 	};
 
@@ -27,7 +27,7 @@ namespace xp {
 	struct index_of<T, N, F, Types...> {
 		static const size_t value = std::conditional<std::is_same<T, typename F::tag>::value
 			, constant<N>
-			, index_of<T, N + 1, Types...>>::type::value;
+			, index_of<T, N + 1, Types... >>::type::value;
 	};
 	//template <class T, class... Types>
 	//struct index_of<T, Types...> {
@@ -44,7 +44,7 @@ namespace xp {
 	}
 
 	template<class T, class... Types>
-	size_t get_index(const std::tuple<Types...>& ) {
+	size_t get_index(const std::tuple<Types...>&) {
 		return index_of<T, 0, Types...>::value;
 	}
 
@@ -53,7 +53,7 @@ namespace xp {
 
 		template<typename U>
 		std::pair<Tag, T> operator=(const U& x) {
-			return std::make_pair(Tag {}, T(x));
+			return std::make_pair(Tag{}, T(x));
 		}
 	};
 
@@ -96,7 +96,7 @@ namespace xp {
 		record(const record& x) : fields(x.fields) { }
 
 		template<typename... Args>
-		record(Args&&... values) : fields (std::forward_as_tuple(values...)) {
+		record(Args&&... values) : fields(std::forward_as_tuple(values...)) {
 		}
 
 		template<typename F>
@@ -110,7 +110,7 @@ namespace xp {
 
 		template<typename... Args>
 		void update(Args&&... values) {
-			int count[] = {0, (set(values), 1)...};
+			int count[] = { 0, (set(values), 1)... };
 		}
 
 		template<typename F, typename V>
@@ -122,16 +122,17 @@ namespace xp {
 	struct name_tag : field_tag<name_tag, std::string> { using field_tag::operator=; };
 	struct phone_number_tag : field_tag<phone_number_tag, std::string> { using field_tag::operator=; };
 	struct email_tag : field_tag<email_tag, std::string> { using field_tag::operator=; };
+	struct rank_tag : field_tag<rank_tag, int> { using field_tag::operator=; };
 
 	//struct Name : field < string, Name > { using field::field;/*using field<string, Name>::operator =;*/ } fullname;
 	//struct PhoneNumber : field < string, PhoneNumber > { /*using field<string, PhoneNumber>::operator =;*/ } phone_number;
 
-	struct Person : record< 
+	struct Person : record<
 		name_tag,
 		email_tag,
 		phone_number_tag
 	> {
-		Person(string name, string email, string phone_number) 
+		Person(string name, string email, string phone_number)
 			: base(std::move(name), std::move(email), std::move(phone_number)) {
 		}
 	};
@@ -141,12 +142,13 @@ namespace xp {
 xp::name_tag fullname;
 xp::phone_number_tag phone_number;
 xp::email_tag email;
+xp::rank_tag rank;
 
 TESTBENCH()
 
 TEST(can_create_record) {
 	using namespace xp;
-	Person vjacquet {"vjacquet", "vjacquet@example.com", "+1 555 033 1234"};
+	Person vjacquet{ "vjacquet", "vjacquet@example.com", "+1 555 033 1234" };
 
 	VERIFY_EQ(0U, get_index<name_tag>(vjacquet.fields));
 	VERIFY_EQ(1U, get_index<email_tag>(vjacquet.fields));
@@ -160,13 +162,14 @@ TEST(can_create_record) {
 
 TEST(can_update_record) {
 	using namespace xp;
-	Person vjacquet {"vjacquet", "jacquet@example.com", "+1 555 033 9871"};
+	Person vjacquet{ "vjacquet", "jacquet@example.com", "+1 555 033 9871" };
 
 	VERIFY_EQ("+1 555 033 9871", vjacquet[phone_number]);
 	VERIFY_EQ("jacquet@example.com", vjacquet[email]);
 
 	// Is is possible to enforce that the same parameter is not used twice?
 	vjacquet.update(phone_number = "+1 555 033 1234", email = "vjacquet@example.com");
+	//vjacquet.update(rank = 1);
 
 	VERIFY_EQ("vjacquet", vjacquet[fullname]);
 	VERIFY_EQ("+1 555 033 1234", vjacquet[phone_number]);
