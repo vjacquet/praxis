@@ -15,7 +15,7 @@ namespace xp {
 
 namespace details {
 
-template<BidirectionalIterator I, class T>
+template<BidirectionalIterator I, typename T>
 I find_backward_with_not_found_value(I first, I last, I not_found, const T& val) {
 	auto it = last;
 	while (it != first) {
@@ -25,7 +25,7 @@ I find_backward_with_not_found_value(I first, I last, I not_found, const T& val)
 	return not_found;
 }
 
-template<BidirectionalIterator I, Predicate Pred>
+template<BidirectionalIterator I, UnaryPredicate Pred>
 I find_if_backward_with_not_found_value(I first, I last, I not_found, Pred pred) {
 	auto it = last;
 	while (it != first) {
@@ -72,19 +72,19 @@ I find_backward(I first, I last, const T& val) {
 	return details::find_backward_with_not_found_value(first, last, last, val);
 }
 
-template<BidirectionalIterator I, Predicate Pred>
+template<BidirectionalIterator I, UnaryPredicate Pred>
 I find_if_backward(I first, I last, Pred pred) {
 	return details::find_if_backward_with_not_found_value(first, last, last, pred);
 }
 
-template<BidirectionalIterator I, Predicate Pred>
+template<BidirectionalIterator I, UnaryPredicate Pred>
 I find_if_not_backward(I first, I last, Pred pred) {
 	return details::find_if_backward_with_not_found_value(first, last, last, negation(pred));
 }
 
 template<BidirectionalIterator I, typename T>
 requires(first <= hint && hint < last)
-	I find(I first, I last, I hint, const T& val) {
+I find(I first, I last, I hint, const T& val) {
 	I lo = hint;
 	I hi = hint + 1;
 	for (;;) {
@@ -98,9 +98,9 @@ requires(first <= hint && hint < last)
 }
 
 // because of cache misses, it might not be best if the hint is too far from the target
-template<BidirectionalIterator I, Predicate Pred>
+template<BidirectionalIterator I, UnaryPredicate Pred>
 requires(first <= hint && hint < last)
-	I find_if(I first, I last, I hint, Pred pred) {
+I find_if(I first, I last, I hint, Pred pred) {
 	I lo = hint;
 	I hi = hint + 1;
 	for (;;) {
@@ -113,7 +113,28 @@ requires(first <= hint && hint < last)
 	}
 }
 
-template <class T, StrictWeakOrdering Compare>
+
+template<InputIterator I, Integer N, typename T>
+std::pair<I, N> find_n(InputIterator first, N n, const T& val)
+{ // adapted from EoP
+	while (n && *first != val) {
+		--n;
+		++first;
+	}
+	return{ first, n };
+}
+
+template<InputIterator I, Integer N, UnaryPredicate Pred>
+std::pair<I, N> find_n_if(InputIterator first, N n, Pred pred)
+{
+	while (n && !pred(*first)) {
+		--n;
+		++first;
+	}
+	return{ first, n };
+}
+
+template <typename T, StrictWeakOrdering Compare>
 bool is_sorted(const T& a, const T& b, Compare cmp) {
 	return !cmp(b, a);
 }
@@ -123,7 +144,7 @@ bool is_sorted(const T& a, const T& b) {
 	return is_sorted(a, b, std::less<T>());
 }
 
-template <class T, StrictWeakOrdering Compare>
+template <typename T, StrictWeakOrdering Compare>
 bool is_sorted(const T& a, const T& b, const T& c, Compare cmp) {
 	return !(cmp(b, a) || cmp(c, b));
 }
@@ -194,7 +215,7 @@ namespace details {
 
 template<InputIterator I, Integer N, OutputIterator O>
 std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::input_iterator_tag) {
-	while (first != last && n != 0) {
+	while (first != last && n) {
 		*output = *first;
 		++first;
 		--n;
@@ -464,7 +485,7 @@ inline bool empty(const counted_range<I>& x) {
 	return x.size() == 0;
 }
 
-template<InputIterator I, Predicate Guard>
+template<InputIterator I, UnaryPredicate Guard>
 struct guarded_range {
 	typedef typename I iterator;
 	typedef typename Guard predicate;
@@ -486,7 +507,7 @@ struct guarded_range {
 };
 
 // The predicate returns true if the iterator is valid.
-template<InputIterator I, Predicate Guard, OutputIterator O>
+template<InputIterator I, UnaryPredicate Guard, OutputIterator O>
 O copy_while(I first, Guard guard, O result) {
 	while (guard(first)) {
 		*result = *first;
@@ -496,7 +517,7 @@ O copy_while(I first, Guard guard, O result) {
 	return result;
 }
 
-template<OutputIterator O, Predicate Guard, class T>
+template<OutputIterator O, UnaryPredicate Guard, typename T>
 O fill_while(O first, Guard guard, const T& val) {
 	while (guard(first)) {
 		*first = val;
@@ -505,7 +526,7 @@ O fill_while(O first, Guard guard, const T& val) {
 	return first;
 }
 
-template<InputIterator I, Predicate Guard, class T>
+template<InputIterator I, UnaryPredicate Guard, typename T>
 I find_while(I first, Guard guard, const T& val)
 {
 	while (guard(first) && *first != val) {
@@ -514,7 +535,7 @@ I find_while(I first, Guard guard, const T& val)
 	return first;
 }
 
-template<InputIterator I, Predicate Guard, Predicate Pred>
+template<InputIterator I, UnaryPredicate Guard, Predicate Pred>
 I find_if_while(I first, Guard guard, Pred pred)
 {
 	while (guard(first) && !pred(*first)) {
@@ -523,7 +544,7 @@ I find_if_while(I first, Guard guard, Pred pred)
 	return first;
 }
 
-template<InputIterator I, Predicate Guard, OutputIterator O, UnaryOperation Op>
+template<InputIterator I, UnaryPredicate Guard, OutputIterator O, UnaryOperation Op>
 O transform_while(I first, Guard guard, O result, Op op)
 {
 	while (guard(first)) {
@@ -535,7 +556,7 @@ O transform_while(I first, Guard guard, O result, Op op)
 }
 
 // both iterators are guarded
-template<InputIterator I1, Predicate Guard1, InputIterator I2, Predicate Guard2, OutputIterator O, BinaryOperation Op>
+template<InputIterator I1, UnaryPredicate Guard1, InputIterator I2, UnaryPredicate Guard2, OutputIterator O, BinaryOperation Op>
 O transform_while(I1 first1, Guard1 guard1, I2 first2, Guard1 guard2, O result, Op op)
 {
 	while (guard1(first1) && guard2(first2)) {
@@ -704,8 +725,8 @@ template<RandomAccessIterator I>
 std::pair<I, I> slide(I first, I last, I point) {
 	using namespace std;
 
-	if (point < first) return{ point, rotate(point, first, last) };
-	if (last < point) return{ rotate(first, last, point), point };
+	if (point < first) return { point, rotate(point, first, last) };
+	if (last < point) return { rotate(first, last, point), point };
 	return{ first, last };
 }
 
@@ -714,7 +735,7 @@ std::pair<I, I> slide(I first, I last, I point) {
 //        ^
 // ....****......
 // from sean parent
-template<BidirectionalIterator I, Predicate P>
+template<BidirectionalIterator I, UnaryPredicate P>
 std::pair<I, I> gather(I first, I last, I point, P pred) {
 	using namespace std;
 
@@ -915,6 +936,35 @@ struct counter {
 	counter(N n) : n{n}{}
 	void operator()(const T&) { ++n; }
 };
+
+
+// split adapted from marshall cow
+template <ForwardIterator I, typename T, BinaryFunction F>
+F split(I first, I last, const T& val, F f) {
+	while (true) {
+		auto found = std::find(first, last, val);
+		f(first, found);
+		if (found == last)
+			return f;
+		first = ++found;
+	}
+}
+
+template <ForwardIterator I, UnaryPredicate Pred, BinaryFunction F>
+F split_if(I first, I last, Pred pred, F f) {
+	while (true) {
+		auto found = std::find_if(first, last, pred);
+		f(first, found);
+		if (found == last)
+			return f;
+		first = ++found;
+	}
+}
+
+// split_n
+// split_n_if
+// bucketize
+// bucketize_n
 
 } // namespace xp
 
