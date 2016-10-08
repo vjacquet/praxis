@@ -6,7 +6,8 @@
 
 #include "../tests/testbench.h"
 
-// investigate strongly typed field names and how thy could be used as named parameters.
+// investigate strongly typed field names and how they could be used as named parameters.
+// check https://github.com/edouarda/brigand
 
 namespace xp {
 	using std::string;
