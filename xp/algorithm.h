@@ -946,7 +946,7 @@ F split(I first, I last, const T& val, F f) {
 		f(first, found);
 		if (found == last)
 			return f;
-		first = ++found;
+		first = ++found; // skip the delimiter
 	}
 }
 
@@ -957,11 +957,24 @@ F split_if(I first, I last, Pred pred, F f) {
 		f(first, found);
 		if (found == last)
 			return f;
-		first = ++found;
+		first = ++found; // should we skip the delimiter?
 	}
 }
 
-// split_n
+template<ForwardIterator I, Integer N, typename T, BinaryFunction F>
+F split_n(I first, N n, const T& val, F f) {
+	I found;
+	while (true) {
+		std::tie(found, n) = find_n(first, n, val);
+		f(first, found);
+		if (found == last)
+			return f;
+		first = ++found; // skip the delimiter
+		--n;
+	}
+}
+
+
 // split_n_if
 // bucketize
 // bucketize_n
