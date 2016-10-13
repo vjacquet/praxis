@@ -199,44 +199,44 @@ std::pair<DifferenceType(I), I> count_while_adjacent(I first, I last)
 }
 
 template<ForwardIterator I, OutputIterator O>
-O unique_copy_with_count(I first, I last, O output) {
+O unique_copy_with_count(I first, I last, O out) {
 	I next;
 	DifferenceType(I) n;
 	while (first != last) {
 		tie(n, next) = count_while_adjacent(first, last);
-		*output = { n, *first };
-		++output;
+		*out = { n, *first };
+		++out;
 		first = next;
 	}
-	return output;
+	return out;
 }
 
 namespace details {
 
 template<InputIterator I, Integer N, OutputIterator O>
-std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::input_iterator_tag) {
+std::pair<I, O> copy_at_most_n(I first, I last, N n, O out, std::input_iterator_tag) {
 	while (first != last && n) {
-		*output = *first;
+		*out = *first;
 		++first;
 		--n;
-		++output;
+		++out;
 	}
-	return{ first, output };
+	return{ first, out };
 }
 
 template<RandomAccessIterator I, Integer N, OutputIterator O>
-std::pair<I, O> copy_at_most_n(I first, I last, N n, O output, std::random_access_iterator_tag) {
+std::pair<I, O> copy_at_most_n(I first, I last, N n, O out, std::random_access_iterator_tag) {
 	auto d = std::iterator_traits<I>::difference_type(n);
 	if (d < std::distance(first, last))
 		last = std::next(first, d);
-	return{ last, std::copy(first, last, output) };
+	return{ last, std::copy(first, last, out) };
 }
 
 }
 
 template<InputIterator I, Integer N, OutputIterator O>
-std::pair<I, O> copy_at_most_n(I first, I last, N n, O output) {
-	return details::copy_at_most_n(first, last, n, output, std::iterator_traits<I>::iterator_category());
+std::pair<I, O> copy_at_most_n(I first, I last, N n, O out) {
+	return details::copy_at_most_n(first, last, n, out, std::iterator_traits<I>::iterator_category());
 }
 
 template<InputIterator I, Function F>
@@ -763,8 +763,7 @@ void reverse_forward(I f, I l) {
 }
 
 template <InputIterator I1, InputIterator I2, Relation Pred>
-auto hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred)
--> typename std::iterator_traits<I1>::difference_type {
+auto hamming_distance(I1 first1, I1 last1, I2 first2, Pred pred) -> typename std::iterator_traits<I1>::difference_type {
 	using namespace std;
 
 	typename iterator_traits<I>::difference_type result{};
@@ -938,16 +937,37 @@ struct counter {
 };
 
 
-// split adapted from marshall cow
+// split from marshall cow CppCon2016's presentation <https://github.com/CppCon/CppCon2016/blob/master/Presentations/STL%20Algorithms/STL%20Algorithms%20-%20Marshall%20Clow%20-%20CppCon%202016.pdf>
+// adapted to return the function.
 template <ForwardIterator I, typename T, BinaryFunction F>
 F split(I first, I last, const T& val, F f) {
 	while (true) {
 		auto found = std::find(first, last, val);
 		f(first, found);
 		if (found == last)
-			return f;
+			break;
 		first = ++found; // skip the delimiter
 	}
+	return f;
+}
+
+// split from marshal cow's blog <https://cplusplusmusings.wordpress.com/2016/02/01/sometimes-you-get-things-wrong/>
+template <ForwardIterator I, Searcher S, OutputIterator O>
+O split(I first, I last, const S &s, O out)
+{
+	while (first != last)
+	{
+		auto found = s(first, last);
+		// We've got three cases here:
+		//  The pattern is found in the middle of the input; output a chunk, and go around again
+		//  The pattern doesn't exist: output the rest of the input and terminate.
+		//  The pattern is found at the end of the input, output an empty chunk and terminate.
+		*out++ = std::make_pair(first, found.first);
+		if (found.second == last && found.first != found.second) // we found the pattern at the end; output an empty match
+			*out++ = std::make_pair(last, last);
+		first = found.second;
+	}
+	return out;
 }
 
 template <ForwardIterator I, UnaryPredicate Pred, BinaryFunction F>

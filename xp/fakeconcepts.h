@@ -37,6 +37,8 @@
 #define BinaryOperation typename
 #define EquivalenceRelation typename
 
+#define Searcher typename
+
 #define Size std::size_t
 
 #define requires(...) 
