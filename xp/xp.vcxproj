@@ -94,6 +94,7 @@
     <ClCompile Include="tests\min.cpp" />
     <ClCompile Include="tests\ranges.cpp" />
     <ClCompile Include="sandbox\tape.cpp" />
+    <ClCompile Include="tests\split.cpp" />
     <ClCompile Include="tests\stick.cpp" />
     <ClCompile Include="tests\trivalent.cpp" />
     <ClCompile Include="tests\utility.cpp" />

@@ -115,7 +115,7 @@ I find_if(I first, I last, I hint, Pred pred) {
 
 
 template<InputIterator I, Integer N, typename T>
-std::pair<I, N> find_n(InputIterator first, N n, const T& val)
+std::pair<I, N> find_n(I first, N n, const T& val)
 { // adapted from EoP
 	while (n && *first != val) {
 		--n;
@@ -125,7 +125,7 @@ std::pair<I, N> find_n(InputIterator first, N n, const T& val)
 }
 
 template<InputIterator I, Integer N, UnaryPredicate Pred>
-std::pair<I, N> find_n_if(InputIterator first, N n, Pred pred)
+std::pair<I, N> find_n_if(I first, N n, Pred pred)
 {
 	while (n && !pred(*first)) {
 		--n;
@@ -950,7 +950,7 @@ F split(I first, I last, const T& val, F f) {
 	}
 	return f;
 }
-
+/*
 // split from marshal cow's blog <https://cplusplusmusings.wordpress.com/2016/02/01/sometimes-you-get-things-wrong/>
 template <ForwardIterator I, Searcher S, OutputIterator O>
 O split(I first, I last, const S &s, O out)
@@ -968,7 +968,7 @@ O split(I first, I last, const S &s, O out)
 		first = found.second;
 	}
 	return out;
-}
+}*/
 
 template <ForwardIterator I, UnaryPredicate Pred, BinaryFunction F>
 F split_if(I first, I last, Pred pred, F f) {

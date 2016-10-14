@@ -79,6 +79,7 @@ struct dump {
 	}
 };
 
+
 TESTBENCH()
 
 TEST(check_for_each_arg) {
