@@ -12,13 +12,20 @@ namespace xp {
 
 namespace flags {
 
-template<typename E>
-constexpr bool enable_flags_operators(E) { return false; }
+template<class E>
+struct is_flags : std::false_type
+{
+};
+
+template<class T>
+constexpr bool is_flags_v = is_flags<T>::value;
 
 template<typename E>
 constexpr
-typename std::enable_if<enable_flags_operators(E{}), E>::type&
+typename std::enable_if<is_flags_v<E>, E>::type&
 operator |=(E& x, E y) {
+	static_assert(std::is_enum_v<E>, "The flag must be an enum.");
+
 	using underlying = typename std::underlying_type<E>::type;
 
 	return x = static_cast<E>(static_cast<underlying>(x) | static_cast<underlying>(y));
@@ -26,15 +33,17 @@ operator |=(E& x, E y) {
 
 template<typename E>
 constexpr 
-typename std::enable_if<enable_flags_operators(E{}), E>::type
+typename std::enable_if<is_flags_v<E>, E>::type
 operator |(E x, E y) {
 	return x |= y;
 }
 
 template<typename E>
 constexpr
-typename std::enable_if<enable_flags_operators(E{}), E>::type&
+typename std::enable_if<is_flags_v<E>, E>::type&
 operator &=(E& x, E y) {
+	static_assert(std::is_enum_v<E>, "The flag must be an enum.");
+
 	using underlying = typename std::underlying_type<E>::type;
 
 	return x = static_cast<E>(static_cast<underlying>(x) & static_cast<underlying>(y));
@@ -42,15 +51,17 @@ operator &=(E& x, E y) {
 
 template<typename E>
 constexpr
-typename std::enable_if<enable_flags_operators(E{}), E>::type
+typename std::enable_if<is_flags_v<E>, E>::type
 operator &(E x, E y) {
 	return x &= y;
 }
 
 template<typename E>
 constexpr
-typename std::enable_if<enable_flags_operators(E{}), E>::type&
+typename std::enable_if<is_flags_v<E>, E>::type&
 operator ^=(E& x, E y) {
+	static_assert(std::is_enum_v<E>, "The flag must be an enum.");
+
 	using underlying = typename std::underlying_type<E>::type;
 
 	return x = static_cast<E>(static_cast<underlying>(x) ^ static_cast<underlying>(y));
@@ -58,15 +69,17 @@ operator ^=(E& x, E y) {
 
 template<typename E>
 constexpr
-typename std::enable_if<enable_flags_operators(E{}), E>::type
+typename std::enable_if<is_flags_v<E>, E>::type
 operator ^(E x, E y) {
 	return x ^= y;
 }
 
 template<typename E>
 constexpr
-typename std::enable_if<enable_flags_operators(E{}), E>::type
+typename std::enable_if<is_flags_v<E>, E>::type
 operator ~(E x) {
+	static_assert(std::is_enum_v<E>, "The flag must be an enum.");
+
 	using underlying = typename std::underlying_type<E>::type;
 
 	return static_cast<E>(~static_cast<underlying>(x));
@@ -76,16 +89,16 @@ operator ~(E x) {
 
 namespace flag_ops {
 
-using ::xp::flags::operator|;
-using ::xp::flags::operator|=;
-using ::xp::flags::operator&;
-using ::xp::flags::operator&=;
-using ::xp::flags::operator^;
-using ::xp::flags::operator^=;
-using ::xp::flags::operator~;
+using xp::flags::operator|;
+using xp::flags::operator|=;
+using xp::flags::operator&;
+using xp::flags::operator&=;
+using xp::flags::operator^;
+using xp::flags::operator^=;
+using xp::flags::operator~;
 
 }
 
 }
 
-#endif __FLAGS_H__
+#endif //__FLAGS_H__
